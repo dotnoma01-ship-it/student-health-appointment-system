@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #e24747;
+            border-radius: 50%;
+            top: 7px;
+            right: 7px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 30px;
+        }
+
+        .page-heading {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .page-heading h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* SUPPORT CARDS */
+        .support-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .support-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .support-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            font-size: 21px;
+        }
+
+        .support-card h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .support-card p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .support-card a {
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* MAIN SUPPORT GRID */
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* FAQ */
+        .faq {
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .faq:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 16px 0;
+            border: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .faq-arrow {
+            color: var(--primary);
+            font-size: 17px;
+            transition: 0.2s ease;
+        }
+
+        .faq-answer {
+            display: none;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+            padding: 0 0 16px;
+        }
+
+        .faq.open .faq-answer {
+            display: block;
+        }
+
+        .faq.open .faq-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* CONTACT FORM */
+        .contact-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            background: #fcfefd;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18,110,81,0.08);
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .success-message {
+            display: none;
+            padding: 11px;
+            border-radius: 9px;
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid #cde8dc;
+            font-size: 11px;
+        }
+
+        /* EMERGENCY NOTICE */
+        .emergency {
+            margin-top: 20px;
+            padding: 17px;
+            background: #fff7e7;
+            border: 1px solid #f1ddb0;
+            border-radius: 12px;
+        }
+
+        .emergency h4 {
+            color: #775b1e;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .emergency p {
+            color: #846f40;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* MOBILE */
+        .mobile-menu {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @media (max-width: 1050px) {
+            .support-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .page-heading h2 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointments.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">Support</div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link active">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="login.html" class="logout">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+            <div class="page-title">
+                <h1>Help & Support</h1>
+                <p>Get assistance with your student health account</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notification">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        DN
+                    </div>
+
+                    <div class="profile-info">
+                        <strong>Daramola Noah</strong>
+                        <span>Student</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <div class="page-heading">
+
+                <h2>How can we help?</h2>
+
+                <p>
+                    Find answers to common questions or contact the health centre
+                    support team when you need assistance.
+                </p>
+
+            </div>
+
+
+            <!-- SUPPORT CARDS -->
+            <div class="support-cards">
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        ☎
+                    </div>
+
+                    <h3>Call Support</h3>
+
+                    <p>
+                        Contact the student health centre directly for assistance
+                        with appointments and general enquiries.
+                    </p>
+
+                    <a href="tel:+2348000000000">
+                        +234 800 000 0000
+                    </a>
+
+                </div>
+
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        ✉
+                    </div>
+
+                    <h3>Email Support</h3>
+
+                    <p>
+                        Send us an email and our support team will respond to your
+                        enquiry.
+                    </p>
+
+                    <a href="mailto:support@studenthealth.edu.ng">
+                        support@studenthealth.edu.ng
+                    </a>
+
+                </div>
+
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        🏥
+                    </div>
+
+                    <h3>Visit Health Centre</h3>
+
+                    <p>
+                        Visit the school health centre during its operating hours
+                        for in-person assistance.
+                    </p>
+
+                    <a href="#">
+                        View Centre Information
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="support-grid">
+
+                <!-- FAQ -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>Frequently Asked Questions</h3>
+
+                        <p>
+                            Quick answers to common student questions.
+                        </p>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            How do I book an appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Go to "Book Appointment" from your dashboard,
+                            choose a healthcare service, select a healthcare
+                            professional, choose an available date and time,
+                            then submit your appointment request.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            How can I see my appointment status?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Open "My Appointments" from the student dashboard.
+                            You will be able to see whether an appointment is
+                            pending, confirmed, completed, or cancelled.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            Can I cancel an appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Yes. Open your appointment from "My Appointments"
+                            and use the cancellation option when it is available.
+                            Cancellation rules may depend on the health centre.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            What should I bring to my appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Bring your valid student identification card and any
+                            relevant documents requested by the health centre.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            What if I forget my password?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Use the password recovery option on the login page.
+                            If you still cannot access your account, contact the
+                            health centre support team.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button class="faq-question">
+
+                            Can I change my profile information?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            You can update editable information from your profile
+                            page. Some academic information, such as your matric
+                            number, may require administrator assistance.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTACT FORM -->
+                <div>
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>Contact Support</h3>
+
+                            <p>
+                                Send a message to the support team.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="success-message"
+                            id="successMessage"
+                        >
+                            Your support request has been submitted.
+                        </div>
+
+
+                        <form
+                            class="contact-form"
+                            id="supportForm"
+                        >
+
+                            <div class="field">
+
+                                <label for="name">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    value="Daramola Noah"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="email">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    value="student@example.edu.ng"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="subject">
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    placeholder="What do you need help with?"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="message">
+                                    Message
+                                </label>
+
+                                <textarea
+                                    id="message"
+                                    placeholder="Describe your issue..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="submit-btn"
+                            >
+                                Send Message
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="emergency">
+
+                        <h4>
+                            ⚠ Important Health Notice
+                        </h4>
+
+                        <p>
+                            This appointment platform is not intended for emergency
+                            medical situations. If you are experiencing a medical
+                            emergency, seek immediate assistance from the appropriate
+                            emergency service or visit the nearest emergency facility.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+<script>
+
+    /* =========================
+       MOBILE SIDEBAR
+    ========================== */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+
+        sidebar.classList.toggle("open");
+
+    });
+
+
+    /* =========================
+       CURRENT STUDENT
+    ========================== */
+
+    const currentStudent =
+        JSON.parse(
+            localStorage.getItem("currentStudent")
+        );
+
+
+    /* =========================
+       CHECK LOGIN
+    ========================== */
+
+    if (!currentStudent) {
+
+        window.location.href =
+            "login.html";
+
+    } else {
+
+        /* =========================
+           DISPLAY STUDENT INFORMATION
+        ========================== */
+
+        const fullName =
+            currentStudent.firstName +
+            " " +
+            currentStudent.lastName;
+
+
+        const initials =
+            currentStudent.firstName
+                .charAt(0)
+                .toUpperCase() +
+
+            currentStudent.lastName
+                .charAt(0)
+                .toUpperCase();
+
+
+        const avatar =
+            document.querySelector(".avatar");
+
+
+        const profileName =
+            document.querySelector(
+                ".profile-info strong"
+            );
+
+
+        const profileRole =
+            document.querySelector(
+                ".profile-info span"
+            );
+
+
+        if (avatar) {
+
+            avatar.textContent =
+                initials;
+
+        }
+
+
+        if (profileName) {
+
+            profileName.textContent =
+                fullName;
+
+        }
+
+
+        if (profileRole) {
+
+            profileRole.textContent =
+                "Student";
+
+        }
+
+    }
+
+
+    /* =========================
+       FAQ
+    ========================== */
+
+    const faqQuestions =
+        document.querySelectorAll(
+            ".faq-question"
+        );
+
+
+    faqQuestions.forEach(
+        function (question) {
+
+            question.addEventListener(
+                "click",
+                function () {
+
+                    const faq =
+                        question.parentElement;
+
+
+                    faq.classList.toggle(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================
+       SUPPORT FORM
+    ========================== */
+
+    const supportForm =
+        document.getElementById(
+            "supportForm"
+        );
+
+
+    const successMessage =
+        document.getElementById(
+            "successMessage"
+        );
+
+
+    supportForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+
+            /* =========================
+               GET FORM VALUES
+            ========================== */
+
+            const name =
+                document.getElementById(
+                    "name"
+                ).value.trim();
+
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value.trim();
+
+
+            const subject =
+                document.getElementById(
+                    "subject"
+                ).value.trim();
+
+
+            const message =
+                document.getElementById(
+                    "message"
+                ).value.trim();
+
+
+            /* =========================
+               VALIDATION
+            ========================== */
+
+            if (
+                name === "" ||
+                email === "" ||
+                subject === "" ||
+                message === ""
+            ) {
+
+                alert(
+                    "Please fill in all fields."
+                );
+
+                return;
+
+            }
+
+
+            /* =========================
+               GET EXISTING SUPPORT
+               REQUESTS
+            ========================== */
+
+            let supportRequests =
+                JSON.parse(
+                    localStorage.getItem(
+                        "supportRequests"
+                    )
+                ) || [];
+
+
+            /* =========================
+               CREATE SUPPORT REQUEST
+            ========================== */
+
+            const supportRequest = {
+
+                id: Date.now(),
+
+                studentId:
+                    currentStudent.id,
+
+                studentName:
+                    name,
+
+                studentEmail:
+                    email,
+
+                subject:
+                    subject,
+
+                message:
+                    message,
+
+                status:
+                    "open",
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
+
+
+            /* =========================
+               SAVE REQUEST
+            ========================== */
+
+            supportRequests.push(
+                supportRequest
+            );
+
+
+            localStorage.setItem(
+                "supportRequests",
+                JSON.stringify(
+                    supportRequests
+                )
+            );
+
+
+            /* =========================
+               SHOW SUCCESS
+            ========================== */
+
+            successMessage.textContent =
+                "Your support request has been submitted successfully.";
+
+            successMessage.style.display =
+                "block";
+
+
+            /* =========================
+               CLEAR FORM
+            ========================== */
+
+            document.getElementById(
+                "subject"
+            ).value = "";
+
+            document.getElementById(
+                "message"
+            ).value = "";
+
+
+            /* =========================
+               HIDE SUCCESS MESSAGE
+               AFTER 4 SECONDS
+            ========================== */
+
+            setTimeout(
+                function () {
+
+                    successMessage.style.display =
+                        "none";
+
+                },
+                4000
+            );
+
+        }
+    );
+
+
+    /* =========================
+       LOGOUT
+    ========================== */
+
+    const logout =
+        document.querySelector(
+            ".logout"
+        );
+
+
+    logout.addEventListener(
+        "click",
+        function () {
+
+            localStorage.removeItem(
+                "currentStudent"
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

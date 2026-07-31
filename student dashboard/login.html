@@ -1,0 +1,543 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #d7e5df;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eaf8f2, #ffffff);
+            color: var(--text);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* LEFT SIDE */
+        .intro {
+            background: var(--primary);
+            color: white;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 50px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.14);
+            font-size: 22px;
+        }
+
+        .intro h1 {
+            font-size: clamp(38px, 5vw, 58px);
+            line-height: 1.05;
+            margin-bottom: 20px;
+            max-width: 520px;
+        }
+
+        .intro p {
+            max-width: 530px;
+            color: #d9eee6;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .features {
+            display: grid;
+            gap: 14px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #edf8f4;
+        }
+
+        .show-password { 
+            display: flex; 
+            align-items: center;
+            gap: 7px; margin-top: -8px; 
+            color: var(--muted); 
+            font-size: 12px; 
+            font-weight: 500; 
+            cursor: pointer; 
+        } 
+        
+        .show-password input {
+            width: auto; cursor: pointer; 
+        }
+
+        .check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* RIGHT SIDE */
+        .login-area {
+            padding: 40px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            width: min(480px, 100%);
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 38px;
+            box-shadow: 0 18px 45px rgba(18, 77, 58, 0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-decoration: none;
+        }
+
+        .login-box h2 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        form {
+            display: grid;
+            gap: 18px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            outline: none;
+            background: #fcfefd;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 110, 81, 0.08);
+        }
+
+        .password-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .password-row a {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .message {
+            display: none;
+            padding: 11px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .message.error {
+            background: #fff1f1;
+            color: var(--danger);
+            border: 1px solid #f3caca;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 25px 0;
+            color: #9aa8a2;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .register-text {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .register-text a {
+            color: var(--primary);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .admin-link {
+            display: block;
+            text-align: center;
+            margin-top: 17px;
+            color: var(--muted);
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .admin-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 850px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .intro {
+                padding: 40px 25px;
+            }
+
+            .logo {
+                margin-bottom: 30px;
+            }
+
+            .intro h1 {
+                font-size: 42px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .login-area {
+                padding: 25px 15px;
+            }
+
+            .login-box {
+                padding: 25px 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- LEFT SIDE -->
+        <section class="intro">
+
+            <div class="logo">
+                <span class="logo-icon">❤</span>
+                <span>Student Health</span>
+            </div>
+
+            <h1>Welcome back to your health portal.</h1>
+
+            <p>
+                Sign in to manage your appointments, view your health
+                services, and stay connected with your campus health centre.
+            </p>
+
+            <div class="features">
+
+                <div class="feature">
+                    <span class="check">✓</span>
+                    <span>Manage your appointments</span>
+                </div>
+
+                <div class="feature">
+                    <span class="check">✓</span>
+                    <span>View appointment history</span>
+                </div>
+
+                <div class="feature">
+                    <span class="check">✓</span>
+                    <span>Access your student health dashboard</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOGIN FORM -->
+        <section class="login-area">
+
+            <div class="login-box">
+
+                <a href="index.html" class="back-link">
+                    ← Back to Home
+                </a>
+
+                <h2>Student Login</h2>
+
+                <p class="subtitle">
+                    Enter your account details to continue.
+                </p>
+
+                <div class="message error" id="errorMessage"></div>
+
+                <form id="loginForm">
+
+                    <div class="field">
+
+                        <label for="email">
+                            School Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="student@example.edu.ng"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="field">
+
+                        <div class="password-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#">
+                                Forgot Password?
+                            </a>
+
+                        </div>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <!-- SHOW PASSWORD --> 
+                        <label class="show-password"> 
+                        <input type="checkbox" id="showPassword" > 
+                        <span>Show Password</span> 
+                        </label>
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-btn"
+                        <a href="student dashboard.html"></a> 
+                    
+                        Login to Account
+                    </button>
+
+                </form>
+
+
+                <div class="divider">
+                    OR
+                </div>
+
+
+                <p class="register-text">
+                    Don't have a student account?
+                    <a href="register.html">
+                        Register here
+                    </a>
+                </p>
+
+
+                <a
+                    href="admin login.html"
+                    class="admin-link"
+                >
+                    Administrator Login →
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+<script>
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+
+    loginForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+
+        errorMessage.style.display = "none";
+
+
+        /* GET REGISTERED STUDENTS */
+        const students =
+            JSON.parse(localStorage.getItem("students")) || [];
+
+
+        /* FIND STUDENT */
+        const student =
+            students.find(function(user) {
+
+                return user.email.toLowerCase() ===
+                    email.toLowerCase() &&
+                    user.password === password;
+
+            });
+
+
+        /* INVALID LOGIN */
+        if (!student) {
+
+            errorMessage.textContent =
+                "Invalid email or password.";
+
+            errorMessage.style.display = "block";
+
+            return;
+        }
+
+
+        /* SAVE LOGGED-IN STUDENT */
+        localStorage.setItem(
+            "currentStudent",
+            JSON.stringify(student)
+        );
+
+
+        /* LOGIN SUCCESS */
+        window.location.href =
+            "student dashboard.html";
+
+    });
+
+
+    /* SHOW PASSWORD */
+
+    const showPassword =
+        document.getElementById("showPassword");
+
+    const passwordInput =
+        document.getElementById("password");
+
+
+    showPassword.addEventListener("change", function() {
+
+        if (this.checked) {
+
+            passwordInput.type = "text";
+
+        } else {
+
+            passwordInput.type = "password";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
+```

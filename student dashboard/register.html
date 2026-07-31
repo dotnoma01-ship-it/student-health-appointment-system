@@ -1,0 +1,758 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #d7e5df;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eaf8f2, #ffffff);
+            color: var(--text);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* LEFT SIDE */
+        .intro {
+            background: var(--primary);
+            color: white;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 50px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.14);
+            font-size: 22px;
+        }
+
+        .intro h1 {
+            font-size: clamp(38px, 5vw, 58px);
+            line-height: 1.05;
+            margin-bottom: 20px;
+            max-width: 520px;
+        }
+
+        .intro p {
+            max-width: 530px;
+            color: #d9eee6;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .benefits {
+            display: grid;
+            gap: 14px;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #edf8f4;
+        }
+
+        .check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* RIGHT SIDE */
+        .form-area {
+            padding: 45px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-box {
+            width: min(560px, 100%);
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 35px;
+            box-shadow: 0 18px 45px rgba(18, 77, 58, 0.08);
+        }
+
+        .top-link {
+            display: inline-block;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            text-decoration: none;
+        }
+
+        .form-box h2 {
+            font-size: 31px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        form {
+            display: grid;
+            gap: 17px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 13px 14px;
+            outline: none;
+            background: #fcfefd;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 110, 81, 0.08);
+        }
+
+        .password-note {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: -2px;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .checkbox input {
+            width: auto;
+            margin-top: 3px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .login-text {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .login-text a {
+            color: var(--primary);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .message {
+            display: none;
+            padding: 11px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .message.error {
+            background: #fff1f1;
+            color: var(--danger);
+            border: 1px solid #f3caca;
+        }
+
+        /* RESPONSIVENESS */
+        @media (max-width: 850px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .intro {
+                padding: 40px 25px;
+            }
+
+            .logo {
+                margin-bottom: 30px;
+            }
+
+            .intro h1 {
+                font-size: 42px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .form-area {
+                padding: 25px 15px;
+            }
+
+            .form-box {
+                padding: 24px 18px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- LEFT SIDE -->
+        <section class="intro">
+
+            <div class="logo">
+                <span class="logo-icon">❤</span>
+                <span>Student Health</span>
+            </div>
+
+            <h1>Create your student health account.</h1>
+
+            <p>
+                Register once to book appointments, manage your visits,
+                and stay connected with your campus health centre.
+            </p>
+
+            <div class="benefits">
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>Book appointments online</span>
+                </div>
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>View appointment status and history</span>
+                </div>
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>Access student-focused health services</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REGISTRATION FORM -->
+        <section class="form-area">
+
+            <div class="form-box">
+
+                <a href="index.html" class="top-link">
+                    ← Back to Home
+                </a>
+
+                <h2>Student Registration</h2>
+
+                <p class="subtitle">
+                    Enter your details to create your account.
+                </p>
+
+                <div class="message error" id="errorMessage"></div>
+
+                <form id="studentRegistrationForm">
+
+                    <!-- FIRST NAME + LAST NAME -->
+                    <div class="form-row">
+
+                        <div class="field">
+                            <label for="firstName">
+                                First Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="Enter first name"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="lastName">
+                                Last Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                placeholder="Enter last name"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+
+                    <!-- MATRIC NUMBER + GENDER -->
+                    <div class="form-row">
+
+                        <div class="field">
+                            <label for="matricNumber">
+                                Matric Number
+                            </label>
+
+                            <input
+                                type="text"
+                                id="matricNumber"
+                                name="matricNumber"
+                                placeholder="e.g. 2024/0620"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="gender">
+                                Gender
+                            </label>
+
+                            <select id="gender" name="gender" required>
+
+                                <option value="">
+                                    Select gender
+                                </option>
+
+                                <option value="male">
+                                    Male
+                                </option>
+
+                                <option value="female">
+                                    Female
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <!-- DEPARTMENT + LEVEL -->
+                    <div class="form-row">
+
+                        <div class="field">
+                            <label for="department">
+                                Department
+                            </label>
+
+                            <input
+                                type="text"
+                                id="department"
+                                name="department"
+                                placeholder="e.g. Software Engineering"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="level">
+                                Level
+                            </label>
+
+                            <select id="level" name="level" required>
+
+                                <option value="">
+                                    Select level
+                                </option>
+
+                                <option value="100">
+                                    100 Level
+                                </option>
+
+                                <option value="200">
+                                    200 Level
+                                </option>
+
+                                <option value="300">
+                                    300 Level
+                                </option>
+
+                                <option value="400">
+                                    400 Level
+                                </option>
+
+                                <option value="500">
+                                    500 Level
+                                </option>
+
+                                <option value="600">
+                                    600 Level
+                                </option>
+
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="field">
+
+                        <label for="email">
+                            School Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="student@example.edu.ng"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PHONE -->
+                    <div class="field">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="08012345678"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORDS -->
+                    <div class="form-row">
+
+                        <div class="field">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create password"
+                                minlength="6"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="field">
+
+                            <label for="confirmPassword">
+                                Confirm Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                placeholder="Repeat password"
+                                minlength="6"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <span class="password-note">
+                        Password must be at least 6 characters.
+                    </span>
+
+
+                    <!-- TERMS -->
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            required
+                        >
+
+                        <span>
+                            I agree to the system terms and understand that
+                            the information provided will be used for student
+                            healthcare appointment management.
+                        </span>
+
+                    </label>
+
+
+                    <!-- SUBMIT -->
+                    <button
+                        class="submit-btn"
+                        type="submit"
+                    >
+                        Create Student Account
+                    </button>
+
+                </form>
+
+
+                <p class="login-text">
+
+                    Already have an account?
+
+                    <a href="login.html">
+                        Login here
+                    </a>
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+   <script>
+    const form = document.getElementById("studentRegistrationForm");
+    const errorMessage = document.getElementById("errorMessage");
+
+    form.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const firstName =
+            document.getElementById("firstName").value.trim();
+
+        const lastName =
+            document.getElementById("lastName").value.trim();
+
+        const matricNumber =
+            document.getElementById("matricNumber").value.trim();
+
+        const gender =
+            document.getElementById("gender").value;
+
+        const department =
+            document.getElementById("department").value.trim();
+
+        const level =
+            document.getElementById("level").value;
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const phone =
+            document.getElementById("phone").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+
+        errorMessage.style.display = "none";
+
+
+        /* CHECK PASSWORD */
+        if (password !== confirmPassword) {
+
+            errorMessage.textContent =
+                "Passwords do not match.";
+
+            errorMessage.style.display = "block";
+
+            return;
+        }
+
+
+        /* GET EXISTING USERS */
+        let students =
+            JSON.parse(localStorage.getItem("students")) || [];
+
+
+        /* CHECK IF EMAIL ALREADY EXISTS */
+        const emailExists =
+            students.some(function(student) {
+
+                return student.email.toLowerCase() ===
+                       email.toLowerCase();
+
+            });
+
+
+        if (emailExists) {
+
+            errorMessage.textContent =
+                "An account with this email already exists.";
+
+            errorMessage.style.display = "block";
+
+            return;
+        }
+
+
+        /* CHECK MATRIC NUMBER */
+        const matricExists =
+            students.some(function(student) {
+
+                return student.matricNumber ===
+                       matricNumber;
+
+            });
+
+
+        if (matricExists) {
+
+            errorMessage.textContent =
+                "This matric number is already registered.";
+
+            errorMessage.style.display = "block";
+
+            return;
+        }
+
+
+        /* CREATE STUDENT */
+        const student = {
+
+            id: Date.now(),
+
+            firstName: firstName,
+
+            lastName: lastName,
+
+            matricNumber: matricNumber,
+
+            gender: gender,
+
+            department: department,
+
+            level: level,
+
+            email: email,
+
+            phone: phone,
+
+            password: password
+
+        };
+
+
+        /* SAVE STUDENT */
+        students.push(student);
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+
+        /* SAVE CURRENT USER */
+        localStorage.setItem(
+            "currentStudent",
+            JSON.stringify(student)
+        );
+
+
+        /* GO TO DASHBOARD */
+        window.location.href =
+            "student dashboard.html";
+
+    });
+</script>
+</body>
+</html>
+```

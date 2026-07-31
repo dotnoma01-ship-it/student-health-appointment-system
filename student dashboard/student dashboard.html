@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --success: #197a50;
+            --warning: #a36a00;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .logo span:last-child {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        /* =========================
+           MAIN AREA
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 75px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #e24747;
+            border-radius: 50%;
+            top: 7px;
+            right: 7px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            padding: 30px;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: linear-gradient(120deg, #e9f7f1, #f8fcfa);
+            border: 1px solid #d3e9df;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .book-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .book-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 19px;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 21px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+        }
+
+        .view-all {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           APPOINTMENTS
+        ========================= */
+
+        .appointment {
+            display: grid;
+            grid-template-columns: 50px 1fr auto;
+            gap: 13px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .appointment:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .appointment:first-child {
+            padding-top: 0;
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 13px;
+            background: var(--light);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+        }
+
+        .appointment-info h4 {
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .appointment-info p {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .appointment-date {
+            text-align: right;
+        }
+
+        .appointment-date strong {
+            display: block;
+            color: var(--primary);
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .appointment-date span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .confirmed {
+            background: #eaf8f0;
+            color: var(--success);
+        }
+
+        .pending {
+            background: #fff5df;
+            color: var(--warning);
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================= */
+
+        .quick-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            transition: 0.2s ease;
+        }
+
+        .action:hover {
+            background: var(--light);
+            border-color: #c7dfd5;
+        }
+
+        .action-icon {
+            width: 37px;
+            height: 37px;
+            border-radius: 10px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .action strong {
+            font-size: 12px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .action span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* =========================
+           HEALTH NOTICE
+        ========================= */
+
+        .notice {
+            margin-top: 20px;
+            background: #f0f8ff;
+            border: 1px solid #d7e9f7;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .notice h4 {
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #245775;
+        }
+
+        .notice p {
+            color: #5c7180;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           PROFILE CARD
+        ========================= */
+
+        .profile-card {
+            margin-top: 20px;
+        }
+
+        .student-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .large-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .student-profile h4 {
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .student-profile p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .details {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #edf1ef;
+            font-size: 11px;
+        }
+
+        .detail:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail span:first-child {
+            color: var(--muted);
+        }
+
+        .detail span:last-child {
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border: 1px solid var(--border);
+                background: white;
+                border-radius: 9px;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .welcome {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment {
+                grid-template-columns: 45px 1fr;
+            }
+
+            .appointment-date {
+                grid-column: 2;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link active">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointment.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">Support</div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="logout">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+            <div class="page-title">
+                <h1>Student Dashboard</h1>
+                <p>Manage your healthcare appointments</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notification">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        DN
+                    </div>
+
+                    <div class="profile-info">
+                        <strong>Daramola Noah</strong>
+                        <span>Student</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- WELCOME -->
+            <div class="welcome">
+
+                <div>
+                    <h2>Good morning, Noah 👋</h2>
+
+                    <p>
+                        Welcome back. Here's an overview of your health appointments.
+                    </p>
+                </div>
+
+                <a href="appointment.html" class="book-btn">
+                    + Book Appointment
+                </a>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-icon">📅</div>
+                    </div>
+
+                    <div class="stat-number">2</div>
+
+                    <div class="stat-label">
+                        Upcoming Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-icon">✓</div>
+                    </div>
+
+                    <div class="stat-number">7</div>
+
+                    <div class="stat-label">
+                        Completed Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-icon">⏳</div>
+                    </div>
+
+                    <div class="stat-number">1</div>
+
+                    <div class="stat-label">
+                        Pending Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-icon">❤</div>
+                    </div>
+
+                    <div class="stat-number">10</div>
+
+                    <div class="stat-label">
+                        Health Services
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD GRID -->
+            <div class="dashboard-grid">
+
+                <!-- LEFT COLUMN -->
+                <div>
+
+                    <!-- UPCOMING APPOINTMENTS -->
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>Upcoming Appointments</h3>
+
+                            <a href="my appointments.html" class="view-all">
+                                View All
+                            </a>
+
+                        </div>
+
+
+                        <!-- APPOINTMENT 1 -->
+                        <div class="appointment">
+
+                            <div class="doctor-avatar">
+                                👨‍⚕️
+                            </div>
+
+                            <div class="appointment-info">
+
+                                <h4>
+                                    Dr. Michael Adeyemi
+                                </h4>
+
+                                <p>
+                                    General Medicine
+                                </p>
+
+                                <span class="status confirmed">
+                                    Confirmed
+                                </span>
+
+                            </div>
+
+                            <div class="appointment-date">
+
+                                <strong>
+                                    Today
+                                </strong>
+
+                                <span>
+                                    10:30 AM
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- APPOINTMENT 2 -->
+                        <div class="appointment">
+
+                            <div class="doctor-avatar">
+                                👩‍⚕️
+                            </div>
+
+                            <div class="appointment-info">
+
+                                <h4>
+                                    Dr. Sarah Okafor
+                                </h4>
+
+                                <p>
+                                    Student Wellness
+                                </p>
+
+                                <span class="status pending">
+                                    Pending
+                                </span>
+
+                            </div>
+
+                            <div class="appointment-date">
+
+                                <strong>
+                                    Tomorrow
+                                </strong>
+
+                                <span>
+                                    2:00 PM
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HEALTH NOTICE -->
+                    <div class="notice">
+
+                        <h4>Health Centre Notice</h4>
+
+                        <p>
+                            Please arrive at least 10 minutes before your scheduled
+                            appointment and bring your student identification card.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT COLUMN -->
+                <div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>Quick Actions</h3>
+
+                        </div>
+
+                        <div class="quick-actions">
+
+                            <a href="appointment.html" class="action">
+
+                                <div class="action-icon">
+                                    📅
+                                </div>
+
+                                <div>
+                                    <strong>Book Appointment</strong>
+                                    <span>Schedule a new visit</span>
+                                </div>
+
+                            </a>
+
+
+                            <a href="my appointments.html" class="action">
+
+                                <div class="action-icon">
+                                    ▣
+                                </div>
+
+                                <div>
+                                    <strong>My Appointments</strong>
+                                    <span>View all appointments</span>
+                                </div>
+
+                            </a>
+
+
+                            <a href="student profile.html" class="action">
+
+                                <div class="action-icon">
+                                    ◉
+                                </div>
+
+                                <div>
+                                    <strong>My Profile</strong>
+                                    <span>Update your information</span>
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROFILE CARD -->
+                    <div class="card profile-card">
+
+                        <div class="card-header">
+
+                            <h3>Student Information</h3>
+
+                            <a href="student profile.html" class="view-all">
+                                Edit
+                            </a>
+
+                        </div>
+
+
+                        <div class="student-profile">
+
+                            <div class="large-avatar">
+                                DN
+                            </div>
+
+                            <div>
+                                <h4>Daramola Noah</h4>
+                                <p>Software Engineering</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="details">
+
+                            <div class="detail">
+                                <span>Matric Number</span>
+                                <span>2024/0620</span>
+                            </div>
+
+                            <div class="detail">
+                                <span>Level</span>
+                                <span>200 Level</span>
+                            </div>
+
+                            <div class="detail">
+                                <span>Department</span>
+                                <span>Software Engineering</span>
+                            </div>
+
+                            <div class="detail">
+                                <span>Email</span>
+                                <span>student@example.edu.ng</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    /* =========================
+       MOBILE SIDEBAR
+    ========================== */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+        sidebar.classList.toggle("open");
+    });
+
+
+    /* =========================
+       GET CURRENT STUDENT
+    ========================== */
+
+    const currentStudent =
+        JSON.parse(localStorage.getItem("currentStudent"));
+
+
+    /* =========================
+       CHECK LOGIN
+    ========================== */
+
+    if (!currentStudent) {
+
+        window.location.href = "login.html";
+
+    } else {
+
+        /* =========================
+           STUDENT INFORMATION
+        ========================== */
+
+        const fullName =
+            currentStudent.firstName +
+            " " +
+            currentStudent.lastName;
+
+
+        /* =========================
+           UPDATE TOP PROFILE
+        ========================== */
+
+        const profileName =
+            document.querySelector(".profile-info strong");
+
+        const profileRole =
+            document.querySelector(".profile-info span");
+
+        const avatar =
+            document.querySelector(".avatar");
+
+
+        profileName.textContent =
+            fullName;
+
+        profileRole.textContent =
+            "Student";
+
+
+        /* Get initials */
+
+        const firstInitial =
+            currentStudent.firstName
+                .charAt(0)
+                .toUpperCase();
+
+        const lastInitial =
+            currentStudent.lastName
+                .charAt(0)
+                .toUpperCase();
+
+
+        avatar.textContent =
+            firstInitial + lastInitial;
+
+
+        /* =========================
+           WELCOME MESSAGE
+        ========================== */
+
+        const welcomeHeading =
+            document.querySelector(".welcome h2");
+
+
+        welcomeHeading.textContent =
+            "Good morning, " +
+            currentStudent.firstName +
+            " 👋";
+
+
+        /* =========================
+           STUDENT INFORMATION CARD
+        ========================== */
+
+        const detailValues =
+            document.querySelectorAll(".detail span:last-child");
+
+
+        if (detailValues.length >= 4) {
+
+            detailValues[0].textContent =
+                currentStudent.matricNumber;
+
+            detailValues[1].textContent =
+                currentStudent.level + " Level";
+
+            detailValues[2].textContent =
+                currentStudent.department;
+
+            detailValues[3].textContent =
+                currentStudent.email;
+
+        }
+
+
+        /* =========================
+           PROFILE CARD
+        ========================== */
+
+        const largeAvatar =
+            document.querySelector(".large-avatar");
+
+        const studentProfileName =
+            document.querySelector(".student profile h4");
+
+        const studentProfileDepartment =
+            document.querySelector(".student profile p");
+
+
+        if (largeAvatar) {
+
+            largeAvatar.textContent =
+                firstInitial + lastInitial;
+
+        }
+
+
+        if (studentProfileName) {
+
+            studentProfileName.textContent =
+                fullName;
+
+        }
+
+
+        if (studentProfileDepartment) {
+
+            studentProfileDepartment.textContent =
+                currentStudent.department;
+
+        }
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================== */
+
+    const logout =
+        document.querySelector(".logout");
+
+
+    logout.addEventListener("click", function () {
+
+        localStorage.removeItem("currentStudent");
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --danger: #c63b3b;
+            --danger-light: #fff1f1;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #e24747;
+            border-radius: 50%;
+            top: 7px;
+            right: 7px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 30px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h2 {
+            font-size: 27px;
+            margin-bottom: 5px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* SETTINGS LAYOUT */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 210px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .settings-menu {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .settings-tab {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            padding: 12px;
+            border-radius: 9px;
+            font-size: 12px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .settings-tab:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .settings-tab.active {
+            background: var(--light);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .settings-tab.danger {
+            color: var(--danger);
+        }
+
+        .settings-content {
+            min-width: 0;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* FORM */
+        .form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            background: #fcfefd;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18,110,81,0.08);
+        }
+
+        .save-btn {
+            width: fit-content;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 9px;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* TOGGLE */
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .setting-item:first-child {
+            padding-top: 0;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .setting-info strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .setting-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #cfd8d4;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s ease;
+        }
+
+        .switch input:checked + .slider {
+            background: var(--primary);
+        }
+
+        .switch input:checked + .slider::before {
+            transform: translateX(20px);
+        }
+
+        /* SECURITY */
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .security-item:first-child {
+            padding-top: 0;
+        }
+
+        .security-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .security-left {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .security-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 10px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .security-left strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .security-left span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .outline-btn {
+            padding: 8px 11px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--primary);
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .outline-btn:hover {
+            background: var(--light);
+        }
+
+        /* DANGER ZONE */
+        .danger-zone {
+            border: 1px solid #efd0d0;
+        }
+
+        .danger-zone .card-header h3 {
+            color: var(--danger);
+        }
+
+        .danger-zone p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .danger-btn {
+            padding: 10px 14px;
+            border: 1px solid #e7bdbd;
+            background: var(--danger-light);
+            color: var(--danger);
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .danger-btn:hover {
+            background: #ffe3e3;
+        }
+
+        /* MESSAGE */
+        .message {
+            display: none;
+            padding: 11px 13px;
+            border-radius: 9px;
+            background: var(--light);
+            border: 1px solid #cde8dc;
+            color: var(--primary);
+            font-size: 11px;
+            margin-bottom: 16px;
+        }
+
+        /* MOBILE */
+        .mobile-menu {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @media (max-width: 850px) {
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-menu {
+                display: flex;
+                gap: 5px;
+                overflow-x: auto;
+            }
+
+            .settings-tab {
+                width: auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .setting-item,
+            .security-item {
+                align-items: flex-start;
+            }
+
+            .setting-item {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointments.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">Support</div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link active">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="logout">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+            <div class="page-title">
+                <h1>Settings</h1>
+                <p>Manage your account preferences and security</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notification">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        DN
+                    </div>
+
+                    <div class="profile-info">
+                        <strong>Daramola Noah</strong>
+                        <span>Student</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <div class="page-heading">
+                <h2>Settings</h2>
+                <p>Customize your account and notification preferences.</p>
+            </div>
+
+
+            <div class="settings-layout">
+
+                <!-- SETTINGS MENU -->
+                <div class="settings-menu">
+
+                    <button class="settings-tab active" data-section="general">
+                        General
+                    </button>
+
+                    <button class="settings-tab" data-section="notifications">
+                        Notifications
+                    </button>
+
+                    <button class="settings-tab" data-section="security">
+                        Security
+                    </button>
+
+                    <button class="settings-tab danger" data-section="account">
+                        Account
+                    </button>
+
+                </div>
+
+
+                <!-- SETTINGS CONTENT -->
+                <div class="settings-content">
+
+
+                    <!-- GENERAL -->
+                    <section class="settings-section active" id="general">
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <h3>General Preferences</h3>
+                                <p>Manage your basic application preferences.</p>
+                            </div>
+
+                            <div class="message" id="generalMessage">
+                                General settings saved successfully.
+                            </div>
+
+                            <form class="form" id="generalForm">
+
+                                <div class="form-row">
+
+                                    <div class="field">
+
+                                        <label for="language">
+                                            Language
+                                        </label>
+
+                                        <select id="language">
+                                            <option selected>English</option>
+                                            <option>French</option>
+                                            <option>Yoruba</option>
+                                        </select>
+
+                                    </div>
+
+                                    <div class="field">
+
+                                        <label for="timezone">
+                                            Time Zone
+                                        </label>
+
+                                        <select id="timezone">
+                                            <option selected>
+                                                West Africa Time (WAT)
+                                            </option>
+                                            <option>
+                                                Greenwich Mean Time (GMT)
+                                            </option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label for="dateFormat">
+                                        Date Format
+                                    </label>
+
+                                    <select id="dateFormat">
+                                        <option selected>
+                                            DD/MM/YYYY
+                                        </option>
+                                        <option>
+                                            MM/DD/YYYY
+                                        </option>
+                                        <option>
+                                            YYYY-MM-DD
+                                        </option>
+                                    </select>
+
+                                </div>
+
+                                <button type="submit" class="save-btn">
+                                    Save Changes
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <h3>Appearance</h3>
+                                <p>Choose how the application should look.</p>
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Compact Dashboard</strong>
+                                    <span>
+                                        Use a more compact layout for dashboard information.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Reduce Animations</strong>
+                                    <span>
+                                        Reduce interface movement and visual effects.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTIFICATIONS -->
+                    <section class="settings-section" id="notifications">
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <h3>Notification Preferences</h3>
+                                <p>Choose the notifications you want to receive.</p>
+                            </div>
+
+                            <div class="message" id="notificationMessage">
+                                Notification settings saved successfully.
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Appointment Reminders</strong>
+                                    <span>
+                                        Receive reminders before scheduled appointments.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Appointment Updates</strong>
+                                    <span>
+                                        Get notified when an appointment is confirmed,
+                                        cancelled, or rescheduled.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Health Centre Announcements</strong>
+                                    <span>
+                                        Receive important announcements from the health centre.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                            <div class="setting-item">
+
+                                <div class="setting-info">
+                                    <strong>Email Notifications</strong>
+                                    <span>
+                                        Receive appointment-related notifications by email.
+                                    </span>
+                                </div>
+
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- SECURITY -->
+                    <section class="settings-section" id="security">
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <h3>Security</h3>
+                                <p>Keep your student health account secure.</p>
+                            </div>
+
+                            <div class="security-item">
+
+                                <div class="security-left">
+
+                                    <div class="security-icon">
+                                        🔒
+                                    </div>
+
+                                    <div>
+                                        <strong>Password</strong>
+                                        <span>
+                                            Change your account password regularly.
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <button class="outline-btn">
+                                    Change Password
+                                </button>
+
+                            </div>
+
+
+                            <div class="security-item">
+
+                                <div class="security-left">
+
+                                    <div class="security-icon">
+                                        ✉
+                                    </div>
+
+                                    <div>
+                                        <strong>Email Verification</strong>
+                                        <span>
+                                            Your school email should remain verified.
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <button class="outline-btn">
+                                    Verified
+                                </button>
+
+                            </div>
+
+
+                            <div class="security-item">
+
+                                <div class="security-left">
+
+                                    <div class="security-icon">
+                                        🛡
+                                    </div>
+
+                                    <div>
+                                        <strong>Two-Factor Authentication</strong>
+                                        <span>
+                                            Add another layer of protection to your account.
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <button class="outline-btn">
+                                    Enable
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ACCOUNT -->
+                    <section class="settings-section" id="account">
+
+                        <div class="card danger-zone">
+
+                            <div class="card-header">
+                                <h3>Account Management</h3>
+                                <p>Actions that affect your student health account.</p>
+                            </div>
+
+                            <p>
+                                Deactivating your account can prevent you from accessing
+                                appointment history and other account features.
+                            </p>
+
+                            <button class="danger-btn" id="deactivateBtn">
+                                Deactivate Account
+                            </button>
+
+                        </div>
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <h3>Logout</h3>
+                                <p>Sign out of your Student Health account.</p>
+                            </div>
+
+                            <a
+                                href="login.html"
+                                class="save-btn"
+                                style="display:inline-block;"
+                            >
+                                Logout
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+<script>
+
+    /* =========================
+       MOBILE SIDEBAR
+    ========================== */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+
+        sidebar.classList.toggle("open");
+
+    });
+
+
+    /* =========================
+       CURRENT STUDENT
+    ========================== */
+
+    const currentStudent =
+        JSON.parse(
+            localStorage.getItem("currentStudent")
+        );
+
+
+    /* =========================
+       CHECK LOGIN
+    ========================== */
+
+    if (!currentStudent) {
+
+        window.location.href = "login.html";
+
+    } else {
+
+        /* =========================
+           DISPLAY STUDENT INFORMATION
+        ========================== */
+
+        const fullName =
+            currentStudent.firstName +
+            " " +
+            currentStudent.lastName;
+
+
+        const initials =
+            currentStudent.firstName
+                .charAt(0)
+                .toUpperCase() +
+
+            currentStudent.lastName
+                .charAt(0)
+                .toUpperCase();
+
+
+        const avatar =
+            document.querySelector(".avatar");
+
+
+        const profileName =
+            document.querySelector(
+                ".profile-info strong"
+            );
+
+
+        const profileRole =
+            document.querySelector(
+                ".profile-info span"
+            );
+
+
+        if (avatar) {
+            avatar.textContent = initials;
+        }
+
+
+        if (profileName) {
+            profileName.textContent = fullName;
+        }
+
+
+        if (profileRole) {
+            profileRole.textContent = "Student";
+        }
+
+    }
+
+
+    /* =========================
+       DEFAULT SETTINGS
+    ========================== */
+
+    const defaultSettings = {
+
+        language: "English",
+
+        timezone: "West Africa Time (WAT)",
+
+        dateFormat: "DD/MM/YYYY",
+
+        compactDashboard: false,
+
+        reduceAnimations: false,
+
+        appointmentReminders: true,
+
+        appointmentUpdates: true,
+
+        healthAnnouncements: true,
+
+        emailNotifications: true
+
+    };
+
+
+    /* =========================
+       GET SAVED SETTINGS
+    ========================== */
+
+    let studentSettings =
+        JSON.parse(
+            localStorage.getItem("studentSettings")
+        );
+
+
+    /* =========================
+       CREATE SETTINGS IF NONE
+       EXIST
+    ========================== */
+
+    if (!studentSettings) {
+
+        studentSettings =
+            { ...defaultSettings };
+
+        localStorage.setItem(
+            "studentSettings",
+            JSON.stringify(studentSettings)
+        );
+
+    }
+
+
+    /* =========================
+       GET ELEMENTS
+    ========================== */
+
+    const language =
+        document.getElementById("language");
+
+    const timezone =
+        document.getElementById("timezone");
+
+    const dateFormat =
+        document.getElementById("dateFormat");
+
+
+    /* =========================
+       GENERAL TOGGLES
+    ========================== */
+
+    const compactDashboard =
+        document.querySelector(
+            '#general .switch input[type="checkbox"]'
+        );
+
+    const reduceAnimations =
+        document.querySelectorAll(
+            '#general .switch input[type="checkbox"]'
+        )[1];
+
+
+    /* =========================
+       NOTIFICATION TOGGLES
+    ========================== */
+
+    const notificationSwitches =
+        document.querySelectorAll(
+            "#notifications .switch input"
+        );
+
+
+    const appointmentReminders =
+        notificationSwitches[0];
+
+    const appointmentUpdates =
+        notificationSwitches[1];
+
+    const healthAnnouncements =
+        notificationSwitches[2];
+
+    const emailNotifications =
+        notificationSwitches[3];
+
+
+    /* =========================
+       LOAD SETTINGS
+    ========================== */
+
+    function loadSettings() {
+
+        language.value =
+            studentSettings.language;
+
+        timezone.value =
+            studentSettings.timezone;
+
+        dateFormat.value =
+            studentSettings.dateFormat;
+
+
+        compactDashboard.checked =
+            studentSettings.compactDashboard;
+
+        reduceAnimations.checked =
+            studentSettings.reduceAnimations;
+
+
+        appointmentReminders.checked =
+            studentSettings.appointmentReminders;
+
+        appointmentUpdates.checked =
+            studentSettings.appointmentUpdates;
+
+        healthAnnouncements.checked =
+            studentSettings.healthAnnouncements;
+
+        emailNotifications.checked =
+            studentSettings.emailNotifications;
+
+    }
+
+
+    /* LOAD SETTINGS ON PAGE OPEN */
+
+    loadSettings();
+
+
+    /* =========================
+       SAVE SETTINGS
+    ========================== */
+
+    function saveSettings() {
+
+        localStorage.setItem(
+            "studentSettings",
+            JSON.stringify(studentSettings)
+        );
+
+    }
+
+
+    /* =========================
+       GENERAL SETTINGS FORM
+    ========================== */
+
+    const generalForm =
+        document.getElementById("generalForm");
+
+    const generalMessage =
+        document.getElementById("generalMessage");
+
+
+    generalForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            studentSettings.language =
+                language.value;
+
+
+            studentSettings.timezone =
+                timezone.value;
+
+
+            studentSettings.dateFormat =
+                dateFormat.value;
+
+
+            saveSettings();
+
+
+            generalMessage.textContent =
+                "General settings saved successfully.";
+
+            generalMessage.style.display =
+                "block";
+
+
+            setTimeout(
+                function() {
+
+                    generalMessage.style.display =
+                        "none";
+
+                },
+                3000
+            );
+
+        }
+    );
+
+
+    /* =========================
+       GENERAL TOGGLES
+    ========================== */
+
+    compactDashboard.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.compactDashboard =
+                compactDashboard.checked;
+
+            saveSettings();
+
+        }
+    );
+
+
+    reduceAnimations.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.reduceAnimations =
+                reduceAnimations.checked;
+
+            saveSettings();
+
+        }
+    );
+
+
+    /* =========================
+       NOTIFICATION MESSAGE
+    ========================== */
+
+    const notificationMessage =
+        document.getElementById(
+            "notificationMessage"
+        );
+
+
+    /* =========================
+       NOTIFICATION SETTINGS
+    ========================== */
+
+    appointmentReminders.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.appointmentReminders =
+                appointmentReminders.checked;
+
+            saveSettings();
+
+            showNotificationMessage();
+
+        }
+    );
+
+
+    appointmentUpdates.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.appointmentUpdates =
+                appointmentUpdates.checked;
+
+            saveSettings();
+
+            showNotificationMessage();
+
+        }
+    );
+
+
+    healthAnnouncements.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.healthAnnouncements =
+                healthAnnouncements.checked;
+
+            saveSettings();
+
+            showNotificationMessage();
+
+        }
+    );
+
+
+    emailNotifications.addEventListener(
+        "change",
+        function() {
+
+            studentSettings.emailNotifications =
+                emailNotifications.checked;
+
+            saveSettings();
+
+            showNotificationMessage();
+
+        }
+    );
+
+
+    function showNotificationMessage() {
+
+        notificationMessage.textContent =
+            "Notification settings saved successfully.";
+
+        notificationMessage.style.display =
+            "block";
+
+
+        setTimeout(
+            function() {
+
+                notificationMessage.style.display =
+                    "none";
+
+            },
+            3000
+        );
+
+    }
+
+
+    /* =========================
+       CHANGE PASSWORD
+    ========================== */
+
+    const changePasswordButtons =
+        document.querySelectorAll(
+            ".outline-btn"
+        );
+
+
+    changePasswordButtons.forEach(
+        function(button, index) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    if (index === 0) {
+
+                        const currentPassword =
+                            prompt(
+                                "Enter your current password:"
+                            );
+
+
+                        if (
+                            currentPassword === null
+                        ) {
+                            return;
+                        }
+
+
+                        const newPassword =
+                            prompt(
+                                "Enter your new password:"
+                            );
+
+
+                        if (
+                            newPassword === null
+                        ) {
+                            return;
+                        }
+
+
+                        if (
+                            newPassword.length < 6
+                        ) {
+
+                            alert(
+                                "Password must be at least 6 characters."
+                            );
+
+                            return;
+
+                        }
+
+
+                        const confirmPassword =
+                            prompt(
+                                "Confirm your new password:"
+                            );
+
+
+                        if (
+                            newPassword !==
+                            confirmPassword
+                        ) {
+
+                            alert(
+                                "Passwords do not match."
+                            );
+
+                            return;
+
+                        }
+
+
+                        /* GET STUDENTS */
+
+                        let students =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "students"
+                                )
+                            ) || [];
+
+
+                        /* FIND CURRENT STUDENT */
+
+                        const studentIndex =
+                            students.findIndex(
+                                function(student) {
+
+                                    return (
+                                        student.id ===
+                                        currentStudent.id
+                                    );
+
+                                }
+                            );
+
+
+                        if (
+                            studentIndex === -1
+                        ) {
+
+                            alert(
+                                "Student account could not be found."
+                            );
+
+                            return;
+
+                        }
+
+
+                        /* CHECK CURRENT PASSWORD */
+
+                        if (
+                            students[
+                                studentIndex
+                            ].password !==
+                            currentPassword
+                        ) {
+
+                            alert(
+                                "Current password is incorrect."
+                            );
+
+                            return;
+
+                        }
+
+
+                        /* UPDATE PASSWORD */
+
+                        students[
+                            studentIndex
+                        ].password =
+                            newPassword;
+
+
+                        localStorage.setItem(
+                            "students",
+                            JSON.stringify(
+                                students
+                            )
+                        );
+
+
+                        /* UPDATE CURRENT STUDENT */
+
+                        currentStudent.password =
+                            newPassword;
+
+
+                        localStorage.setItem(
+                            "currentStudent",
+                            JSON.stringify(
+                                currentStudent
+                            )
+                        );
+
+
+                        alert(
+                            "Password changed successfully."
+                        );
+
+                    }
+
+
+                    /* EMAIL VERIFICATION */
+
+                    if (index === 1) {
+
+                        alert(
+                            "Your school email is currently marked as verified."
+                        );
+
+                    }
+
+
+                    /* TWO FACTOR AUTHENTICATION */
+
+                    if (index === 2) {
+
+                        alert(
+                            "Two-factor authentication will be available when the backend is connected."
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================
+       DEACTIVATE ACCOUNT
+    ========================== */
+
+    const deactivateBtn =
+        document.getElementById(
+            "deactivateBtn"
+        );
+
+
+    deactivateBtn.addEventListener(
+        "click",
+        function() {
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to deactivate your account?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            /* GET STUDENTS */
+
+            let students =
+                JSON.parse(
+                    localStorage.getItem(
+                        "students"
+                    )
+                ) || [];
+
+
+            /* REMOVE CURRENT STUDENT */
+
+            students =
+                students.filter(
+                    function(student) {
+
+                        return (
+                            student.id !==
+                            currentStudent.id
+                        );
+
+                    }
+                );
+
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(students)
+            );
+
+
+            /* REMOVE CURRENT LOGIN */
+
+            localStorage.removeItem(
+                "currentStudent"
+            );
+
+
+            /* OPTIONAL: REMOVE STUDENT
+               APPOINTMENTS */
+
+            let appointments =
+                JSON.parse(
+                    localStorage.getItem(
+                        "appointments"
+                    )
+                ) || [];
+
+
+            appointments =
+                appointments.filter(
+                    function(appointment) {
+
+                        return (
+                            appointment.studentId !==
+                            currentStudent.id
+                        );
+
+                    }
+                );
+
+
+            localStorage.setItem(
+                "appointments",
+                JSON.stringify(
+                    appointments
+                )
+            );
+
+
+            /* LOGOUT */
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+
+    /* =========================
+       LOGOUT
+    ========================== */
+
+    const logout =
+        document.querySelector(
+            ".logout"
+        );
+
+
+    logout.addEventListener(
+        "click",
+        function() {
+
+            localStorage.removeItem(
+                "currentStudent"
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

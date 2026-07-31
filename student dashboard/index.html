@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Health Appointment System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    :root {
+      --primary: #126e51;
+      --primary-dark: #0c523c;
+      --secondary: #e9f7f1;
+      --white: #ffffff;
+      --text: #17221e;
+      --muted: #68756f;
+      --border: #dce7e2;
+      --background: #f7fbf9;
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-content {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 19px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--secondary);
+      font-size: 22px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: #41514a;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: 0.2s ease;
+      display: inline-block;
+    }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--secondary);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* HERO */
+    .hero {
+      padding: 75px 0 65px;
+      background: linear-gradient(135deg, #eefaf5 0%, #ffffff 58%, #edf7f4 100%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 55px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 30px;
+      color: var(--primary);
+      background: var(--secondary);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 17px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.07;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      max-width: 650px;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 570px;
+      margin-bottom: 28px;
+      font-size: 16px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-card-wrap {
+      position: relative;
+    }
+
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 27px;
+      box-shadow: 0 18px 45px rgba(19, 63, 48, 0.09);
+    }
+
+    .hero-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+
+    .hero-card h3 {
+      font-size: 19px;
+    }
+
+    .status {
+      color: #197a50;
+      background: #eaf8f0;
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .appointment-preview {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      align-items: center;
+      gap: 13px;
+      padding: 15px 0;
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    .appointment-preview:last-child {
+      border-bottom: none;
+    }
+
+    .doctor-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 15px;
+      background: #e4f3ed;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+
+    .appointment-preview strong {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .appointment-preview small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .appointment-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: right;
+    }
+
+    /* STATS */
+    .stats {
+      padding: 18px 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 10px;
+    }
+
+    .stat h3 {
+      color: var(--primary);
+      font-size: 24px;
+      margin-bottom: 2px;
+    }
+
+    .stat p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* SECTION */
+    section {
+      padding: 75px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 38px;
+    }
+
+    .section-header h2 {
+      font-size: 34px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+    }
+
+    /* SERVICES */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .service-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 25px;
+      transition: 0.2s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(19, 63, 48, 0.08);
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--secondary);
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      margin-bottom: 16px;
+    }
+
+    .service-card h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .service-card p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      background: var(--white);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .step {
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fbfdfc;
+    }
+
+    .step-number {
+      width: 37px;
+      height: 37px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: var(--primary);
+      font-weight: 800;
+      margin-bottom: 17px;
+    }
+
+    .step h3 {
+      font-size: 16px;
+      margin-bottom: 7px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* CTA */
+    .cta-box {
+      background: var(--primary);
+      color: var(--white);
+      padding: 43px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .cta-box h2 {
+      font-size: 31px;
+      margin-bottom: 8px;
+    }
+
+    .cta-box p {
+      opacity: 0.85;
+      max-width: 560px;
+    }
+
+    .cta-box .btn {
+      background: var(--white);
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #10231c;
+      color: #d8e6e0;
+      padding: 45px 0 24px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .footer-brand p {
+      color: #a9bbb3;
+      margin-top: 13px;
+      max-width: 440px;
+      font-size: 14px;
+    }
+
+    footer h4 {
+      margin-bottom: 13px;
+      color: #ffffff;
+    }
+
+    .footer-links {
+      display: grid;
+      gap: 9px;
+      font-size: 13px;
+      color: #b7c8c1;
+    }
+
+    .copyright {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      color: #93a9a1;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* MOBILE */
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      font-size: 25px;
+      color: var(--text);
+    }
+
+    @media (max-width: 900px) {
+      .nav-links,
+      .nav-actions {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 50px 0;
+      }
+
+      .hero h1 {
+        font-size: 39px;
+      }
+
+      .stats-grid,
+      .services-grid,
+      .steps-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 55px 0;
+      }
+
+      .section-header h2 {
+        font-size: 28px;
+      }
+
+      .cta-box {
+        padding: 28px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cta-box h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <a href="#" class="logo">
+        <span class="logo-icon">❤</span>
+        <span>Student Health</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#home">Home</a>
+        <a href="help.html">How It Works</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline">Login</a>
+        <a href="register.html" class="btn btn-primary">Register</a>
+      </div>
+
+      <button class="menu-toggle" id="menuToggle">☰</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="home">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="badge">● Campus Healthcare Made Simple</div>
+          <h1>Your health deserves <span>easy access.</span></h1>
+          <p>
+            Book appointments with your school health centre quickly, choose a convenient time,
+            and keep track of your healthcare appointments from one place.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="register.html" class="btn btn-primary">Book an Appointment</a>
+            <a href="help.html" class="btn btn-outline">Learn More</a>
+          </div>
+        </div>
+
+        <div class="hero-card-wrap">
+          <div class="hero-card">
+            <div class="hero-card-top">
+              <h3>Upcoming Appointments</h3>
+              <span class="status">2 Scheduled</span>
+            </div>
+
+            <div class="appointment-preview">
+              <div class="doctor-avatar">👨‍⚕️</div>
+              <div>
+                <strong>Dr. Michael Adeyemi</strong>
+                <small>General Medicine</small>
+              </div>
+              <div class="appointment-time">10:30 AM<br />Today</div>
+            </div>
+
+            <div class="appointment-preview">
+              <div class="doctor-avatar">👩‍⚕️</div>
+              <div>
+                <strong>Dr. Sarah Okafor</strong>
+                <small>Student Wellness</small>
+              </div>
+              <div class="appointment-time">2:00 PM<br />Tomorrow</div>
+            </div>
+
+            <a href="login.html" class="btn btn-primary" style="width:100%; text-align:center; margin-top:18px;">
+              View My Appointments
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="container stats-grid">
+        <div class="stat">
+          <h3>24/7</h3>
+          <p>Online Appointment Access</p>
+        </div>
+        <div class="stat">
+          <h3>10+</h3>
+          <p>Healthcare Services</p>
+        </div>
+        <div class="stat">
+          <h3>100%</h3>
+          <p>Student Focused</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="container">
+        <div class="section-header">
+          <h2>Healthcare services for students</h2>
+          <p>
+            Access common campus health services and schedule appointments without unnecessary queues.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon">🩺</div>
+            <h3>General Consultation</h3>
+            <p>See a health professional for common illnesses, symptoms, and general medical concerns.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">💊</div>
+            <h3>Medical Advice</h3>
+            <p>Receive professional guidance about medications, symptoms, and basic health concerns.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">🧠</div>
+            <h3>Mental Wellness</h3>
+            <p>Connect with qualified professionals for counselling and student wellbeing support.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">🧪</div>
+            <h3>Laboratory Services</h3>
+            <p>Schedule laboratory-related appointments and keep track of your scheduled visits.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">🦷</div>
+            <h3>Dental Care</h3>
+            <p>Book dental consultations and get access to routine student dental healthcare.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">❤️</div>
+            <h3>Health Screening</h3>
+            <p>Schedule routine health checks and preventive screening through the school health centre.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="steps" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <h2>How the system works</h2>
+          <p>Four simple steps from registration to your appointment.</p>
+        </div>
+
+        <div class="steps-grid">
+          <article class="step">
+            <div class="step-number">1</div>
+            <h3>Create an Account</h3>
+            <p>Register with your student information and create a secure account.</p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">2</div>
+            <h3>Choose a Service</h3>
+            <p>Select the healthcare service or health professional you need.</p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">3</div>
+            <h3>Select a Time</h3>
+            <p>Choose an available appointment date and time that works for you.</p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">4</div>
+            <h3>Attend Your Appointment</h3>
+            <p>View your appointment details and visit the health centre at the scheduled time.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section>
+      <div class="container">
+        <div class="cta-box">
+          <div>
+            <h2>Need to see a health professional?</h2>
+            <p>Register now and book your first appointment through the student health portal.</p>
+          </div>
+          <a href="register.html" class="btn">Get Started</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo" style="color:#ffffff;">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+          </div>
+          <p>
+            A simple digital platform for managing student healthcare appointments and improving access to campus health services.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <div class="footer-links">
+            <a href="#home">Home</a>
+            <a href="help.html">How It Works</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Account</h4>
+          <div class="footer-links">
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+            <a href="student dashboard.html">Dashboard</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="copyright">
+        © 2026 Student Health Appointment System. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+
+    menuToggle.addEventListener("click", function () {
+      const nav = document.querySelector(".nav-links");
+      const actions = document.querySelector(".nav-actions");
+
+      const isOpen = nav.style.display === "flex";
+
+      if (isOpen) {
+        nav.style.display = "none";
+        actions.style.display = "none";
+      } else {
+        nav.style.display = "flex";
+        nav.style.flexDirection = "column";
+        nav.style.position = "absolute";
+        nav.style.top = "72px";
+        nav.style.left = "0";
+        nav.style.right = "0";
+        nav.style.padding = "20px";
+        nav.style.background = "white";
+        nav.style.borderBottom = "1px solid #dce7e2";
+
+        actions.style.display = "flex";
+        actions.style.position = "absolute";
+        actions.style.top = "250px";
+        actions.style.left = "20px";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #e24747;
+            border-radius: 50%;
+            top: 7px;
+            right: 7px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 30px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h2 {
+            font-size: 27px;
+            margin-bottom: 6px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .appointment-layout {
+            display: grid;
+            grid-template-columns: 1.6fr 0.9fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+        }
+
+        .card h3 {
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        .card-description {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 22px;
+        }
+
+        /* FORM */
+        form {
+            display: grid;
+            gap: 19px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: #fcfefd;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18,110,81,0.08);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .field-note {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* TIME SLOTS */
+        .time-label {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+        }
+
+        .time-slot input {
+            display: none;
+        }
+
+        .time-slot label {
+            border: 1px solid var(--border);
+            padding: 10px 8px;
+            border-radius: 9px;
+            text-align: center;
+            font-size: 11px;
+            cursor: pointer;
+            background: white;
+            transition: 0.2s ease;
+        }
+
+        .time-slot label:hover {
+            border-color: var(--primary);
+        }
+
+        .time-slot input:checked + label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* SUMMARY */
+        .summary-card {
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--light);
+            display: grid;
+            place-items: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .summary-header h3 {
+            margin-bottom: 2px;
+        }
+
+        .summary-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .summary-item {
+            padding: 13px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .summary-item strong {
+            font-size: 13px;
+        }
+
+        .empty-summary {
+            padding: 18px;
+            background: #f8fbfa;
+            border-radius: 10px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+
+        .important-note {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #fff7e7;
+            border: 1px solid #f1ddb0;
+            color: #775b1e;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* MOBILE MENU */
+        .mobile-menu {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
+            .appointment-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link active">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointment.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">Support</div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="logout">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+            <div class="page-title">
+                <h1>Book Appointment</h1>
+                <p>Schedule an appointment with the health centre</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notification">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        DN
+                    </div>
+
+                    <div class="profile-info">
+                        <strong>Daramola Noah</strong>
+                        <span>Student</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <div class="page-heading">
+                <h2>Book an Appointment</h2>
+                <p>
+                    Fill in the information below to schedule your visit.
+                </p>
+            </div>
+
+
+            <div class="appointment-layout">
+
+                <!-- FORM -->
+                <div class="card">
+
+                    <h3>Appointment Details</h3>
+
+                    <p class="card-description">
+                        Select the service, healthcare professional, date and available time.
+                    </p>
+
+                    <form id="appointmentForm">
+
+                        <div class="field">
+
+                            <label for="service">
+                                Healthcare Service
+                            </label>
+
+                            <select id="service" required>
+
+                                <option value="">
+                                    Select a healthcare service
+                                </option>
+
+                                <option value="general">
+                                    General Consultation
+                                </option>
+
+                                <option value="mental">
+                                    Mental Wellness
+                                </option>
+
+                                <option value="dental">
+                                    Dental Care
+                                </option>
+
+                                <option value="laboratory">
+                                    Laboratory Services
+                                </option>
+
+                                <option value="screening">
+                                    Health Screening
+                                </option>
+
+                                <option value="medical-advice">
+                                    Medical Advice
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="doctor">
+                                Healthcare Professional
+                            </label>
+
+                            <select id="doctor" required>
+
+                                <option value="">
+                                    Select a healthcare professional
+                                </option>
+
+                                <option value="michael">
+                                    Dr. Michael Adeyemi — General Medicine
+                                </option>
+
+                                <option value="sarah">
+                                    Dr. Sarah Okafor — Student Wellness
+                                </option>
+
+                                <option value="john">
+                                    Dr. John Ibrahim — Dental Care
+                                </option>
+
+                                <option value="grace">
+                                    Dr. Grace Williams — General Medicine
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <div class="field">
+
+                                <label for="date">
+                                    Appointment Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="date"
+                                    required
+                                >
+
+                                <span class="field-note">
+                                    Select an available date.
+                                </span>
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="appointmentType">
+                                    Appointment Type
+                                </label>
+
+                                <select id="appointmentType" required>
+
+                                    <option value="">
+                                        Select type
+                                    </option>
+
+                                    <option value="physical">
+                                        Physical Visit
+                                    </option>
+
+                                    <option value="follow-up">
+                                        Follow-up
+                                    </option>
+
+                                    <option value="consultation">
+                                        Consultation
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="time-label">
+                                Available Time
+                            </div>
+
+                            <div class="time-slots">
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time1"
+                                        name="time"
+                                        value="09:00 AM"
+                                        required
+                                    >
+                                    <label for="time1">
+                                        09:00 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time2"
+                                        name="time"
+                                        value="09:30 AM"
+                                    >
+                                    <label for="time2">
+                                        09:30 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time3"
+                                        name="time"
+                                        value="10:00 AM"
+                                    >
+                                    <label for="time3">
+                                        10:00 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time4"
+                                        name="time"
+                                        value="10:30 AM"
+                                    >
+                                    <label for="time4">
+                                        10:30 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time5"
+                                        name="time"
+                                        value="11:00 AM"
+                                    >
+                                    <label for="time5">
+                                        11:00 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time6"
+                                        name="time"
+                                        value="11:30 AM"
+                                    >
+                                    <label for="time6">
+                                        11:30 AM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time7"
+                                        name="time"
+                                        value="02:00 PM"
+                                    >
+                                    <label for="time7">
+                                        02:00 PM
+                                    </label>
+                                </div>
+
+                                <div class="time-slot">
+                                    <input
+                                        type="radio"
+                                        id="time8"
+                                        name="time"
+                                        value="02:30 PM"
+                                    >
+                                    <label for="time8">
+                                        02:30 PM
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="reason">
+                                Reason for Appointment
+                            </label>
+
+                            <textarea
+                                id="reason"
+                                placeholder="Briefly describe the reason for your appointment..."
+                                required
+                            ></textarea>
+
+                            <span class="field-note">
+                                Do not include sensitive information that is not necessary for scheduling.
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            Confirm Appointment
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- SUMMARY -->
+                <aside>
+
+                    <div class="card summary-card">
+
+                        <div class="summary-header">
+
+                            <div class="summary-icon">
+                                📅
+                            </div>
+
+                            <div>
+                                <h3>Appointment Summary</h3>
+                                <p>Review your selected details</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-item">
+                            <span>Service</span>
+                            <strong id="summaryService">Not selected</strong>
+                        </div>
+
+
+                        <div class="summary-item">
+                            <span>Healthcare Professional</span>
+                            <strong id="summaryDoctor">Not selected</strong>
+                        </div>
+
+
+                        <div class="summary-item">
+                            <span>Date</span>
+                            <strong id="summaryDate">Not selected</strong>
+                        </div>
+
+
+                        <div class="summary-item">
+                            <span>Time</span>
+                            <strong id="summaryTime">Not selected</strong>
+                        </div>
+
+
+                        <div class="summary-item">
+                            <span>Appointment Type</span>
+                            <strong id="summaryType">Not selected</strong>
+                        </div>
+
+
+                        <div class="important-note">
+                            <strong>Important:</strong>
+                            Please arrive at least 10 minutes before your appointment
+                            and bring your student identification card.
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+    /* =========================
+       MOBILE SIDEBAR
+    ========================== */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+
+        sidebar.classList.toggle("open");
+
+    });
+
+
+    /* =========================
+       CURRENT STUDENT
+    ========================== */
+
+    const currentStudent =
+        JSON.parse(localStorage.getItem("currentStudent"));
+
+
+    /* =========================
+       CHECK LOGIN
+    ========================== */
+
+    if (!currentStudent) {
+
+        window.location.href = "login.html";
+
+    }
+
+
+    /* =========================
+       FORM ELEMENTS
+    ========================== */
+
+    const form =
+        document.getElementById("appointmentForm");
+
+    const service =
+        document.getElementById("service");
+
+    const doctor =
+        document.getElementById("doctor");
+
+    const date =
+        document.getElementById("date");
+
+    const type =
+        document.getElementById("appointmentType");
+
+    const reason =
+        document.getElementById("reason");
+
+
+    /* =========================
+       SUMMARY ELEMENTS
+    ========================== */
+
+    const summaryService =
+        document.getElementById("summaryService");
+
+    const summaryDoctor =
+        document.getElementById("summaryDoctor");
+
+    const summaryDate =
+        document.getElementById("summaryDate");
+
+    const summaryTime =
+        document.getElementById("summaryTime");
+
+    const summaryType =
+        document.getElementById("summaryType");
+
+
+    /* =========================
+       SERVICE SUMMARY
+    ========================== */
+
+    service.addEventListener("change", function () {
+
+        if (service.value !== "") {
+
+            summaryService.textContent =
+                service.options[service.selectedIndex].text;
+
+        } else {
+
+            summaryService.textContent =
+                "Not selected";
+
+        }
+
+    });
+
+
+    /* =========================
+       DOCTOR SUMMARY
+    ========================== */
+
+    doctor.addEventListener("change", function () {
+
+        if (doctor.value !== "") {
+
+            summaryDoctor.textContent =
+                doctor.options[doctor.selectedIndex].text;
+
+        } else {
+
+            summaryDoctor.textContent =
+                "Not selected";
+
+        }
+
+    });
+
+
+    /* =========================
+       DATE SUMMARY
+    ========================== */
+
+    date.addEventListener("change", function () {
+
+        if (date.value) {
+
+            const selectedDate =
+                new Date(date.value + "T00:00:00");
+
+            summaryDate.textContent =
+                selectedDate.toLocaleDateString(
+                    "en-US",
+                    {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric"
+                    }
+                );
+
+        } else {
+
+            summaryDate.textContent =
+                "Not selected";
+
+        }
+
+    });
+
+
+    /* =========================
+       TYPE SUMMARY
+    ========================== */
+
+    type.addEventListener("change", function () {
+
+        if (type.value !== "") {
+
+            summaryType.textContent =
+                type.options[type.selectedIndex].text;
+
+        } else {
+
+            summaryType.textContent =
+                "Not selected";
+
+        }
+
+    });
+
+
+    /* =========================
+       TIME SUMMARY
+    ========================== */
+
+    const timeInputs =
+        document.querySelectorAll(
+            'input[name="time"]'
+        );
+
+
+    timeInputs.forEach(function (input) {
+
+        input.addEventListener("change", function () {
+
+            summaryTime.textContent =
+                input.value;
+
+        });
+
+    });
+
+
+    /* =========================
+       PREVENT PAST DATES
+    ========================== */
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    date.min = today;
+
+
+    /* =========================
+       BOOK APPOINTMENT
+    ========================== */
+
+    form.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+
+        /* GET SELECTED TIME */
+
+        const selectedTime =
+            document.querySelector(
+                'input[name="time"]:checked'
+            );
+
+
+        if (!selectedTime) {
+
+            alert("Please select an appointment time.");
+
+            return;
+
+        }
+
+
+        /* GET EXISTING APPOINTMENTS */
+
+        let appointments =
+            JSON.parse(
+                localStorage.getItem("appointments")
+            ) || [];
+
+
+        /* =========================
+           CREATE APPOINTMENT
+        ========================== */
+
+        const appointment = {
+
+            id: Date.now(),
+
+            studentId: currentStudent.id,
+
+            studentName:
+                currentStudent.firstName +
+                " " +
+                currentStudent.lastName,
+
+            studentEmail:
+                currentStudent.email,
+
+            matricNumber:
+                currentStudent.matricNumber,
+
+            service:
+                service.value,
+
+            serviceName:
+                service.options[
+                    service.selectedIndex
+                ].text,
+
+            doctor:
+                doctor.value,
+
+            doctorName:
+                doctor.options[
+                    doctor.selectedIndex
+                ].text,
+
+            date:
+                date.value,
+
+            time:
+                selectedTime.value,
+
+            appointmentType:
+                type.value,
+
+            appointmentTypeName:
+                type.options[
+                    type.selectedIndex
+                ].text,
+
+            reason:
+                reason.value.trim(),
+
+            status:
+                "pending",
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+
+        /* =========================
+           CHECK FOR DUPLICATE SLOT
+        ========================== */
+
+        const slotAlreadyBooked =
+            appointments.some(function (item) {
+
+                return (
+                    item.doctor === appointment.doctor &&
+                    item.date === appointment.date &&
+                    item.time === appointment.time &&
+                    item.status !== "cancelled"
+                );
+
+            });
+
+
+        if (slotAlreadyBooked) {
+
+            alert(
+                "This appointment slot has already been booked. Please choose another time."
+            );
+
+            return;
+
+        }
+
+
+        /* =========================
+           SAVE APPOINTMENT
+        ========================== */
+
+        appointments.push(appointment);
+
+        localStorage.setItem(
+            "appointments",
+            JSON.stringify(appointments)
+        );
+
+
+        /* =========================
+           SAVE LAST APPOINTMENT
+        ========================== */
+
+        localStorage.setItem(
+            "lastAppointment",
+            JSON.stringify(appointment)
+        );
+
+
+        /* =========================
+           GO TO MY APPOINTMENTS
+        ========================== */
+
+        window.location.href =
+            "my appointments.html";
+
+    });
+
+</script>
+
+</body>
+</html>
