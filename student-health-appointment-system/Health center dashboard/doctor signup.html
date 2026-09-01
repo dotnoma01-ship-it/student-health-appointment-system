@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Registration | Student Health Appointment System</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0d5a42;
+            --primary-light: #17815f;
+            --secondary: #edf7f3;
+            --white: #ffffff;
+            --text: #1d2939;
+            --gray: #667085;
+            --border: #e4e7ec;
+            --danger: #dc3545;
+            --success: #198754;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        /* ==========================================
+           MAIN CONTAINER
+        ========================================== */
+
+        .signup-container {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--white);
+            border-radius: 25px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .10);
+        }
+
+        /* ==========================================
+           LEFT SIDE
+        ========================================== */
+
+        .signup-left {
+            background: linear-gradient(
+                145deg,
+                #126e51,
+                #0d5a42
+            );
+
+            color: white;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-left::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+            top: -120px;
+            right: -120px;
+        }
+
+        .signup-left::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        /* ==========================================
+           BRAND
+        ========================================== */
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 55px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 17px;
+            background: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .brand h2 {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 12px;
+            opacity: .8;
+        }
+
+        /* ==========================================
+           LEFT CONTENT
+        ========================================== */
+
+        .left-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .doctor-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 25px;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.20);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin-bottom: 28px;
+        }
+
+        .left-content h1 {
+            font-size: 34px;
+            line-height: 1.3;
+            margin-bottom: 18px;
+        }
+
+        .left-content p {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: .85;
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .feature i {
+            color: #a8e6ce;
+        }
+
+        /* ==========================================
+           RIGHT SIDE
+        ========================================== */
+
+        .signup-right {
+            padding: 45px 55px;
+        }
+
+        .heading {
+            margin-bottom: 28px;
+        }
+
+        .heading h2 {
+            font-size: 29px;
+            color: var(--text);
+            margin-bottom: 7px;
+        }
+
+        .heading p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* ==========================================
+           FORM
+        ========================================== */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 3px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-box > i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 15px;
+        }
+
+        .input-box input,
+        .input-box select {
+            width: 100%;
+            height: 50px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            outline: none;
+            padding: 0 43px;
+            color: var(--text);
+            font-size: 13px;
+            background: white;
+            transition: .3s;
+        }
+
+        .input-box select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .input-box input:focus,
+        .input-box select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(18,110,81,.09);
+        }
+
+        .input-box input::placeholder {
+            color: #98a2b3;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* ==========================================
+           PASSWORD STRENGTH
+        ========================================== */
+
+        .password-strength {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 5px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .strength-progress {
+            height: 100%;
+            width: 0;
+            border-radius: 10px;
+            transition: .3s;
+        }
+
+        .strength-text {
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* ==========================================
+           TERMS
+        ========================================== */
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .terms input {
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+
+        .terms a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        /* ==========================================
+           MESSAGE
+        ========================================== */
+
+        .message {
+            display: none;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 18px;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff0f0;
+            color: var(--danger);
+            border: 1px solid #ffd4d4;
+        }
+
+        .message.success {
+            display: block;
+            background: #edf9f3;
+            color: var(--success);
+            border: 1px solid #c8eedc;
+        }
+
+        /* ==========================================
+           BUTTON
+        ========================================== */
+
+        .signup-btn {
+            width: 100%;
+            height: 51px;
+            border: none;
+            border-radius: 11px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 22px;
+            transition: .3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .signup-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(18,110,81,.20);
+        }
+
+        .signup-btn:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==========================================
+           LOGIN LINK
+        ========================================== */
+
+        .login-text {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .login-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .back-home a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .back-home a:hover {
+            color: var(--primary);
+        }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+
+        @media (max-width: 900px) {
+
+            .signup-container {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+
+            .signup-left {
+                padding: 35px;
+                min-height: 270px;
+            }
+
+            .brand {
+                margin-bottom: 28px;
+            }
+
+            .doctor-icon {
+                display: none;
+            }
+
+            .left-content h1 {
+                font-size: 27px;
+            }
+
+            .features {
+                display: none;
+            }
+
+            .signup-right {
+                padding: 40px 35px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 0;
+                align-items: flex-start;
+            }
+
+            .signup-container {
+                min-height: 100vh;
+                border-radius: 0;
+            }
+
+            .signup-left {
+                padding: 28px 22px;
+            }
+
+            .signup-right {
+                padding: 32px 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .heading h2 {
+                font-size: 25px;
+            }
+
+            .left-content h1 {
+                font-size: 24px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="signup-container">
+
+    <!-- ==========================================
+         LEFT SIDE
+    =========================================== -->
+
+    <section class="signup-left">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fas fa-heart-pulse"></i>
+            </div>
+
+            <div>
+
+                <h2>Student Health</h2>
+
+                <span>Health Centre</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="left-content">
+
+            <div class="doctor-icon">
+
+                <i class="fas fa-user-doctor"></i>
+
+            </div>
+
+
+            <h1>
+                Join the Health<br>
+                Centre Team
+            </h1>
+
+
+            <p>
+                Create your doctor account to manage
+                student appointments, access records and
+                provide better healthcare services.
+            </p>
+
+
+            <div class="features">
+
+                <div class="feature">
+
+                    <i class="fas fa-circle-check"></i>
+
+                    <span>
+                        Manage student appointments
+                    </span>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <i class="fas fa-circle-check"></i>
+
+                    <span>
+                        Access student records
+                    </span>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <i class="fas fa-circle-check"></i>
+
+                    <span>
+                        Track your consultations
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         RIGHT SIDE
+    =========================================== -->
+
+    <section class="signup-right">
+
+        <div class="heading">
+
+            <h2>Doctor Registration</h2>
+
+            <p>
+                Create your Health Centre account.
+            </p>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+
+        <!-- FORM -->
+
+        <form id="doctorSignupForm">
+
+            <div class="form-grid">
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-user-doctor"></i>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Dr. John Doe"
+                            autocomplete="name"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="doctor@example.com"
+                            autocomplete="email"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-phone"></i>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            placeholder="08012345678"
+                            autocomplete="tel"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LICENSE -->
+
+                <div class="form-group">
+
+                    <label for="license">
+                        Medical License / ID
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-id-card"></i>
+
+                        <input
+                            type="text"
+                            id="license"
+                            placeholder="Enter license ID"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SPECIALIZATION -->
+
+                <div class="form-group full">
+
+                    <label for="specialization">
+                        Specialization / Department
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-stethoscope"></i>
+
+                        <select
+                            id="specialization"
+                            required>
+
+                            <option value="">
+                                Select specialization
+                            </option>
+
+                            <option value="General Medicine">
+                                General Medicine
+                            </option>
+
+                            <option value="Family Medicine">
+                                Family Medicine
+                            </option>
+
+                            <option value="Internal Medicine">
+                                Internal Medicine
+                            </option>
+
+                            <option value="Pediatrics">
+                                Pediatrics
+                            </option>
+
+                            <option value="Dermatology">
+                                Dermatology
+                            </option>
+
+                            <option value="Dental Care">
+                                Dental Care
+                            </option>
+
+                            <option value="Mental Health">
+                                Mental Health
+                            </option>
+
+                            <option value="Nursing">
+                                Nursing
+                            </option>
+
+                            <option value="Pharmacy">
+                                Pharmacy
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Create password"
+                            autocomplete="new-password"
+                            required>
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle">
+
+                            <i class="fas fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="password-strength"
+                        id="passwordStrength">
+
+                        <div class="strength-bar">
+
+                            <div
+                                class="strength-progress"
+                                id="strengthProgress">
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="strength-text"
+                            id="strengthText">
+
+                            Password strength
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Confirm password"
+                            autocomplete="new-password"
+                            required>
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="confirmPasswordToggle">
+
+                            <i class="fas fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TERMS -->
+
+            <label class="terms">
+
+                <input
+                    type="checkbox"
+                    id="terms"
+                    required>
+
+                <span>
+
+                    I agree to the
+                    <a href="#">
+                        Terms & Conditions
+                    </a>
+                    and confirm that the information
+                    provided is accurate.
+
+                </span>
+
+            </label>
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="signup-btn"
+                id="signupBtn">
+
+                <i class="fas fa-user-plus"></i>
+
+                Create Doctor Account
+
+            </button>
+
+        </form>
+
+
+        <!-- LOGIN -->
+
+        <div class="login-text">
+
+            Already have a doctor account?
+
+            <a href="doctor login.html">
+                Login here
+            </a>
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <div class="back-home">
+
+            <a href="index.html">
+
+                <i class="fas fa-arrow-left"></i>
+
+                Back to Home
+
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const signupForm =
+    document.getElementById("doctorSignupForm");
+
+const nameInput =
+    document.getElementById("name");
+
+const emailInput =
+    document.getElementById("email");
+
+const phoneInput =
+    document.getElementById("phone");
+
+const licenseInput =
+    document.getElementById("license");
+
+const specializationInput =
+    document.getElementById("specialization");
+
+const passwordInput =
+    document.getElementById("password");
+
+const confirmPasswordInput =
+    document.getElementById("confirmPassword");
+
+const termsInput =
+    document.getElementById("terms");
+
+const message =
+    document.getElementById("message");
+
+const signupBtn =
+    document.getElementById("signupBtn");
+
+
+/* ==========================================
+   SHOW MESSAGE
+========================================== */
+
+function showMessage(text, type) {
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+/* ==========================================
+   HIDE MESSAGE
+========================================== */
+
+function hideMessage() {
+
+    message.textContent = "";
+
+    message.className = "message";
+
+}
+
+
+/* ==========================================
+   PASSWORD TOGGLE
+========================================== */
+
+function setupPasswordToggle(buttonId, input) {
+
+    const button =
+        document.getElementById(buttonId);
+
+    button.addEventListener("click", function () {
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            button.innerHTML =
+                '<i class="fas fa-eye-slash"></i>';
+
+        } else {
+
+            input.type = "password";
+
+            button.innerHTML =
+                '<i class="fas fa-eye"></i>';
+
+        }
+
+    });
+
+}
+
+
+setupPasswordToggle(
+    "passwordToggle",
+    passwordInput
+);
+
+setupPasswordToggle(
+    "confirmPasswordToggle",
+    confirmPasswordInput
+);
+
+
+/* ==========================================
+   PASSWORD STRENGTH
+========================================== */
+
+const passwordStrength =
+    document.getElementById("passwordStrength");
+
+const strengthProgress =
+    document.getElementById("strengthProgress");
+
+const strengthText =
+    document.getElementById("strengthText");
+
+
+passwordInput.addEventListener("input", function () {
+
+    const password =
+        passwordInput.value;
+
+    if (!password) {
+
+        passwordStrength.style.display =
+            "none";
+
+        return;
+
+    }
+
+    passwordStrength.style.display =
+        "block";
+
+
+    let strength = 0;
+
+
+    if (password.length >= 8) {
+        strength++;
+    }
+
+    if (/[A-Z]/.test(password)) {
+        strength++;
+    }
+
+    if (/[a-z]/.test(password)) {
+        strength++;
+    }
+
+    if (/[0-9]/.test(password)) {
+        strength++;
+    }
+
+    if (/[^A-Za-z0-9]/.test(password)) {
+        strength++;
+    }
+
+
+    const percentage =
+        (strength / 5) * 100;
+
+    strengthProgress.style.width =
+        percentage + "%";
+
+
+    if (strength <= 2) {
+
+        strengthText.textContent =
+            "Weak password";
+
+        strengthText.style.color =
+            "#dc3545";
+
+    }
+
+    else if (strength <= 3) {
+
+        strengthText.textContent =
+            "Medium password";
+
+        strengthText.style.color =
+            "#b7791f";
+
+    }
+
+    else {
+
+        strengthText.textContent =
+            "Strong password";
+
+        strengthText.style.color =
+            "#198754";
+
+    }
+
+});
+
+
+/* ==========================================
+   FORM SUBMISSION
+========================================== */
+
+signupForm.addEventListener(
+    "submit",
+    function (event) {
+
+        event.preventDefault();
+
+        hideMessage();
+
+
+        /* ==============================
+           GET VALUES
+        ============================== */
+
+        const name =
+            nameInput.value.trim();
+
+        const email =
+            emailInput.value.trim().toLowerCase();
+
+        const phone =
+            phoneInput.value.trim();
+
+        const license =
+            licenseInput.value.trim();
+
+        const specialization =
+            specializationInput.value;
+
+        const password =
+            passwordInput.value;
+
+        const confirmPassword =
+            confirmPasswordInput.value;
+
+
+        /* ==============================
+           VALIDATION
+        ============================== */
+
+        if (
+            !name ||
+            !email ||
+            !phone ||
+            !license ||
+            !specialization ||
+            !password ||
+            !confirmPassword
+        ) {
+
+            showMessage(
+                "Please complete all required fields.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* ==============================
+           PASSWORD LENGTH
+        ============================== */
+
+        if (password.length < 8) {
+
+            showMessage(
+                "Password must contain at least 8 characters.",
+                "error"
+            );
+
+            passwordInput.focus();
+
+            return;
+
+        }
+
+
+        /* ==============================
+           PASSWORD MATCH
+        ============================== */
+
+        if (password !== confirmPassword) {
+
+            showMessage(
+                "Passwords do not match.",
+                "error"
+            );
+
+            confirmPasswordInput.focus();
+
+            return;
+
+        }
+
+
+        /* ==============================
+           TERMS
+        ============================== */
+
+        if (!termsInput.checked) {
+
+            showMessage(
+                "Please agree to the Terms & Conditions.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* ==============================
+           GET EXISTING DOCTORS
+        ============================== */
+
+        let doctors =
+            JSON.parse(
+                localStorage.getItem("doctorAccounts")
+            ) || [];
+
+
+        /* ==============================
+           CHECK EMAIL
+        ============================== */
+
+        const emailExists =
+            doctors.some(function (doctor) {
+
+                return (
+                    doctor.email.toLowerCase() === email
+                );
+
+            });
+
+
+        if (emailExists) {
+
+            showMessage(
+                "A doctor account with this email already exists.",
+                "error"
+            );
+
+            emailInput.focus();
+
+            return;
+
+        }
+
+
+        /* ==============================
+           CHECK LICENSE
+        ============================== */
+
+        const licenseExists =
+            doctors.some(function (doctor) {
+
+                return (
+                    doctor.license.toLowerCase() ===
+                    license.toLowerCase()
+                );
+
+            });
+
+
+        if (licenseExists) {
+
+            showMessage(
+                "This medical license / ID is already registered.",
+                "error"
+            );
+
+            licenseInput.focus();
+
+            return;
+
+        }
+
+
+        /* ==============================
+           CREATE DOCTOR
+        ============================== */
+
+        const doctor = {
+
+            id: Date.now(),
+
+            name: name,
+
+            email: email,
+
+            phone: phone,
+
+            license: license,
+
+            specialization: specialization,
+
+            role: "Medical Officer",
+
+            password: password,
+
+            image: "images/doctor.png",
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+
+        /* ==============================
+           SAVE DOCTOR
+        ============================== */
+
+        doctors.push(doctor);
+
+
+        localStorage.setItem(
+            "doctorAccounts",
+            JSON.stringify(doctors)
+        );
+
+
+        /* ==============================
+           SUCCESS
+        ============================== */
+
+        showMessage(
+            "Doctor account created successfully. Redirecting to login...",
+            "success"
+        );
+
+
+        signupBtn.disabled = true;
+
+        signupBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+
+        /* ==============================
+           REDIRECT
+        ============================== */
+
+        setTimeout(function () {
+
+            window.location.href =
+                "doctor login.html";
+
+        }, 1200);
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,2991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Dashboard | Student Health</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --success: #197a50;
+            --warning: #a36a00;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* ==========================================
+           LAYOUT
+        ========================================== */
+
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ==========================================
+           SIDEBAR
+        ========================================== */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .logo span:last-child {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        /* ==========================================
+           MAIN AREA
+        ========================================== */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        /* ==========================================
+           TOPBAR
+        ========================================== */
+
+        .topbar {
+            height: 75px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #e24747;
+            color: white;
+            border-radius: 50%;
+            font-size: 9px;
+            font-weight: 700;
+            border: 2px solid white;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* ==========================================
+           NOTIFICATION PANEL
+        ========================================== */
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: 48px;
+            right: 0;
+            width: 350px;
+            max-width: calc(100vw - 30px);
+            max-height: 450px;
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            display: none;
+            z-index: 2000;
+        }
+
+        .notification-panel.show {
+            display: block;
+        }
+
+        .notification-panel h3 {
+            font-size: 16px;
+            padding: 16px;
+            border-bottom: 1px solid #edf1ef;
+            margin: 0;
+        }
+
+        .notification-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #edf1ef;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f5faf8;
+        }
+
+        .notification-item.unread {
+            background: #eef9f4;
+        }
+
+        .notification-item strong {
+            font-size: 13px;
+            color: #17221e;
+        }
+
+        .notification-item p {
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #68756f;
+        }
+
+        .notification-item small {
+            font-size: 10px;
+            color: #888;
+        }
+
+        .empty-notification {
+            text-align: center;
+            padding: 35px 20px;
+            color: #68756f;
+        }
+
+        .empty-notification strong {
+            display: block;
+            color: #17221e;
+            margin-top: 8px;
+        }
+
+        /* ==========================================
+           CONTENT
+        ========================================== */
+
+        .content {
+            padding: 30px;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: linear-gradient(120deg, #e9f7f1, #f8fcfa);
+            border: 1px solid #d3e9df;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .book-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .book-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ==========================================
+           STAT CARDS
+        ========================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 19px;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* ==========================================
+           MAIN GRID
+        ========================================== */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 21px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+        }
+
+        .view-all {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ==========================================
+           APPOINTMENTS
+        ========================================== */
+
+        .appointment {
+            display: grid;
+            grid-template-columns: 50px 1fr auto;
+            gap: 13px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .appointment:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .appointment:first-child {
+            padding-top: 0;
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 13px;
+            background: var(--light);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+        }
+
+        .appointment-info h4 {
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .appointment-info p {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .appointment-date {
+            text-align: right;
+        }
+
+        .appointment-date strong {
+            display: block;
+            color: var(--primary);
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .appointment-date span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .confirmed {
+            background: #eaf8f0;
+            color: var(--success);
+        }
+
+        .pending {
+            background: #fff5df;
+            color: var(--warning);
+        }
+
+        .rejected {
+            background: #fff1f1;
+            color: var(--danger);
+        }
+
+        .completed {
+            background: #edf4ff;
+            color: #275b91;
+        }
+
+        .cancelled {
+            background: #f2f2f2;
+            color: #666;
+        }
+
+        .empty-card {
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        .empty-card h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .empty-card p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* ==========================================
+           QUICK ACTIONS
+        ========================================== */
+
+        .quick-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            transition: 0.2s ease;
+        }
+
+        .action:hover {
+            background: var(--light);
+            border-color: #c7dfd5;
+        }
+
+        .action-icon {
+            width: 37px;
+            height: 37px;
+            border-radius: 10px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .action strong {
+            font-size: 12px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .action span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* ==========================================
+           HEALTH NOTICE
+        ========================================== */
+
+        .notice {
+            margin-top: 20px;
+            background: #f0f8ff;
+            border: 1px solid #d7e9f7;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .notice h4 {
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #245775;
+        }
+
+        .notice p {
+            color: #5c7180;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           PROFILE CARD
+        ========================================== */
+
+        .profile-card {
+            margin-top: 20px;
+        }
+
+        .student-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .large-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .student-profile h4 {
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .student-profile p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .details {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #edf1ef;
+            font-size: 11px;
+        }
+
+        .detail:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail span:first-child {
+            color: var(--muted);
+        }
+
+        .detail span:last-child {
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* ==========================================
+           MOBILE
+        ========================================== */
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border: 1px solid var(--border);
+                background: white;
+                border-radius: 9px;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .welcome {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .notification-panel {
+                position: fixed;
+                top: 65px;
+                right: 15px;
+                width: 340px;
+                max-width: calc(100vw - 30px);
+            }
+
+        }
+
+        @media (max-width: 430px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment {
+                grid-template-columns: 45px 1fr;
+            }
+
+            .appointment-date {
+                grid-column: 2;
+                text-align: left;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard">
+
+    <!-- ==========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ❤
+            </span>
+
+            <span>
+                Student Health
+            </span>
+
+        </div>
+
+
+        <div class="nav-title">
+            Main Menu
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a
+                href="student dashboard.html"
+                class="nav-link active"
+            >
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a
+                href="appointment.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+
+            <a
+                href="my appointment.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+
+            <a
+                href="student profile.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+
+        <div class="nav-title">
+            Support
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a
+                href="help.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+
+            <a
+                href="settings.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="login.html"
+                class="logout"
+                id="logoutBtn"
+            >
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN
+    ========================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+            >
+                ☰
+            </button>
+
+
+            <div class="page-title">
+
+                <h1>
+                    Student Dashboard
+                </h1>
+
+                <p>
+                    Manage your healthcare appointments
+                </p>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+
+                <!-- NOTIFICATION -->
+
+                <div class="notification-wrapper">
+
+                    <button
+                        class="notification"
+                        id="notificationButton"
+                        type="button"
+                    >
+
+                        🔔
+
+                        <span
+                            id="notificationCount"
+                            class="notification-dot"
+                        ></span>
+
+                    </button>
+
+
+                    <div
+                        id="notificationPanel"
+                        class="notification-panel"
+                    >
+
+                        <h3>
+                            Notifications
+                        </h3>
+
+                        <div
+                            id="notificationList"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE -->
+
+                <div class="profile">
+
+                    <div
+                        class="avatar"
+                        id="headerAvatar"
+                    >
+                        ST
+                    </div>
+
+
+                    <div class="profile-info">
+
+                        <strong
+                            id="headerStudentName"
+                        >
+                            Student
+                        </strong>
+
+                        <span>
+                            Student
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==========================================
+             CONTENT
+        ========================================== -->
+
+        <section class="content">
+
+
+            <!-- WELCOME -->
+
+            <div class="welcome">
+
+                <div>
+
+                    <h2 id="welcomeHeading">
+                        Welcome 👋
+                    </h2>
+
+                    <p>
+                        Welcome back. Here's an overview
+                        of your health appointments.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="appointment.html"
+                    class="book-btn"
+                >
+                    + Book Appointment
+                </a>
+
+            </div>
+
+
+            <!-- ==========================================
+                 STATISTICS
+            ========================================== -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+                            📅
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-number"
+                        id="upcomingCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Upcoming Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+                            ✓
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-number"
+                        id="completedCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Completed Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+                            ⏳
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-number"
+                        id="pendingCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Pending Appointments
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon">
+                            ❤
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-number"
+                        id="serviceCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Health Services
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 DASHBOARD GRID
+            ========================================== -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- LEFT COLUMN -->
+
+                <div>
+
+
+                    <!-- UPCOMING APPOINTMENTS -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Upcoming Appointments
+                            </h3>
+
+                            <a
+                                href="my appointment.html"
+                                class="view-all"
+                            >
+                                View All
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            id="appointmentsContainer"
+                        ></div>
+
+                    </div>
+
+
+                    <!-- HEALTH NOTICE -->
+
+                    <div class="notice">
+
+                        <h4>
+                            Health Centre Notice
+                        </h4>
+
+                        <p>
+                            Please arrive at least 10 minutes
+                            before your scheduled appointment
+                            and bring your student identification card.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT COLUMN -->
+
+                <div>
+
+
+                    <!-- QUICK ACTIONS -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Quick Actions
+                            </h3>
+
+                        </div>
+
+
+                        <div class="quick-actions">
+
+
+                            <a
+                                href="appointment.html"
+                                class="action"
+                            >
+
+                                <div class="action-icon">
+                                    📅
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Book Appointment
+                                    </strong>
+
+                                    <span>
+                                        Schedule a new visit
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+
+                            <a
+                                href="my appointment.html"
+                                class="action"
+                            >
+
+                                <div class="action-icon">
+                                    ▣
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        My Appointments
+                                    </strong>
+
+                                    <span>
+                                        View all appointments
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+
+                            <a
+                                href="student profile.html"
+                                class="action"
+                            >
+
+                                <div class="action-icon">
+                                    ◉
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        My Profile
+                                    </strong>
+
+                                    <span>
+                                        Update your information
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROFILE CARD -->
+
+                    <div class="card profile-card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Student Information
+                            </h3>
+
+                            <a
+                                href="student profile.html"
+                                class="view-all"
+                            >
+                                Edit
+                            </a>
+
+                        </div>
+
+
+                        <div class="student-profile">
+
+                            <div
+                                class="large-avatar"
+                                id="largeAvatar"
+                            >
+                                ST
+                            </div>
+
+
+                            <div>
+
+                                <h4 id="studentProfileName">
+                                    Student
+                                </h4>
+
+                                <p id="studentDepartment">
+                                    Student
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="details">
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Matric Number
+                                </span>
+
+                                <span id="detailMatric">
+                                    Not provided
+                                </span>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Level
+                                </span>
+
+                                <span id="detailLevel">
+                                    Not provided
+                                </span>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Department
+                                </span>
+
+                                <span id="detailDepartment">
+                                    Not provided
+                                </span>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Email
+                                </span>
+
+                                <span id="detailEmail">
+                                    Not provided
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SHABS STUDENT DASHBOARD
+   FINAL CORRECTED VERSION
+===================================================== */
+
+
+/* =====================================================
+   CHECK LOGIN SESSION FIRST
+===================================================== */
+
+const storedStudent =
+    localStorage.getItem("currentStudent");
+
+const isLoggedIn =
+    localStorage.getItem("isLoggedIn");
+
+
+/*
+   If there is no logged-in student,
+   send the user back to login.
+*/
+
+if (!storedStudent || isLoggedIn !== "true") {
+
+    window.location.replace("login.html");
+
+    throw new Error(
+        "Student is not logged in."
+    );
+
+}
+
+
+/* =====================================================
+   GET CURRENT STUDENT
+===================================================== */
+
+let currentStudent;
+
+try {
+
+    currentStudent =
+        JSON.parse(storedStudent);
+
+} catch (error) {
+
+    console.error(
+        "Invalid student data:",
+        error
+    );
+
+    localStorage.removeItem(
+        "currentStudent"
+    );
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+    window.location.replace(
+        "login.html"
+    );
+
+    throw new Error(
+        "Invalid student session."
+    );
+
+}
+
+
+console.log(
+    "Logged in student:",
+    currentStudent
+);
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+const mobileMenu =
+    document.getElementById(
+        "mobileMenu"
+    );
+
+const sidebar =
+    document.getElementById(
+        "sidebar"
+    );
+
+
+if (
+    mobileMenu &&
+    sidebar
+) {
+
+    mobileMenu.addEventListener(
+        "click",
+        function () {
+
+            sidebar.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   STUDENT IDENTIFICATION
+===================================================== */
+
+const dashboardStudentId =
+    currentStudent.id ||
+    currentStudent.studentId ||
+    currentStudent.matricNumber ||
+    currentStudent.email ||
+    "";
+
+
+const dashboardStudentEmail =
+    currentStudent.email ||
+    "";
+
+
+/* =====================================================
+   STUDENT NAME
+===================================================== */
+
+const firstName =
+    currentStudent.firstName ||
+    "";
+
+
+const lastName =
+    currentStudent.lastName ||
+    "";
+
+
+const fullName =
+    `${firstName} ${lastName}`.trim()
+    || "Student";
+
+
+const initials =
+    (
+        firstName.charAt(0) +
+        lastName.charAt(0)
+    ).toUpperCase()
+    || "ST";
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+const profileName =
+    document.getElementById(
+        "headerStudentName"
+    );
+
+
+const headerAvatar =
+    document.getElementById(
+        "headerAvatar"
+    );
+
+
+if (profileName) {
+
+    profileName.textContent =
+        fullName;
+
+}
+
+
+if (headerAvatar) {
+
+    headerAvatar.textContent =
+        initials;
+
+}
+
+
+/* =====================================================
+   WELCOME MESSAGE
+===================================================== */
+
+const welcomeHeading =
+    document.getElementById(
+        "welcomeHeading"
+    );
+
+
+const hour =
+    new Date().getHours();
+
+
+let greeting;
+
+
+if (
+    hour >= 5 &&
+    hour < 12
+) {
+
+    greeting =
+        "Good Morning ☀️";
+
+}
+
+else if (
+    hour >= 12 &&
+    hour < 17
+) {
+
+    greeting =
+        "Good Afternoon 🌤️";
+
+}
+
+else {
+
+    greeting =
+        "Good Evening 🌙";
+
+}
+
+
+if (welcomeHeading) {
+
+    welcomeHeading.textContent =
+        `${greeting}, ${firstName || "Student"} 👋`;
+
+}
+
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+const largeAvatar =
+    document.getElementById(
+        "largeAvatar"
+    );
+
+
+const studentProfileName =
+    document.getElementById(
+        "studentProfileName"
+    );
+
+
+const studentDepartment =
+    document.getElementById(
+        "studentDepartment"
+    );
+
+
+if (largeAvatar) {
+
+    largeAvatar.textContent =
+        initials;
+
+}
+
+
+if (studentProfileName) {
+
+    studentProfileName.textContent =
+        fullName;
+
+}
+
+
+if (studentDepartment) {
+
+    studentDepartment.textContent =
+        currentStudent.department ||
+        "Student";
+
+}
+
+
+/* =====================================================
+   STUDENT DETAILS
+===================================================== */
+
+const detailMatric =
+    document.getElementById(
+        "detailMatric"
+    );
+
+
+const detailLevel =
+    document.getElementById(
+        "detailLevel"
+    );
+
+
+const detailDepartment =
+    document.getElementById(
+        "detailDepartment"
+    );
+
+
+const detailEmail =
+    document.getElementById(
+        "detailEmail"
+    );
+
+
+if (detailMatric) {
+
+    detailMatric.textContent =
+        currentStudent.matricNumber ||
+        "Not provided";
+
+}
+
+
+if (detailLevel) {
+
+    detailLevel.textContent =
+        currentStudent.level
+            ? currentStudent.level + " Level"
+            : "Not provided";
+
+}
+
+
+if (detailDepartment) {
+
+    detailDepartment.textContent =
+        currentStudent.department ||
+        "Not provided";
+
+}
+
+
+if (detailEmail) {
+
+    detailEmail.textContent =
+        currentStudent.email ||
+        "Not provided";
+
+}
+
+
+/* =====================================================
+   APPOINTMENTS
+===================================================== */
+
+let allAppointments = [];
+
+try {
+
+    allAppointments =
+        JSON.parse(
+            localStorage.getItem(
+                "appointments"
+            )
+        ) || [];
+
+} catch (error) {
+
+    console.error(
+        "Invalid appointments data:",
+        error
+    );
+
+    allAppointments = [];
+
+}
+
+
+/* =====================================================
+   STUDENT APPOINTMENTS
+===================================================== */
+
+const studentAppointments =
+    allAppointments.filter(
+        function (appointment) {
+
+            return (
+
+                appointment.studentId ===
+                dashboardStudentId
+
+                ||
+
+                appointment.studentEmail ===
+                dashboardStudentEmail
+
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   APPOINTMENT COUNTS
+===================================================== */
+
+const upcomingAppointments =
+    studentAppointments.filter(
+        function (appointment) {
+
+            return (
+                appointment.status ===
+                "Upcoming"
+            );
+
+        }
+    );
+
+
+const pendingAppointments =
+    studentAppointments.filter(
+        function (appointment) {
+
+            return (
+                appointment.status ===
+                "Pending"
+            );
+
+        }
+    );
+
+
+const completedAppointments =
+    studentAppointments.filter(
+        function (appointment) {
+
+            return (
+                appointment.status ===
+                "Completed"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   UPDATE STATISTICS
+===================================================== */
+
+const upcomingCount =
+    document.getElementById(
+        "upcomingCount"
+    );
+
+
+const pendingCount =
+    document.getElementById(
+        "pendingCount"
+    );
+
+
+const completedCount =
+    document.getElementById(
+        "completedCount"
+    );
+
+
+const serviceCount =
+    document.getElementById(
+        "serviceCount"
+    );
+
+
+if (upcomingCount) {
+
+    upcomingCount.textContent =
+        upcomingAppointments.length;
+
+}
+
+
+if (pendingCount) {
+
+    pendingCount.textContent =
+        pendingAppointments.length;
+
+}
+
+
+if (completedCount) {
+
+    completedCount.textContent =
+        completedAppointments.length;
+
+}
+
+
+/*
+   Count unique departments/services.
+*/
+
+const services =
+    new Set(
+        studentAppointments
+            .map(
+                function (appointment) {
+
+                    return (
+                        appointment.department ||
+                        appointment.service ||
+                        ""
+                    );
+
+                }
+            )
+            .filter(Boolean)
+    );
+
+
+if (serviceCount) {
+
+    serviceCount.textContent =
+        services.size;
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   APPOINTMENT STATUS CLASS
+===================================================== */
+
+function getStatusClass(status) {
+
+    if (status === "Pending") {
+
+        return "pending";
+
+    }
+
+    if (status === "Upcoming") {
+
+        return "confirmed";
+
+    }
+
+    if (status === "Completed") {
+
+        return "completed";
+
+    }
+
+    if (status === "Rejected") {
+
+        return "rejected";
+
+    }
+
+    if (status === "Cancelled") {
+
+        return "cancelled";
+
+    }
+
+    return "";
+
+}
+
+
+/* =====================================================
+   RECENT APPOINTMENTS
+===================================================== */
+
+const appointmentsContainer =
+    document.getElementById(
+        "appointmentsContainer"
+    );
+
+
+if (appointmentsContainer) {
+
+    appointmentsContainer.innerHTML =
+        "";
+
+
+    if (
+        studentAppointments.length ===
+        0
+    ) {
+
+        appointmentsContainer.innerHTML = `
+
+            <div class="empty-card">
+
+                <h3>
+                    No Appointments Yet
+                </h3>
+
+                <p>
+                    You haven't booked any appointment.
+                </p>
+
+                <a
+                    href="appointment.html"
+                    class="book-btn"
+                >
+                    Book Appointment
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        const sortedAppointments =
+            [...studentAppointments]
+                .sort(
+                    function (a, b) {
+
+                        const dateA =
+                            new Date(
+                                a.appointmentDate ||
+                                0
+                            );
+
+                        const dateB =
+                            new Date(
+                                b.appointmentDate ||
+                                0
+                            );
+
+                        return dateA - dateB;
+
+                    }
+                );
+
+
+        sortedAppointments
+            .slice(0, 3)
+            .forEach(
+                function (appointment) {
+
+                    const status =
+                        appointment.status ||
+                        "Pending";
+
+
+                    appointmentsContainer
+                        .innerHTML += `
+
+                        <div class="appointment">
+
+                            <div class="doctor-avatar">
+                                🩺
+                            </div>
+
+                            <div class="appointment-info">
+
+                                <h4>
+                                    ${escapeHTML(
+                                        appointment.department ||
+                                        appointment.service ||
+                                        "Health Service"
+                                    )}
+                                </h4>
+
+                                <p>
+                                    ${escapeHTML(
+                                        appointment.doctor ||
+                                        "Doctor not assigned"
+                                    )}
+                                </p>
+
+                                <span class="
+                                    status
+                                    ${getStatusClass(status)}
+                                ">
+                                    ${escapeHTML(status)}
+                                </span>
+
+                            </div>
+
+                            <div class="appointment-date">
+
+                                <strong>
+                                    ${escapeHTML(
+                                        appointment.appointmentDate ||
+                                        ""
+                                    )}
+                                </strong>
+
+                                <span>
+                                    ${escapeHTML(
+                                        appointment.appointmentTime ||
+                                        ""
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
+
+const notificationButton =
+    document.getElementById(
+        "notificationButton"
+    );
+
+
+const notificationPanel =
+    document.getElementById(
+        "notificationPanel"
+    );
+
+
+const notificationList =
+    document.getElementById(
+        "notificationList"
+    );
+
+
+const notificationCount =
+    document.getElementById(
+        "notificationCount"
+    );
+
+
+/* =====================================================
+   GET NOTIFICATIONS
+===================================================== */
+
+function getNotifications() {
+
+    try {
+
+        return (
+            JSON.parse(
+                localStorage.getItem(
+                    "notifications"
+                )
+            ) || []
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Invalid notifications data:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE NOTIFICATIONS
+===================================================== */
+
+function saveNotifications(
+    notifications
+) {
+
+    localStorage.setItem(
+        "notifications",
+        JSON.stringify(
+            notifications
+        )
+    );
+
+}
+
+
+/* =====================================================
+   CHECK NOTIFICATION OWNER
+===================================================== */
+
+function notificationBelongsToStudent(
+    notification
+) {
+
+    return (
+
+        notification.studentId ===
+        dashboardStudentId
+
+        ||
+
+        notification.studentEmail ===
+        dashboardStudentEmail
+
+    );
+
+}
+
+
+/* =====================================================
+   GET STUDENT NOTIFICATIONS
+===================================================== */
+
+function getStudentNotifications() {
+
+    return getNotifications()
+        .filter(
+            notificationBelongsToStudent
+        );
+
+}
+
+
+/* =====================================================
+   NOTIFICATION ICON
+===================================================== */
+
+function getNotificationIcon(
+    type,
+    title
+) {
+
+    if (
+        type ===
+        "appointment_submitted"
+    ) {
+
+        return "📅";
+
+    }
+
+    if (
+        type ===
+        "appointment_approved"
+    ) {
+
+        return "✅";
+
+    }
+
+    if (
+        type ===
+        "appointment_rejected"
+    ) {
+
+        return "❌";
+
+    }
+
+    if (
+        type ===
+        "appointment_completed"
+    ) {
+
+        return "✔️";
+
+    }
+
+
+    const notificationTitle =
+        String(
+            title || ""
+        ).toLowerCase();
+
+
+    if (
+        notificationTitle.includes(
+            "approved"
+        )
+    ) {
+
+        return "✅";
+
+    }
+
+
+    if (
+        notificationTitle.includes(
+            "rejected"
+        )
+    ) {
+
+        return "❌";
+
+    }
+
+
+    if (
+        notificationTitle.includes(
+            "completed"
+        )
+    ) {
+
+        return "✔️";
+
+    }
+
+
+    return "🔔";
+
+}
+
+
+/* =====================================================
+   UPDATE NOTIFICATION BADGE
+===================================================== */
+
+function updateNotificationBadge() {
+
+    if (!notificationCount) {
+
+        return;
+
+    }
+
+
+    const notifications =
+        getStudentNotifications();
+
+
+    const unread =
+        notifications.filter(
+            function (notification) {
+
+                return (
+                    notification.read !==
+                    true
+                );
+
+            }
+        ).length;
+
+
+    if (unread > 0) {
+
+        notificationCount.textContent =
+            unread > 99
+                ? "99+"
+                : unread;
+
+
+        notificationCount.style.display =
+            "flex";
+
+    }
+
+    else {
+
+        notificationCount.textContent =
+            "";
+
+
+        notificationCount.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD NOTIFICATIONS
+===================================================== */
+
+function loadNotifications() {
+
+    if (!notificationList) {
+
+        return;
+
+    }
+
+
+    let studentNotifications =
+        getStudentNotifications();
+
+
+    studentNotifications.sort(
+        function (a, b) {
+
+            const dateA =
+                new Date(
+                    a.createdAt ||
+                    a.time ||
+                    0
+                );
+
+
+            const dateB =
+                new Date(
+                    b.createdAt ||
+                    b.time ||
+                    0
+                );
+
+
+            return dateB - dateA;
+
+        }
+    );
+
+
+    notificationList.innerHTML =
+        "";
+
+
+    if (
+        studentNotifications.length ===
+        0
+    ) {
+
+        notificationList.innerHTML = `
+
+            <div class="empty-notification">
+
+                <div style="font-size:30px;">
+                    🔔
+                </div>
+
+                <strong>
+                    No Notifications
+                </strong>
+
+                <p>
+                    You don't have any notifications yet.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    studentNotifications.forEach(
+        function (notification) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "notification-item";
+
+
+            if (
+                notification.read !==
+                true
+            ) {
+
+                item.classList.add(
+                    "unread"
+                );
+
+            }
+
+
+            const icon =
+                getNotificationIcon(
+                    notification.type,
+                    notification.title
+                );
+
+
+            const appointmentId =
+                notification.appointmentId
+                    ? `
+                        <small>
+                            Appointment ID:
+                            ${escapeHTML(
+                                notification.appointmentId
+                            )}
+                        </small>
+                      `
+                    : "";
+
+
+            item.innerHTML = `
+
+                <div style="
+                    display:flex;
+                    gap:10px;
+                    align-items:flex-start;
+                ">
+
+                    <span style="
+                        font-size:19px;
+                    ">
+                        ${icon}
+                    </span>
+
+                    <div style="
+                        flex:1;
+                    ">
+
+                        <strong>
+                            ${escapeHTML(
+                                notification.title ||
+                                "Notification"
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHTML(
+                                notification.message ||
+                                ""
+                            )}
+                        </p>
+
+                        ${appointmentId}
+
+                        <br>
+
+                        <small>
+                            ${escapeHTML(
+                                notification.time ||
+                                notification.createdAt ||
+                                ""
+                            )}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    markNotificationAsRead(
+                        notification.id
+                    );
+
+                }
+            );
+
+
+            notificationList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   MARK NOTIFICATION AS READ
+===================================================== */
+
+function markNotificationAsRead(
+    notificationId
+) {
+
+    const notifications =
+        getNotifications();
+
+
+    const updated =
+        notifications.map(
+            function (notification) {
+
+                if (
+                    notification.id ===
+                    notificationId
+                ) {
+
+                    notification.read =
+                        true;
+
+                }
+
+                return notification;
+
+            }
+        );
+
+
+    saveNotifications(
+        updated
+    );
+
+
+    updateNotificationBadge();
+
+    loadNotifications();
+
+}
+
+
+/* =====================================================
+   MARK ALL AS READ
+===================================================== */
+
+function markAllNotificationsAsRead() {
+
+    const notifications =
+        getNotifications();
+
+
+    const updated =
+        notifications.map(
+            function (notification) {
+
+                if (
+                    notificationBelongsToStudent(
+                        notification
+                    )
+                ) {
+
+                    notification.read =
+                        true;
+
+                }
+
+                return notification;
+
+            }
+        );
+
+
+    saveNotifications(
+        updated
+    );
+
+
+    updateNotificationBadge();
+
+}
+
+
+/* =====================================================
+   NOTIFICATION BUTTON
+===================================================== */
+
+if (
+    notificationButton &&
+    notificationPanel
+) {
+
+    notificationButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            const isOpen =
+                notificationPanel
+                    .classList
+                    .contains("show");
+
+
+            if (isOpen) {
+
+                notificationPanel
+                    .classList
+                    .remove("show");
+
+            }
+
+            else {
+
+                loadNotifications();
+
+
+                notificationPanel
+                    .classList
+                    .add("show");
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE NOTIFICATION PANEL
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            notificationPanel &&
+            notificationButton &&
+            !notificationPanel.contains(
+                event.target
+            ) &&
+            !notificationButton.contains(
+                event.target
+            )
+        ) {
+
+            notificationPanel
+                .classList
+                .remove("show");
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIALIZE NOTIFICATIONS
+===================================================== */
+
+updateNotificationBadge();
+
+loadNotifications();
+
+
+/* =====================================================
+   STORAGE EVENT
+===================================================== */
+
+window.addEventListener(
+    "storage",
+    function (event) {
+
+        if (
+            event.key ===
+            "notifications"
+        ) {
+
+            updateNotificationBadge();
+
+            loadNotifications();
+
+        }
+
+
+        if (
+            event.key ===
+            "appointments"
+        ) {
+
+            location.reload();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            const confirmLogout =
+                confirm(
+                    "Are you sure you want to logout?"
+                );
+
+
+            if (!confirmLogout) {
+
+                return;
+
+            }
+
+
+            localStorage.removeItem(
+                "currentStudent"
+            );
+
+
+            localStorage.removeItem(
+                "isLoggedIn"
+            );
+
+
+            window.location.replace(
+                "login.html"
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   INITIALIZE APPOINTMENT STORAGE
+===================================================== */
+
+if (
+    !localStorage.getItem(
+        "appointments"
+    )
+) {
+
+    localStorage.setItem(
+        "appointments",
+        JSON.stringify([])
+    );
+
+}
+
+
+if (
+    !localStorage.getItem(
+        "notifications"
+    )
+) {
+
+    localStorage.setItem(
+        "notifications",
+        JSON.stringify([])
+    );
+
+}
+
+
+/* =====================================================
+   DASHBOARD READY
+===================================================== */
+
+console.log(
+    "SHABS Student Dashboard Ready"
+);
+
+
+console.log(
+    "Logged In Student:",
+    currentStudent
+);
+
+
+console.log(
+    "Student Appointments:",
+    studentAppointments
+);
+
+
+console.log(
+    "Student Notifications:",
+    getStudentNotifications()
+);
+
+</script>
+
+</body>
+
+</html>

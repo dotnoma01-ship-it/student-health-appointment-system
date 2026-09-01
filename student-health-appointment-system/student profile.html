@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Student Health</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --danger: #c63b3b;
+            --danger-light: #fff1f1;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+        }
+
+        /* =====================================================
+           NOTIFICATION BUTTON
+        ===================================================== */
+
+        .notification {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 17px;
+            z-index: 1100;
+        }
+
+        .notification:hover {
+            background: var(--light);
+        }
+
+        .notification-dot {
+            position: absolute;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e24747;
+            color: white;
+            border-radius: 50%;
+            top: -5px;
+            right: -5px;
+            font-size: 9px;
+            font-weight: 800;
+            border: 2px solid white;
+        }
+
+        /* =====================================================
+           NOTIFICATION PANEL
+        ===================================================== */
+
+        .notification-panel {
+            position: absolute;
+            top: 52px;
+            right: 0;
+            width: 370px;
+            max-height: 430px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.14);
+            display: none;
+            z-index: 2000;
+        }
+
+        .notification-panel.show {
+            display: block;
+        }
+
+        .notification-panel h3 {
+            margin: 0;
+            padding: 17px 18px;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 17px;
+            border-bottom: 1px solid #edf1ef;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f7faf8;
+        }
+
+        .notification-item.unread {
+            background: #f0f8f4;
+        }
+
+        .notification-icon {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--light);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .notification-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-text strong {
+            display: block;
+            font-size: 12px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .notification-text p {
+            margin: 0;
+            font-size: 11px;
+            line-height: 1.5;
+            color: var(--muted);
+        }
+
+        .notification-text small {
+            display: block;
+            margin-top: 6px;
+            font-size: 9px;
+            color: #8b9691;
+        }
+
+        .empty-notification {
+            padding: 30px 15px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           PROFILE TOP
+        ===================================================== */
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h2 {
+            font-size: 27px;
+            margin-bottom: 5px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           PROFILE HEADER
+        ===================================================== */
+
+        .profile-header {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-person {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+        }
+
+        .large-avatar {
+            width: 78px;
+            height: 78px;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .profile-person h3 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .profile-person p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .student-badge {
+            display: inline-block;
+            background: var(--light);
+            color: var(--primary);
+            padding: 4px 9px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .edit-profile-btn {
+            border: 1px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            padding: 11px 16px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .edit-profile-btn:hover {
+            background: var(--light);
+        }
+
+        /* =====================================================
+           GRID
+        ===================================================== */
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        form {
+            display: grid;
+            gap: 17px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            background: #fcfefd;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18,110,81,0.08);
+        }
+
+        input:disabled,
+        select:disabled {
+            background: #f2f5f4;
+            color: #87938e;
+            cursor: not-allowed;
+        }
+
+        .field-note {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 12px 17px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .cancel-btn {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--muted);
+            padding: 12px 17px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* =====================================================
+           SECURITY
+        ===================================================== */
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .security-item:last-child {
+            border-bottom: none;
+        }
+
+        .security-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 10px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .security-left {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .security-left strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .security-left span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .change-btn {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--primary);
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .change-btn:hover {
+            background: var(--light);
+        }
+
+        /* =====================================================
+           INFO CARD
+        ===================================================== */
+
+        .info-list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 11px;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-item span:first-child {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .info-item span:last-child {
+            font-size: 11px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* =====================================================
+           NOTICE
+        ===================================================== */
+
+        .notice {
+            padding: 15px;
+            background: #f0f8ff;
+            border: 1px solid #d7e9f7;
+            border-radius: 11px;
+            margin-top: 20px;
+        }
+
+        .notice h4 {
+            color: #245775;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .notice p {
+            color: #5c7180;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* =====================================================
+           SUCCESS MESSAGE
+        ===================================================== */
+
+        .message {
+            display: none;
+            padding: 11px 13px;
+            background: var(--light);
+            border: 1px solid #cde8dc;
+            color: var(--primary);
+            border-radius: 9px;
+            font-size: 12px;
+            margin-bottom: 18px;
+        }
+
+        /* =====================================================
+           MOBILE MENU
+        ===================================================== */
+
+        .mobile-menu {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .notification-panel {
+                position: fixed;
+                top: 70px;
+                left: 15px;
+                right: 15px;
+                width: auto;
+                max-height: 70vh;
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            .profile-person {
+                align-items: flex-start;
+            }
+
+            .large-avatar {
+                width: 60px;
+                height: 60px;
+                border-radius: 16px;
+                font-size: 18px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .save-btn,
+            .cancel-btn {
+                width: 100%;
+            }
+
+            .notification-panel {
+                left: 10px;
+                right: 10px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">
+            Main Menu
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointment.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link active">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">
+            Support
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="login.html" class="logout">
+
+                <span class="nav-icon">↪</span>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+            >
+                ☰
+            </button>
+
+            <div class="page-title">
+
+                <h1>My Profile</h1>
+
+                <p>
+                    View and manage your student information
+                </p>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <!-- NOTIFICATION -->
+
+                <button
+                    class="notification"
+                    id="notificationButton"
+                    type="button"
+                    aria-label="Notifications"
+                >
+
+                    🔔
+
+                    <span
+                        id="notificationCount"
+                        class="notification-dot"
+                        style="display:none;"
+                    ></span>
+
+                </button>
+
+                <!-- NOTIFICATION PANEL -->
+
+                <div
+                    id="notificationPanel"
+                    class="notification-panel"
+                >
+
+                    <h3>
+                        Notifications
+                    </h3>
+
+                    <div id="notificationList"></div>
+
+                </div>
+
+                <!-- PROFILE -->
+
+                <div class="profile">
+
+                    <div
+                        class="avatar"
+                        id="topAvatar"
+                    >
+                        ST
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong id="topProfileName">
+                            Student
+                        </strong>
+
+                        <span>
+                            Student
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+            <div class="page-heading">
+
+                <h2>
+                    My Profile
+                </h2>
+
+                <p>
+                    Manage your personal and academic information.
+                </p>
+
+            </div>
+
+
+            <!-- PROFILE HEADER -->
+
+            <div class="profile-header">
+
+                <div class="profile-person">
+
+                    <div
+                        class="large-avatar"
+                        id="largeAvatar"
+                    >
+                        ST
+                    </div>
+
+                    <div>
+
+                        <h3 id="profileName">
+                            Student
+                        </h3>
+
+                        <p id="profileDescription">
+                            Student
+                        </p>
+
+                        <span class="student-badge">
+                            Student
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="edit-profile-btn"
+                    id="editProfileBtn"
+                    type="button"
+                >
+                    Edit Profile
+                </button>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+                <!-- LEFT -->
+
+                <div>
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Personal Information
+                            </h3>
+
+                            <p>
+                                Your basic student information
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="message"
+                            id="successMessage"
+                        >
+                            Profile information updated successfully.
+                        </div>
+
+                        <form id="profileForm">
+
+                            <div class="form-row">
+
+                                <div class="field">
+
+                                    <label for="firstName">
+                                        First Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="firstName"
+                                        disabled
+                                    >
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label for="lastName">
+                                        Last Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="lastName"
+                                        disabled
+                                    >
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="field">
+
+                                    <label for="email">
+                                        School Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        disabled
+                                    >
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label for="phone">
+                                        Phone Number
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        disabled
+                                    >
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="field">
+
+                                    <label for="matric">
+                                        Matric Number
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="matric"
+                                        disabled
+                                    >
+
+                                    <span class="field-note">
+                                        Matric number cannot be changed.
+                                    </span>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label for="gender">
+                                        Gender
+                                    </label>
+
+                                    <select id="gender" disabled>
+
+                                        <option value="">
+                                            Select gender
+                                        </option>
+
+                                        <option value="male">
+                                            Male
+                                        </option>
+
+                                        <option value="female">
+                                            Female
+                                        </option>
+
+                                        <option value="other">
+                                            Other
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="field">
+
+                                    <label for="department">
+                                        Department
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="department"
+                                        disabled
+                                    >
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label for="level">
+                                        Level
+                                    </label>
+
+                                    <select id="level" disabled>
+
+                                        <option value="">
+                                            Select level
+                                        </option>
+
+                                        <option value="100 Level">
+                                            100 Level
+                                        </option>
+
+                                        <option value="200 Level">
+                                            200 Level
+                                        </option>
+
+                                        <option value="300 Level">
+                                            300 Level
+                                        </option>
+
+                                        <option value="400 Level">
+                                            400 Level
+                                        </option>
+
+                                        <option value="500 Level">
+                                            500 Level
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-actions">
+
+                                <button
+                                    type="button"
+                                    class="cancel-btn"
+                                    id="cancelEditBtn"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="save-btn"
+                                    id="saveBtn"
+                                    style="display:none;"
+                                >
+                                    Save Changes
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT -->
+
+                <div>
+
+                    <!-- ACADEMIC -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Academic Information
+                            </h3>
+
+                            <p>
+                                Information associated with your student account
+                            </p>
+
+                        </div>
+
+                        <div class="info-list">
+
+                            <div class="info-item">
+
+                                <span>
+                                    Matric Number
+                                </span>
+
+                                <span id="infoMatric">
+                                    —
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Department
+                                </span>
+
+                                <span id="infoDepartment">
+                                    —
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Faculty
+                                </span>
+
+                                <span>
+                                    Computing
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Current Level
+                                </span>
+
+                                <span id="infoLevel">
+                                    —
+                                </span>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Account Type
+                                </span>
+
+                                <span>
+                                    Student
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SECURITY -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Account Security
+                            </h3>
+
+                            <p>
+                                Manage your account security
+                            </p>
+
+                        </div>
+
+                        <div class="security-item">
+
+                            <div class="security-left">
+
+                                <div class="security-icon">
+                                    🔒
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Password
+                                    </strong>
+
+                                    <span>
+                                        Last updated recently
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <a
+                                href="change pass.html"
+                                class="change-btn"
+                            >
+                                Change
+                            </a>
+
+                        </div>
+
+                        <div class="security-item">
+
+                            <div class="security-left">
+
+                                <div class="security-icon">
+                                    ✉
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Email
+                                    </strong>
+
+                                    <span id="securityEmail">
+                                        —
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <button
+                                class="change-btn"
+                                type="button"
+                                id="verifyEmailBtn"
+                            >
+                                Verify
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRIVACY -->
+
+                    <div class="notice">
+
+                        <h4>
+                            🔐 Your information is important
+                        </h4>
+
+                        <p>
+                            Keep your login information private and never share
+                            your password with other people. Only update your
+                            personal information when necessary.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       MOBILE SIDEBAR
+    ===================================================== */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    if (mobileMenu && sidebar) {
+
+        mobileMenu.addEventListener("click", function () {
+
+            sidebar.classList.toggle("open");
+
+        });
+
+    }
+
+
+    /* =====================================================
+       CURRENT STUDENT
+       IMPORTANT:
+       We only use the currently logged-in student.
+    ===================================================== */
+
+    let currentStudent = null;
+
+    try {
+
+        const stored =
+            localStorage.getItem("currentStudent");
+
+        if (stored) {
+
+            currentStudent =
+                JSON.parse(stored);
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Unable to read current student:",
+            error
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN CHECK
+    ===================================================== */
+
+    if (!currentStudent) {
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+
+    console.log(
+        "PROFILE - CURRENT STUDENT:",
+        currentStudent
+    );
+
+
+    /* =====================================================
+       CREATE UNIQUE STUDENT KEY
+       This prevents Student A from seeing
+       Student B's notifications.
+    ===================================================== */
+
+    function getStudentKey(student) {
+
+        if (!student) {
+            return "unknown";
+        }
+
+        if (student._id) {
+
+            return "id_" +
+                String(student._id)
+                .trim()
+                .toLowerCase();
+
+        }
+
+        if (student.id) {
+
+            return "id_" +
+                String(student.id)
+                .trim()
+                .toLowerCase();
+
+        }
+
+        if (student.email) {
+
+            return "email_" +
+                String(student.email)
+                .trim()
+                .toLowerCase();
+
+        }
+
+        if (student.matricNumber) {
+
+            return "matric_" +
+                String(student.matricNumber)
+                .trim()
+                .toLowerCase();
+
+        }
+
+        return "unknown";
+
+    }
+
+
+    const studentKey =
+        getStudentKey(currentStudent);
+
+
+    console.log(
+        "PROFILE - STUDENT KEY:",
+        studentKey
+    );
+
+
+    /* =====================================================
+       PROFILE ELEMENTS
+    ===================================================== */
+
+    const firstName =
+        document.getElementById("firstName");
+
+    const lastName =
+        document.getElementById("lastName");
+
+    const email =
+        document.getElementById("email");
+
+    const phone =
+        document.getElementById("phone");
+
+    const matric =
+        document.getElementById("matric");
+
+    const gender =
+        document.getElementById("gender");
+
+    const department =
+        document.getElementById("department");
+
+    const level =
+        document.getElementById("level");
+
+
+    /* =====================================================
+       PROFILE HEADER
+    ===================================================== */
+
+    const profileName =
+        document.getElementById("profileName");
+
+    const profileDescription =
+        document.getElementById(
+            "profileDescription"
+        );
+
+    const avatar =
+        document.getElementById("largeAvatar");
+
+    const topAvatar =
+        document.getElementById("topAvatar");
+
+    const topProfileName =
+        document.getElementById(
+            "topProfileName"
+        );
+
+
+    /* =====================================================
+       ACADEMIC
+    ===================================================== */
+
+    const infoMatric =
+        document.getElementById("infoMatric");
+
+    const infoDepartment =
+        document.getElementById(
+            "infoDepartment"
+        );
+
+    const infoLevel =
+        document.getElementById("infoLevel");
+
+    const securityEmail =
+        document.getElementById(
+            "securityEmail"
+        );
+
+
+    /* =====================================================
+       FULL NAME
+    ===================================================== */
+
+    function getFullName(student = currentStudent) {
+
+        const first =
+            student.firstName || "";
+
+        const last =
+            student.lastName || "";
+
+        return (
+            first + " " + last
+        ).trim();
+
+    }
+
+
+    /* =====================================================
+       INITIALS
+    ===================================================== */
+
+    function getInitials(student = currentStudent) {
+
+        const first =
+            (
+                student.firstName ||
+                ""
+            )
+            .charAt(0)
+            .toUpperCase();
+
+        const last =
+            (
+                student.lastName ||
+                ""
+            )
+            .charAt(0)
+            .toUpperCase();
+
+        return (
+            first + last
+        ) || "ST";
+
+    }
+
+
+    /* =====================================================
+       LOAD PROFILE
+    ===================================================== */
+
+    function loadProfile() {
+
+        if (!currentStudent) {
+            return;
+        }
+
+        const fullName =
+            getFullName();
+
+        const initials =
+            getInitials();
+
+
+        firstName.value =
+            currentStudent.firstName || "";
+
+        lastName.value =
+            currentStudent.lastName || "";
+
+        email.value =
+            currentStudent.email || "";
+
+        phone.value =
+            currentStudent.phone || "";
+
+        matric.value =
+            currentStudent.matricNumber || "";
+
+        gender.value =
+            currentStudent.gender || "";
+
+        department.value =
+            currentStudent.department || "";
+
+        level.value =
+            currentStudent.level || "";
+
+
+        profileName.textContent =
+            fullName || "Student";
+
+
+        profileDescription.textContent =
+            (
+                currentStudent.department ||
+                "Student"
+            ) +
+            (
+                currentStudent.level
+                    ? " • " + currentStudent.level
+                    : ""
+            );
+
+
+        avatar.textContent =
+            initials;
+
+        topAvatar.textContent =
+            initials;
+
+        topProfileName.textContent =
+            fullName || "Student";
+
+
+        infoMatric.textContent =
+            currentStudent.matricNumber || "—";
+
+        infoDepartment.textContent =
+            currentStudent.department || "—";
+
+        infoLevel.textContent =
+            currentStudent.level || "—";
+
+        securityEmail.textContent =
+            currentStudent.email || "—";
+
+    }
+
+
+    loadProfile();
+
+
+    /* =====================================================
+       EDIT PROFILE
+    ===================================================== */
+
+    const editProfileBtn =
+        document.getElementById(
+            "editProfileBtn"
+        );
+
+    const cancelEditBtn =
+        document.getElementById(
+            "cancelEditBtn"
+        );
+
+    const saveBtn =
+        document.getElementById("saveBtn");
+
+    const successMessage =
+        document.getElementById(
+            "successMessage"
+        );
+
+
+    const editableFields = [
+
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "gender",
+        "department",
+        "level"
+
+    ];
+
+
+    editProfileBtn.addEventListener(
+        "click",
+        function () {
+
+            editableFields.forEach(function (id) {
+
+                const field =
+                    document.getElementById(id);
+
+                if (field) {
+
+                    field.disabled = false;
+
+                }
+
+            });
+
+            matric.disabled = true;
+
+            editProfileBtn.style.display =
+                "none";
+
+            saveBtn.style.display =
+                "block";
+
+            cancelEditBtn.style.display =
+                "block";
+
+        }
+    );
+
+
+    /* =====================================================
+       CANCEL EDIT
+    ===================================================== */
+
+    cancelEditBtn.addEventListener(
+        "click",
+        function () {
+
+            loadProfile();
+
+            editableFields.forEach(function (id) {
+
+                const field =
+                    document.getElementById(id);
+
+                if (field) {
+
+                    field.disabled = true;
+
+                }
+
+            });
+
+            matric.disabled = true;
+
+            editProfileBtn.style.display =
+                "block";
+
+            saveBtn.style.display =
+                "none";
+
+            cancelEditBtn.style.display =
+                "none";
+
+            successMessage.style.display =
+                "none";
+
+        }
+    );
+
+
+    /* =====================================================
+       SAVE PROFILE
+    ===================================================== */
+
+    const profileForm =
+        document.getElementById(
+            "profileForm"
+        );
+
+
+    profileForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+
+            const updatedFirstName =
+                firstName.value.trim();
+
+            const updatedLastName =
+                lastName.value.trim();
+
+            const updatedEmail =
+                email.value.trim();
+
+            const updatedPhone =
+                phone.value.trim();
+
+            const updatedGender =
+                gender.value;
+
+            const updatedDepartment =
+                department.value.trim();
+
+            const updatedLevel =
+                level.value;
+
+
+            if (
+
+                updatedFirstName === "" ||
+                updatedLastName === "" ||
+                updatedEmail === "" ||
+                updatedPhone === "" ||
+                updatedGender === "" ||
+                updatedDepartment === "" ||
+                updatedLevel === ""
+
+            ) {
+
+                alert(
+                    "Please fill in all required fields."
+                );
+
+                return;
+
+            }
+
+
+            currentStudent.firstName =
+                updatedFirstName;
+
+            currentStudent.lastName =
+                updatedLastName;
+
+            currentStudent.email =
+                updatedEmail;
+
+            currentStudent.phone =
+                updatedPhone;
+
+            currentStudent.gender =
+                updatedGender;
+
+            currentStudent.department =
+                updatedDepartment;
+
+            currentStudent.level =
+                updatedLevel;
+
+
+            localStorage.setItem(
+                "currentStudent",
+                JSON.stringify(currentStudent)
+            );
+
+
+            /*
+             * Update the local students array
+             * ONLY for the current student.
+             */
+
+            let students = [];
+
+            try {
+
+                students =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "students"
+                        )
+                    ) || [];
+
+            } catch (error) {
+
+                students = [];
+
+            }
+
+
+            const studentIndex =
+                students.findIndex(
+                    function (student) {
+
+                        if (
+                            student._id &&
+                            currentStudent._id
+                        ) {
+
+                            return String(
+                                student._id
+                            ) === String(
+                                currentStudent._id
+                            );
+
+                        }
+
+                        if (
+                            student.id &&
+                            currentStudent.id
+                        ) {
+
+                            return String(
+                                student.id
+                            ) === String(
+                                currentStudent.id
+                            );
+
+                        }
+
+                        return (
+                            student.email &&
+                            currentStudent.email &&
+                            student.email
+                                .toLowerCase()
+                                .trim() ===
+                            currentStudent.email
+                                .toLowerCase()
+                                .trim()
+                        );
+
+                    }
+                );
+
+
+            if (studentIndex !== -1) {
+
+                students[studentIndex] =
+                    currentStudent;
+
+            }
+
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(students)
+            );
+
+
+            editableFields.forEach(function (id) {
+
+                const field =
+                    document.getElementById(id);
+
+                if (field) {
+
+                    field.disabled = true;
+
+                }
+
+            });
+
+
+            matric.disabled = true;
+
+
+            editProfileBtn.style.display =
+                "block";
+
+            saveBtn.style.display =
+                "none";
+
+            cancelEditBtn.style.display =
+                "none";
+
+
+            loadProfile();
+
+
+            successMessage.textContent =
+                "Profile updated successfully.";
+
+            successMessage.style.display =
+                "block";
+
+
+            setTimeout(function () {
+
+                successMessage.style.display =
+                    "none";
+
+            }, 3000);
+
+        }
+    );
+
+
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
+
+    const logout =
+        document.querySelector(".logout");
+
+
+    if (logout) {
+
+        logout.addEventListener(
+            "click",
+            function () {
+
+                localStorage.removeItem(
+                    "currentStudent"
+                );
+
+                localStorage.removeItem(
+                    "loggedInStudent"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       NOTIFICATION ELEMENTS
+    ===================================================== */
+
+    const notificationButton =
+        document.getElementById(
+            "notificationButton"
+        );
+
+    const notificationPanel =
+        document.getElementById(
+            "notificationPanel"
+        );
+
+    const notificationList =
+        document.getElementById(
+            "notificationList"
+        );
+
+    const notificationCount =
+        document.getElementById(
+            "notificationCount"
+        );
+
+
+    /* =====================================================
+       STUDENT-SPECIFIC NOTIFICATION STORAGE
+       
+       OLD:
+       localStorage["notifications"]
+
+       NEW:
+       localStorage["notifications_email_student@email.com"]
+
+       This means every student gets their own
+       notification storage.
+    ===================================================== */
+
+    const notificationStorageKey =
+        "notifications_" + studentKey;
+
+
+    console.log(
+        "NOTIFICATION STORAGE KEY:",
+        notificationStorageKey
+    );
+
+
+    /* =====================================================
+       LOAD THIS STUDENT'S NOTIFICATIONS ONLY
+    ===================================================== */
+
+    let notifications = [];
+
+    try {
+
+        notifications =
+            JSON.parse(
+                localStorage.getItem(
+                    notificationStorageKey
+                )
+            ) || [];
+
+    } catch (error) {
+
+        notifications = [];
+
+    }
+
+
+    /* =====================================================
+       SAVE NOTIFICATIONS
+    ===================================================== */
+
+    function saveNotifications() {
+
+        localStorage.setItem(
+            notificationStorageKey,
+            JSON.stringify(notifications)
+        );
+
+    }
+
+
+    /* =====================================================
+       ADD NOTIFICATION
+    ===================================================== */
+
+    function addNotification(
+        title,
+        message,
+        type = "info"
+    ) {
+
+        notifications.unshift({
+
+            id: Date.now(),
+
+            studentKey:
+                studentKey,
+
+            title:
+                title,
+
+            message:
+                message,
+
+            type:
+                type,
+
+            read:
+                false,
+
+            date:
+                new Date().toLocaleString()
+
+        });
+
+
+        saveNotifications();
+
+        updateNotificationUI();
+
+    }
+
+
+    /* =====================================================
+       UPDATE NOTIFICATION UI
+    ===================================================== */
+
+    function updateNotificationUI() {
+
+        notificationList.innerHTML = "";
+
+
+        /*
+         * EXTRA SAFETY:
+         * Only display notifications belonging
+         * to this student.
+         */
+
+        const studentNotifications =
+            notifications.filter(function (notification) {
+
+                return (
+                    !notification.studentKey ||
+                    notification.studentKey === studentKey
+                );
+
+            });
+
+
+        const unread =
+            studentNotifications.filter(
+                function (notification) {
+
+                    return !notification.read;
+
+                }
+            );
+
+
+        if (unread.length === 0) {
+
+            notificationCount.style.display =
+                "none";
+
+        } else {
+
+            notificationCount.style.display =
+                "flex";
+
+            notificationCount.textContent =
+                unread.length;
+
+        }
+
+
+        if (studentNotifications.length === 0) {
+
+            notificationList.innerHTML = `
+
+                <div class="empty-notification">
+
+                    No notifications yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        studentNotifications.forEach(
+            function (note) {
+
+                let icon = "🔔";
+
+
+                if (note.type === "success") {
+
+                    icon = "✅";
+
+                }
+
+                if (note.type === "warning") {
+
+                    icon = "⚠️";
+
+                }
+
+                if (
+                    note.type === "cancel" ||
+                    note.type === "rejected"
+                ) {
+
+                    icon = "❌";
+
+                }
+
+
+                /*
+                 * Find the original notification index
+                 * so marking it read still works.
+                 */
+
+                const originalIndex =
+                    notifications.indexOf(note);
+
+
+                notificationList.innerHTML += `
+
+                    <div
+                        class="notification-item ${
+                            note.read
+                                ? ""
+                                : "unread"
+                        }"
+                        data-index="${originalIndex}"
+                    >
+
+                        <div class="notification-icon">
+
+                            ${icon}
+
+                        </div>
+
+                        <div class="notification-text">
+
+                            <strong>
+                                ${escapeHTML(
+                                    note.title ||
+                                    "Notification"
+                                )}
+                            </strong>
+
+                            <p>
+                                ${escapeHTML(
+                                    note.message ||
+                                    ""
+                                )}
+                            </p>
+
+                            <small>
+                                ${escapeHTML(
+                                    note.date ||
+                                    "Recently"
+                                )}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(value) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            String(value);
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =====================================================
+       OPEN NOTIFICATIONS
+    ===================================================== */
+
+    notificationButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+            notificationPanel.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       KEEP PANEL OPEN
+    ===================================================== */
+
+    notificationPanel.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+    /* =====================================================
+       CLOSE OUTSIDE
+    ===================================================== */
+
+    document.addEventListener(
+        "click",
+        function () {
+
+            notificationPanel.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       MARK NOTIFICATION AS READ
+    ===================================================== */
+
+    notificationList.addEventListener(
+        "click",
+        function (event) {
+
+            const item =
+                event.target.closest(
+                    ".notification-item"
+                );
+
+
+            if (!item) {
+                return;
+            }
+
+
+            const index =
+                Number(
+                    item.dataset.index
+                );
+
+
+            if (notifications[index]) {
+
+                notifications[index].read =
+                    true;
+
+                saveNotifications();
+
+                updateNotificationUI();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CLEAR THIS STUDENT'S NOTIFICATIONS ONLY
+    ===================================================== */
+
+    function clearNotifications() {
+
+        notifications = [];
+
+        saveNotifications();
+
+        updateNotificationUI();
+
+    }
+
+
+    /* =====================================================
+       VERIFY EMAIL
+    ===================================================== */
+
+    const verifyEmailBtn =
+        document.getElementById(
+            "verifyEmailBtn"
+        );
+
+
+    if (verifyEmailBtn) {
+
+        verifyEmailBtn.addEventListener(
+            "click",
+            function () {
+
+                alert(
+                    "Email verification will be available soon."
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
+
+    updateNotificationUI();
+
+
+});
+
+</script>
+
+</body>
+</html>

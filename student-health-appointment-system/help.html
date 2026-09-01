@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --primary: #126e51;
+            --primary-dark: #0c523c;
+            --light: #e9f7f1;
+            --background: #f5faf8;
+            --white: #ffffff;
+            --text: #17221e;
+            --muted: #68756f;
+            --border: #dce7e2;
+            --danger: #c63b3b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 35px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.13);
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b6d7ca;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #d8eee6;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 20px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #d8eee6;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================== */
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 2px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* =========================
+           NOTIFICATION CENTER
+        ========================== */
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 17px;
+            transition: 0.2s ease;
+        }
+
+        .notification:hover {
+            background: var(--light);
+            border-color: #c8ddd4;
+        }
+
+        .notification-count {
+            position: absolute;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            background: #e24747;
+            color: white;
+            border-radius: 20px;
+            top: -5px;
+            right: -5px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 800;
+            border: 2px solid white;
+        }
+
+        .notification-count.show {
+            display: flex;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: 52px;
+            right: 0;
+            width: 360px;
+            max-width: calc(100vw - 30px);
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 12px 35px rgba(18, 52, 40, 0.14);
+            overflow: hidden;
+            display: none;
+            z-index: 2000;
+        }
+
+        .notification-panel.open {
+            display: block;
+            animation: notificationOpen 0.18s ease;
+        }
+
+        @keyframes notificationOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .notification-header h3 {
+            font-size: 14px;
+        }
+
+        .mark-all {
+            border: none;
+            background: transparent;
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .mark-all:hover {
+            text-decoration: underline;
+        }
+
+        .notification-list {
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            position: relative;
+            display: flex;
+            gap: 11px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #edf1ef;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f8fcfa;
+        }
+
+        .notification-item.unread {
+            background: #f0faf6;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            border-radius: 9px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 15px;
+        }
+
+        .notification-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-item-content strong {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+
+        .notification-item-content p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            color: #8a9791;
+            font-size: 9px;
+        }
+
+        .unread-dot {
+            width: 7px;
+            height: 7px;
+            background: #e24747;
+            border-radius: 50%;
+            position: absolute;
+            right: 13px;
+            top: 17px;
+        }
+
+        .empty-notifications {
+            padding: 35px 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .empty-notifications-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .empty-notifications strong {
+            display: block;
+            font-size: 12px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .empty-notifications p {
+            font-size: 10px;
+        }
+
+        .notification-footer {
+            padding: 11px 16px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .notification-footer button {
+            border: none;
+            background: transparent;
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* =========================
+           PROFILE
+        ========================== */
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           CONTENT
+        ========================== */
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-heading {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .page-heading h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           SUPPORT CARDS
+        ========================== */
+
+        .support-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .support-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .support-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: var(--light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            font-size: 21px;
+        }
+
+        .support-card h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .support-card p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .support-card a {
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           MAIN SUPPORT GRID
+        ========================== */
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 24px;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           FAQ
+        ========================== */
+
+        .faq {
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .faq:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 16px 0;
+            border: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .faq-arrow {
+            color: var(--primary);
+            font-size: 17px;
+            transition: 0.2s ease;
+        }
+
+        .faq-answer {
+            display: none;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+            padding: 0 0 16px;
+        }
+
+        .faq.open .faq-answer {
+            display: block;
+        }
+
+        .faq.open .faq-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* =========================
+           CONTACT FORM
+        ========================== */
+
+        .contact-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            background: #fcfefd;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18,110,81,0.08);
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .success-message {
+            display: none;
+            padding: 11px;
+            border-radius: 9px;
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid #cde8dc;
+            font-size: 11px;
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+           EMERGENCY NOTICE
+        ========================== */
+
+        .emergency {
+            margin-top: 20px;
+            padding: 17px;
+            background: #fff7e7;
+            border: 1px solid #f1ddb0;
+            border-radius: 12px;
+        }
+
+        .emergency h4 {
+            color: #775b1e;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .emergency p {
+            color: #846f40;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           MOBILE
+        ========================== */
+
+        .mobile-menu {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @media (max-width: 1050px) {
+
+            .support-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                place-items: center;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .page-heading h2 {
+                font-size: 25px;
+            }
+
+            .notification-panel {
+                position: fixed;
+                top: 70px;
+                right: 15px;
+                width: calc(100vw - 30px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">❤</span>
+            <span>Student Health</span>
+        </div>
+
+        <div class="nav-title">
+            Main Menu
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="student dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="appointment.html" class="nav-link">
+                <span class="nav-icon">＋</span>
+                <span>Book Appointment</span>
+            </a>
+
+            <a href="my appointments.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                <span>My Appointments</span>
+            </a>
+
+            <a href="student profile.html" class="nav-link">
+                <span class="nav-icon">◉</span>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">
+            Support
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="help.html" class="nav-link active">
+                <span class="nav-icon">?</span>
+                <span>Help & Support</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="login.html" class="logout">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+            >
+                ☰
+            </button>
+
+
+            <div class="page-title">
+
+                <h1>
+                    Help & Support
+                </h1>
+
+                <p>
+                    Get assistance with your student health account
+                </p>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <!-- NOTIFICATION CENTER -->
+
+                <div class="notification-wrapper">
+
+                    <button
+                        class="notification"
+                        id="notificationButton"
+                        type="button"
+                        aria-label="Notifications"
+                        aria-expanded="false"
+                    >
+
+                        🔔
+
+                        <span
+                            class="notification-count"
+                            id="notificationCount"
+                        >
+                            0
+                        </span>
+
+                    </button>
+
+
+                    <div
+                        class="notification-panel"
+                        id="notificationPanel"
+                    >
+
+                        <div class="notification-header">
+
+                            <h3>
+                                Notifications
+                            </h3>
+
+                            <button
+                                class="mark-all"
+                                id="markAllRead"
+                                type="button"
+                            >
+                                Mark all as read
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="notification-list"
+                            id="notificationList"
+                        >
+                        </div>
+
+
+                        <div class="notification-footer">
+
+                            <button
+                                type="button"
+                                id="clearNotifications"
+                            >
+                                Clear notifications
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE -->
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        DN
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+                            Daramola Noah
+                        </strong>
+
+                        <span>
+                            Student
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             CONTENT
+        ========================== -->
+
+        <section class="content">
+
+            <div class="page-heading">
+
+                <h2>
+                    How can we help?
+                </h2>
+
+                <p>
+                    Find answers to common questions or contact the health centre
+                    support team when you need assistance.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 SUPPORT CARDS
+            ========================== -->
+
+            <div class="support-cards">
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        ☎
+                    </div>
+
+                    <h3>
+                        Call Support
+                    </h3>
+
+                    <p>
+                        Contact the student health centre directly for assistance
+                        with appointments and general enquiries.
+                    </p>
+
+                    <a href="tel:+2348000000000">
+                        +234 800 000 0000
+                    </a>
+
+                </div>
+
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        ✉
+                    </div>
+
+                    <h3>
+                        Email Support
+                    </h3>
+
+                    <p>
+                        Send us an email and our support team will respond to your
+                        enquiry.
+                    </p>
+
+                    <a href="mailto:support@studenthealth.edu.ng">
+                        support@studenthealth.edu.ng
+                    </a>
+
+                </div>
+
+
+                <div class="support-card">
+
+                    <div class="support-icon">
+                        🏥
+                    </div>
+
+                    <h3>
+                        Visit Health Centre
+                    </h3>
+
+                    <p>
+                        Visit the school health centre during its operating hours
+                        for in-person assistance.
+                    </p>
+
+                    <a href="javascript:void(0)" id="centreInfoLink">
+                        View Centre Information
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 SUPPORT GRID
+            ========================== -->
+
+            <div class="support-grid">
+
+                <!-- FAQ -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>
+                            Frequently Asked Questions
+                        </h3>
+
+                        <p>
+                            Quick answers to common student questions.
+                        </p>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            How do I book an appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Go to "Book Appointment" from your dashboard,
+                            choose a healthcare service, select a healthcare
+                            professional, choose an available date and time,
+                            then submit your appointment request.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            How can I see my appointment status?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Open "My Appointments" from the student dashboard.
+                            You will be able to see whether an appointment is
+                            pending, confirmed, completed, or cancelled.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            Can I cancel an appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Yes. Open your appointment from "My Appointments"
+                            and use the cancellation option when it is available.
+                            Cancellation rules may depend on the health centre.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            What should I bring to my appointment?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Bring your valid student identification card and any
+                            relevant documents requested by the health centre.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            What if I forget my password?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            Use the password recovery option on the login page.
+                            If you still cannot access your account, contact the
+                            health centre support team.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            Can I change my profile information?
+
+                            <span class="faq-arrow">
+                                ▼
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            You can update editable information from your profile
+                            page. Some academic information, such as your matric
+                            number, may require administrator assistance.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTACT FORM -->
+
+                <div>
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Contact Support
+                            </h3>
+
+                            <p>
+                                Send a message to the support team.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="success-message"
+                            id="successMessage"
+                        >
+                            Your support request has been submitted.
+                        </div>
+
+
+                        <form
+                            class="contact-form"
+                            id="supportForm"
+                        >
+
+                            <div class="field">
+
+                                <label for="name">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="email">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="subject">
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    placeholder="What do you need help with?"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="message">
+                                    Message
+                                </label>
+
+                                <textarea
+                                    id="message"
+                                    placeholder="Describe your issue..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="submit-btn"
+                            >
+                                Send Message
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="emergency">
+
+                        <h4>
+                            ⚠ Important Health Notice
+                        </h4>
+
+                        <p>
+                            This appointment platform is not intended for emergency
+                            medical situations. If you are experiencing a medical
+                            emergency, seek immediate assistance from the appropriate
+                            emergency service or visit the nearest emergency facility.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /* =====================================================
+           MOBILE SIDEBAR
+        ===================================================== */
+
+        const mobileMenu =
+            document.getElementById("mobileMenu");
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+
+        if (mobileMenu && sidebar) {
+
+            mobileMenu.addEventListener(
+                "click",
+                function () {
+
+                    sidebar.classList.toggle("open");
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           CURRENT STUDENT
+        ===================================================== */
+
+        let currentStudent = null;
+
+
+        try {
+
+            currentStudent =
+                JSON.parse(
+                    localStorage.getItem("currentStudent")
+                );
+
+        } catch (error) {
+
+            console.error(
+                "Could not read current student:",
+                error
+            );
+
+        }
+
+
+        /* =====================================================
+           CHECK LOGIN
+        ===================================================== */
+
+        if (!currentStudent) {
+
+            window.location.href = "login.html";
+
+        } else {
+
+            const firstName =
+                currentStudent.firstName || "";
+
+            const lastName =
+                currentStudent.lastName || "";
+
+
+            const fullName =
+                `${firstName} ${lastName}`.trim();
+
+
+            const initials =
+                (
+                    firstName.charAt(0) +
+                    lastName.charAt(0)
+                ).toUpperCase();
+
+
+            const avatar =
+                document.querySelector(".avatar");
+
+
+            const profileName =
+                document.querySelector(
+                    ".profile-info strong"
+                );
+
+
+            const profileRole =
+                document.querySelector(
+                    ".profile-info span"
+                );
+
+
+            const nameInput =
+                document.getElementById("name");
+
+
+            const emailInput =
+                document.getElementById("email");
+
+
+            if (avatar && initials) {
+
+                avatar.textContent =
+                    initials;
+
+            }
+
+
+            if (profileName && fullName) {
+
+                profileName.textContent =
+                    fullName;
+
+            }
+
+
+            if (profileRole) {
+
+                profileRole.textContent =
+                    "Student";
+
+            }
+
+
+            if (nameInput && fullName) {
+
+                nameInput.value =
+                    fullName;
+
+            }
+
+
+            if (emailInput && currentStudent.email) {
+
+                emailInput.value =
+                    currentStudent.email;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           NOTIFICATION CENTER
+        ===================================================== */
+
+        const notificationButton =
+            document.getElementById(
+                "notificationButton"
+            );
+
+
+        const notificationPanel =
+            document.getElementById(
+                "notificationPanel"
+            );
+
+
+        const notificationList =
+            document.getElementById(
+                "notificationList"
+            );
+
+
+        const notificationCount =
+            document.getElementById(
+                "notificationCount"
+            );
+
+
+        const markAllRead =
+            document.getElementById(
+                "markAllRead"
+            );
+
+
+        const clearNotifications =
+            document.getElementById(
+                "clearNotifications"
+            );
+
+
+        /* =====================================================
+           NOTIFICATION STORAGE KEY
+        ===================================================== */
+
+        const notificationStorageKey =
+            "studentNotifications";
+
+
+        /* =====================================================
+           GET NOTIFICATIONS
+        ===================================================== */
+
+        function getNotifications() {
+
+            let notifications = [];
+
+            try {
+
+                notifications =
+                    JSON.parse(
+                        localStorage.getItem(
+                            notificationStorageKey
+                        )
+                    ) || [];
+
+            } catch (error) {
+
+                console.error(
+                    "Could not load notifications:",
+                    error
+                );
+
+            }
+
+
+            /*
+             * Only show notifications belonging
+             * to the current student when studentId exists.
+             */
+
+            if (currentStudent && currentStudent.id) {
+
+                notifications =
+                    notifications.filter(
+                        function (notification) {
+
+                            return (
+                                !notification.studentId ||
+                                String(notification.studentId) ===
+                                String(currentStudent.id)
+                            );
+
+                        }
+                    );
+
+            }
+
+
+            return notifications;
+
+        }
+
+
+        /* =====================================================
+           SAVE NOTIFICATIONS
+        ===================================================== */
+
+        function saveNotifications(notifications) {
+
+            localStorage.setItem(
+                notificationStorageKey,
+                JSON.stringify(notifications)
+            );
+
+        }
+
+
+        /* =====================================================
+           FORMAT NOTIFICATION TIME
+        ===================================================== */
+
+        function formatNotificationTime(dateValue) {
+
+            if (!dateValue) {
+
+                return "Recently";
+
+            }
+
+
+            const date =
+                new Date(dateValue);
+
+
+            if (isNaN(date.getTime())) {
+
+                return "Recently";
+
+            }
+
+
+            const now =
+                new Date();
+
+
+            const difference =
+                now.getTime() -
+                date.getTime();
+
+
+            const minutes =
+                Math.floor(
+                    difference / 60000
+                );
+
+
+            if (minutes < 1) {
+
+                return "Just now";
+
+            }
+
+
+            if (minutes < 60) {
+
+                return (
+                    minutes +
+                    (minutes === 1 ? " minute ago" : " minutes ago")
+                );
+
+            }
+
+
+            const hours =
+                Math.floor(
+                    minutes / 60
+                );
+
+
+            if (hours < 24) {
+
+                return (
+                    hours +
+                    (hours === 1 ? " hour ago" : " hours ago")
+                );
+
+            }
+
+
+            const days =
+                Math.floor(
+                    hours / 24
+                );
+
+
+            if (days < 7) {
+
+                return (
+                    days +
+                    (days === 1 ? " day ago" : " days ago")
+                );
+
+            }
+
+
+            return date.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           RENDER NOTIFICATIONS
+        ===================================================== */
+
+        function renderNotifications() {
+
+            if (!notificationList) {
+
+                return;
+
+            }
+
+
+            const notifications =
+                getNotifications();
+
+
+            const unreadNotifications =
+                notifications.filter(
+                    function (notification) {
+
+                        return !notification.read;
+
+                    }
+                );
+
+
+            /*
+             * Update notification badge
+             */
+
+            if (unreadNotifications.length > 0) {
+
+                notificationCount.textContent =
+                    unreadNotifications.length > 99
+                        ? "99+"
+                        : unreadNotifications.length;
+
+                notificationCount.classList.add(
+                    "show"
+                );
+
+            } else {
+
+                notificationCount.classList.remove(
+                    "show"
+                );
+
+            }
+
+
+            /*
+             * Empty state
+             */
+
+            if (notifications.length === 0) {
+
+                notificationList.innerHTML = `
+
+                    <div class="empty-notifications">
+
+                        <div class="empty-notifications-icon">
+                            🔔
+                        </div>
+
+                        <strong>
+                            No notifications
+                        </strong>
+
+                        <p>
+                            You're all caught up.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            /*
+             * Newest notifications first
+             */
+
+            notifications.sort(
+                function (a, b) {
+
+                    return (
+                        new Date(b.createdAt || 0) -
+                        new Date(a.createdAt || 0)
+                    );
+
+                }
+            );
+
+
+            notificationList.innerHTML =
+                notifications.map(
+                    function (notification) {
+
+                        const title =
+                            notification.title ||
+                            "Notification";
+
+
+                        const message =
+                            notification.message ||
+                            "You have a new notification.";
+
+
+                        const icon =
+                            notification.icon ||
+                            "🔔";
+
+
+                        const unreadClass =
+                            notification.read
+                                ? ""
+                                : "unread";
+
+
+                        const unreadDot =
+                            notification.read
+                                ? ""
+                                : `<span class="unread-dot"></span>`;
+
+
+                        return `
+
+                            <div
+                                class="notification-item ${unreadClass}"
+                                data-notification-id="${notification.id}"
+                            >
+
+                                <div class="notification-icon">
+                                    ${icon}
+                                </div>
+
+                                <div class="notification-item-content">
+
+                                    <strong>
+                                        ${escapeHtml(title)}
+                                    </strong>
+
+                                    <p>
+                                        ${escapeHtml(message)}
+                                    </p>
+
+                                    <span class="notification-time">
+                                        ${formatNotificationTime(notification.createdAt)}
+                                    </span>
+
+                                </div>
+
+                                ${unreadDot}
+
+                            </div>
+
+                        `;
+
+                    }
+                ).join("");
+
+
+            /*
+             * Add click events
+             */
+
+            const notificationItems =
+                document.querySelectorAll(
+                    ".notification-item"
+                );
+
+
+            notificationItems.forEach(
+                function (item) {
+
+                    item.addEventListener(
+                        "click",
+                        function () {
+
+                            const id =
+                                item.dataset.notificationId;
+
+
+                            markNotificationAsRead(id);
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(value) {
+
+            const div =
+                document.createElement("div");
+
+
+            div.textContent =
+                value;
+
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =====================================================
+           MARK ONE NOTIFICATION AS READ
+        ===================================================== */
+
+        function markNotificationAsRead(id) {
+
+            const notifications =
+                getAllStoredNotifications();
+
+
+            const index =
+                notifications.findIndex(
+                    function (notification) {
+
+                        return String(notification.id) ===
+                            String(id);
+
+                    }
+                );
+
+
+            if (index !== -1) {
+
+                notifications[index].read =
+                    true;
+
+
+                saveNotifications(
+                    notifications
+                );
+
+
+                renderNotifications();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           GET ALL STORED NOTIFICATIONS
+        ===================================================== */
+
+        function getAllStoredNotifications() {
+
+            try {
+
+                return (
+                    JSON.parse(
+                        localStorage.getItem(
+                            notificationStorageKey
+                        )
+                    ) || []
+                );
+
+            } catch (error) {
+
+                return [];
+
+            }
+
+        }
+
+
+        /* =====================================================
+           MARK ALL AS READ
+        ===================================================== */
+
+        if (markAllRead) {
+
+            markAllRead.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    const notifications =
+                        getAllStoredNotifications();
+
+
+                    notifications.forEach(
+                        function (notification) {
+
+                            /*
+                             * Only mark the current student's
+                             * notifications as read.
+                             */
+
+                            if (
+                                currentStudent &&
+                                currentStudent.id &&
+                                notification.studentId &&
+                                String(notification.studentId) !==
+                                String(currentStudent.id)
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            notification.read =
+                                true;
+
+                        }
+                    );
+
+
+                    saveNotifications(
+                        notifications
+                    );
+
+
+                    renderNotifications();
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           CLEAR NOTIFICATIONS
+        ===================================================== */
+
+        if (clearNotifications) {
+
+            clearNotifications.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    const confirmed =
+                        confirm(
+                            "Clear all your notifications?"
+                        );
+
+
+                    if (!confirmed) {
+
+                        return;
+
+                    }
+
+
+                    let notifications =
+                        getAllStoredNotifications();
+
+
+                    if (
+                        currentStudent &&
+                        currentStudent.id
+                    ) {
+
+                        notifications =
+                            notifications.filter(
+                                function (notification) {
+
+                                    return (
+                                        notification.studentId &&
+                                        String(notification.studentId) !==
+                                        String(currentStudent.id)
+                                    );
+
+                                }
+                            );
+
+                    } else {
+
+                        notifications = [];
+
+                    }
+
+
+                    saveNotifications(
+                        notifications
+                    );
+
+
+                    renderNotifications();
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           OPEN / CLOSE NOTIFICATION CENTER
+        ===================================================== */
+
+        if (notificationButton) {
+
+            notificationButton.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    const isOpen =
+                        notificationPanel.classList.contains(
+                            "open"
+                        );
+
+
+                    if (isOpen) {
+
+                        notificationPanel.classList.remove(
+                            "open"
+                        );
+
+                        notificationButton.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    } else {
+
+                        renderNotifications();
+
+
+                        notificationPanel.classList.add(
+                            "open"
+                        );
+
+                        notificationButton.setAttribute(
+                            "aria-expanded",
+                            "true"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           CLICK OUTSIDE NOTIFICATION PANEL
+        ===================================================== */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const wrapper =
+                    document.querySelector(
+                        ".notification-wrapper"
+                    );
+
+
+                if (
+                    wrapper &&
+                    !wrapper.contains(event.target)
+                ) {
+
+                    notificationPanel.classList.remove(
+                        "open"
+                    );
+
+
+                    notificationButton.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           UPDATE NOTIFICATIONS AUTOMATICALLY
+        ===================================================== */
+
+        window.addEventListener(
+            "storage",
+            function (event) {
+
+                if (
+                    event.key ===
+                    notificationStorageKey
+                ) {
+
+                    renderNotifications();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Render notifications when page loads.
+         */
+
+        renderNotifications();
+
+
+        /* =====================================================
+           FAQ
+        ===================================================== */
+
+        const faqQuestions =
+            document.querySelectorAll(
+                ".faq-question"
+            );
+
+
+        faqQuestions.forEach(
+            function (question) {
+
+                question.addEventListener(
+                    "click",
+                    function () {
+
+                        const faq =
+                            question.parentElement;
+
+
+                        faq.classList.toggle(
+                            "open"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           SUPPORT FORM
+        ===================================================== */
+
+        const supportForm =
+            document.getElementById(
+                "supportForm"
+            );
+
+
+        const successMessage =
+            document.getElementById(
+                "successMessage"
+            );
+
+
+        if (supportForm) {
+
+            supportForm.addEventListener(
+                "submit",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    const name =
+                        document.getElementById(
+                            "name"
+                        ).value.trim();
+
+
+                    const email =
+                        document.getElementById(
+                            "email"
+                        ).value.trim();
+
+
+                    const subject =
+                        document.getElementById(
+                            "subject"
+                        ).value.trim();
+
+
+                    const message =
+                        document.getElementById(
+                            "message"
+                        ).value.trim();
+
+
+                    if (
+                        name === "" ||
+                        email === "" ||
+                        subject === "" ||
+                        message === ""
+                    ) {
+
+                        alert(
+                            "Please fill in all fields."
+                        );
+
+                        return;
+
+                    }
+
+
+                    let supportRequests =
+                        [];
+
+
+                    try {
+
+                        supportRequests =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "supportRequests"
+                                )
+                            ) || [];
+
+                    } catch (error) {
+
+                        supportRequests = [];
+
+                    }
+
+
+                    const supportRequest = {
+
+                        id:
+                            Date.now(),
+
+                        studentId:
+                            currentStudent
+                                ? currentStudent.id
+                                : null,
+
+                        studentName:
+                            name,
+
+                        studentEmail:
+                            email,
+
+                        subject:
+                            subject,
+
+                        message:
+                            message,
+
+                        status:
+                            "open",
+
+                        createdAt:
+                            new Date().toISOString()
+
+                    };
+
+
+                    supportRequests.push(
+                        supportRequest
+                    );
+
+
+                    localStorage.setItem(
+                        "supportRequests",
+                        JSON.stringify(
+                            supportRequests
+                        )
+                    );
+
+
+                    /*
+                     * Create a notification for
+                     * the submitted support request.
+                     */
+
+                    let notifications =
+                        getAllStoredNotifications();
+
+
+                    notifications.push({
+
+                        id:
+                            "support-" +
+                            Date.now(),
+
+                        studentId:
+                            currentStudent
+                                ? currentStudent.id
+                                : null,
+
+                        title:
+                            "Support request submitted",
+
+                        message:
+                            "Your support request has been received. The support team will review it.",
+
+                        icon:
+                            "✉",
+
+                        read:
+                            false,
+
+                        createdAt:
+                            new Date().toISOString()
+
+                    });
+
+
+                    saveNotifications(
+                        notifications
+                    );
+
+
+                    renderNotifications();
+
+
+                    successMessage.textContent =
+                        "Your support request has been submitted successfully.";
+
+
+                    successMessage.style.display =
+                        "block";
+
+
+                    document.getElementById(
+                        "subject"
+                    ).value = "";
+
+
+                    document.getElementById(
+                        "message"
+                    ).value = "";
+
+
+                    setTimeout(
+                        function () {
+
+                            successMessage.style.display =
+                                "none";
+
+                        },
+                        4000
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           HEALTH CENTRE INFORMATION
+        ===================================================== */
+
+        const centreInfoLink =
+            document.getElementById(
+                "centreInfoLink"
+            );
+
+
+        if (centreInfoLink) {
+
+            centreInfoLink.addEventListener(
+                "click",
+                function () {
+
+                    alert(
+                        "Health Centre Information\n\n" +
+                        "Please contact the student health centre through the support phone number or email above for current opening hours and location information."
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        const logout =
+            document.querySelector(
+                ".logout"
+            );
+
+
+        if (logout) {
+
+            logout.addEventListener(
+                "click",
+                function () {
+
+                    localStorage.removeItem(
+                        "currentStudent"
+                    );
+
+                }
+            );
+
+        }
+
+    </script>
+
+</body>
+</html>

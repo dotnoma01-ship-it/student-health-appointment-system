@@ -1,0 +1,37 @@
+student-health-appointment-system/
+│
+├── frontend/
+│   ├── login.html
+│   ├── signup.html
+│   ├── student dashboard.html
+│   ├── appointment.html
+│   ├── my appointment.html
+│   ├── student profile.html
+│   └── ...
+│
+└── backend/
+    ├── server.js
+    ├── package.json
+    ├── .env
+    │
+    ├── config/
+    │   └── db.js
+    │
+    ├── models/
+    │   ├── Student.js
+    │   ├── Doctor.js
+    │   ├── Appointment.js
+    │   └── Notification.js
+    │
+    ├── routes/
+    │   ├── authRoutes.js
+    │   ├── studentRoutes.js
+    │   ├── doctorRoutes.js
+    │   ├── appointmentRoutes.js
+    │   └── notificationRoutes.js
+    │
+    └── controllers/
+        ├── authController.js
+        ├── appointmentController.js
+        ├── doctorController.js
+        └── notificationController.js
