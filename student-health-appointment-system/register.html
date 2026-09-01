@@ -919,10 +919,6 @@ form.addEventListener("submit", async function (event) {
 
         if (data.success) {
 
-            alert(
-                "Registration successful! You can now login."
-            );
-
             window.location.href =
                 "login.html";
 
@@ -949,8 +945,8 @@ form.addEventListener("submit", async function (event) {
         );
 
         showError(
-            "Unable to connect to the backend. " +
-            "Please make sure the server is running on port 5001."
+            "Unable to connect to the server. " +
+            "Please try again later."
         );
 
         resetButton();
@@ -1002,6 +998,7 @@ function resetButton() {
 }
 
 </script>
+
 
 </body>
 </html>

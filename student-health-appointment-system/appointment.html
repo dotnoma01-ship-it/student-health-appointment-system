@@ -1261,6 +1261,124 @@ const notificationCount =
 
 
 /* =========================================================
+   IN-PAGE MESSAGE
+   Replaces browser alert()
+========================================================= */
+
+function showMessage(message, type = "error") {
+
+    let messageBox =
+        document.getElementById("appointmentMessage");
+
+    if (!messageBox) {
+
+        messageBox =
+            document.createElement("div");
+
+        messageBox.id =
+            "appointmentMessage";
+
+        messageBox.style.position =
+            "fixed";
+
+        messageBox.style.top =
+            "20px";
+
+        messageBox.style.right =
+            "20px";
+
+        messageBox.style.maxWidth =
+            "380px";
+
+        messageBox.style.padding =
+            "14px 18px";
+
+        messageBox.style.borderRadius =
+            "10px";
+
+        messageBox.style.fontSize =
+            "14px";
+
+        messageBox.style.lineHeight =
+            "1.5";
+
+        messageBox.style.fontWeight =
+            "500";
+
+        messageBox.style.zIndex =
+            "99999";
+
+        messageBox.style.boxShadow =
+            "0 8px 25px rgba(0,0,0,0.15)";
+
+        messageBox.style.transition =
+            "opacity 0.3s ease, transform 0.3s ease";
+
+        document.body.appendChild(
+            messageBox
+        );
+
+    }
+
+
+    if (type === "success") {
+
+        messageBox.style.background =
+            "#e8f7ee";
+
+        messageBox.style.color =
+            "#137a3a";
+
+        messageBox.style.border =
+            "1px solid #b7e4c7";
+
+    } else {
+
+        messageBox.style.background =
+            "#fff0f0";
+
+        messageBox.style.color =
+            "#b42318";
+
+        messageBox.style.border =
+            "1px solid #f5b5b5";
+
+    }
+
+
+    messageBox.textContent =
+        message;
+
+    messageBox.style.opacity =
+        "1";
+
+    messageBox.style.transform =
+        "translateY(0)";
+
+
+    clearTimeout(
+        window.appointmentMessageTimer
+    );
+
+
+    window.appointmentMessageTimer =
+        setTimeout(
+            function () {
+
+                messageBox.style.opacity =
+                    "0";
+
+                messageBox.style.transform =
+                    "translateY(-10px)";
+
+            },
+            5000
+        );
+
+}
+
+
+/* =========================================================
    CURRENT STUDENT
 ========================================================= */
 
@@ -1272,10 +1390,20 @@ const currentStudent =
 
 if (!currentStudent) {
 
-    alert("Please login first.");
+    showMessage(
+        "Your session has expired. Please login again.",
+        "error"
+    );
 
-    window.location.href =
-        "login.html";
+    setTimeout(
+        function () {
+
+            window.location.href =
+                "login.html";
+
+        },
+        1200
+    );
 
     throw new Error(
         "No logged-in student found."
@@ -1304,7 +1432,7 @@ if (mobileMenu && sidebar) {
 
     mobileMenu.addEventListener(
         "click",
-        () => {
+        function () {
 
             sidebar.classList.toggle(
                 "open"
@@ -1324,26 +1452,29 @@ document
     .querySelectorAll(
         ".sidebar .nav-link"
     )
-    .forEach(link => {
+    .forEach(
+        function (link) {
 
-        link.addEventListener(
-            "click",
-            () => {
+            link.addEventListener(
+                "click",
+                function () {
 
-                if (
-                    window.innerWidth <= 700
-                ) {
+                    if (
+                        window.innerWidth <= 700 &&
+                        sidebar
+                    ) {
 
-                    sidebar.classList.remove(
-                        "open"
-                    );
+                        sidebar.classList.remove(
+                            "open"
+                        );
+
+                    }
 
                 }
+            );
 
-            }
-        );
-
-    });
+        }
+    );
 
 
 /* =========================================================
@@ -1367,6 +1498,7 @@ function loadStudentProfile() {
             lastName.charAt(0)
         ).toUpperCase();
 
+
     const avatar =
         document.getElementById(
             "studentAvatar"
@@ -1377,12 +1509,14 @@ function loadStudentProfile() {
             "studentName"
         );
 
+
     if (avatar) {
 
         avatar.textContent =
             initials || "ST";
 
     }
+
 
     if (studentName) {
 
@@ -1392,6 +1526,7 @@ function loadStudentProfile() {
     }
 
 }
+
 
 loadStudentProfile();
 
@@ -1408,22 +1543,26 @@ if (logoutBtn) {
 
     logoutBtn.addEventListener(
         "click",
-        function(e) {
+        function (e) {
 
             e.preventDefault();
 
             const confirmed =
-                confirm(
+                window.confirm(
                     "Are you sure you want to logout?"
                 );
 
             if (!confirmed) {
+
                 return;
+
             }
+
 
             localStorage.removeItem(
                 "currentStudent"
             );
+
 
             window.location.href =
                 "login.html";
@@ -1441,8 +1580,11 @@ if (logoutBtn) {
 function loadRegisteredDoctors() {
 
     if (!doctor) {
+
         return;
+
     }
+
 
     const doctorAccounts =
         JSON.parse(
@@ -1451,31 +1593,39 @@ function loadRegisteredDoctors() {
             )
         ) || [];
 
+
     doctor.innerHTML = "";
+
 
     const defaultOption =
         document.createElement(
             "option"
         );
 
-    defaultOption.value = "";
+
+    defaultOption.value =
+        "";
+
 
     defaultOption.textContent =
         doctorAccounts.length > 0
             ? "Select a healthcare professional"
             : "No registered doctors available";
 
+
     doctor.appendChild(
         defaultOption
     );
 
+
     doctorAccounts.forEach(
-        registeredDoctor => {
+        function (registeredDoctor) {
 
             const option =
                 document.createElement(
                     "option"
                 );
+
 
             option.value =
                 String(
@@ -1484,26 +1634,33 @@ function loadRegisteredDoctors() {
                     ""
                 );
 
+
             option.textContent =
                 `${registeredDoctor.name || "Doctor"} — ${
                     registeredDoctor.specialization ||
                     "Healthcare Professional"
                 }`;
 
+
             option.dataset.doctorId =
                 option.value;
+
 
             option.dataset.doctorName =
                 registeredDoctor.name || "";
 
+
             option.dataset.specialization =
                 registeredDoctor.specialization || "";
+
 
             option.dataset.email =
                 registeredDoctor.email || "";
 
+
             option.dataset.phone =
                 registeredDoctor.phone || "";
+
 
             doctor.appendChild(
                 option
@@ -1513,6 +1670,7 @@ function loadRegisteredDoctors() {
     );
 
 }
+
 
 loadRegisteredDoctors();
 
@@ -1549,7 +1707,7 @@ function saveNotifications(
 function getStudentNotifications() {
 
     return getNotifications().filter(
-        notification => {
+        function (notification) {
 
             return String(
                 notification.studentId
@@ -1566,16 +1724,23 @@ function getStudentNotifications() {
 function updateNotifications() {
 
     if (!notificationCount) {
+
         return;
+
     }
+
 
     const unread =
         getStudentNotifications()
             .filter(
-                notification =>
-                    notification.read !== true
+                function (notification) {
+
+                    return notification.read !== true;
+
+                }
             )
             .length;
+
 
     notificationCount.style.display =
         unread > 0
@@ -1588,13 +1753,19 @@ function updateNotifications() {
 function loadNotifications() {
 
     if (!notificationList) {
+
         return;
+
     }
+
 
     const notifications =
         getStudentNotifications();
 
-    notificationList.innerHTML = "";
+
+    notificationList.innerHTML =
+        "";
+
 
     if (
         notifications.length === 0
@@ -1615,19 +1786,22 @@ function loadNotifications() {
 
     }
 
+
     notifications
         .slice()
         .reverse()
         .forEach(
-            notification => {
+            function (notification) {
 
                 const item =
                     document.createElement(
                         "div"
                     );
 
+
                 item.className =
                     "notification-item";
+
 
                 item.innerHTML = `
                     <strong>
@@ -1652,6 +1826,7 @@ function loadNotifications() {
                     </small>
                 `;
 
+
                 notificationList.appendChild(
                     item
                 );
@@ -1669,6 +1844,7 @@ function addNotification(
 
     let notifications =
         getNotifications();
+
 
     notifications.push({
 
@@ -1692,6 +1868,7 @@ function addNotification(
 
     });
 
+
     if (
         notifications.length > 50
     ) {
@@ -1701,9 +1878,11 @@ function addNotification(
 
     }
 
+
     saveNotifications(
         notifications
     );
+
 
     updateNotifications();
 
@@ -1723,13 +1902,15 @@ if (
 
     notificationBtn.addEventListener(
         "click",
-        function(e) {
+        function (e) {
 
             e.stopPropagation();
+
 
             notificationPanel.classList.toggle(
                 "show"
             );
+
 
             if (
                 notificationPanel.classList.contains(
@@ -1740,9 +1921,10 @@ if (
                 let notifications =
                     getNotifications();
 
+
                 notifications =
                     notifications.map(
-                        notification => {
+                        function (notification) {
 
                             if (
                                 String(
@@ -1758,14 +1940,17 @@ if (
 
                             }
 
+
                             return notification;
 
                         }
                     );
 
+
                 saveNotifications(
                     notifications
                 );
+
 
                 updateNotifications();
 
@@ -1779,7 +1964,7 @@ if (
 
 document.addEventListener(
     "click",
-    function(e) {
+    function (e) {
 
         if (
             notificationPanel &&
@@ -1809,11 +1994,26 @@ document.addEventListener(
 function escapeHTML(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -1824,7 +2024,7 @@ function escapeHTML(value) {
 
 function updateSummary() {
 
-    if (summaryService) {
+    if (summaryService && service) {
 
         summaryService.textContent =
             service.value
@@ -1836,7 +2036,7 @@ function updateSummary() {
     }
 
 
-    if (summaryDoctor) {
+    if (summaryDoctor && doctor) {
 
         summaryDoctor.textContent =
             doctor.value
@@ -1848,15 +2048,21 @@ function updateSummary() {
     }
 
 
-    if (summaryDate) {
+    if (
+        summaryDate &&
+        appointmentDate
+    ) {
 
-        if (appointmentDate.value) {
+        if (
+            appointmentDate.value
+        ) {
 
             const selectedDate =
                 new Date(
                     appointmentDate.value +
                     "T00:00:00"
                 );
+
 
             summaryDate.textContent =
                 selectedDate.toLocaleDateString(
@@ -1886,6 +2092,7 @@ function updateSummary() {
                 'input[name="time"]:checked'
             );
 
+
         summaryTime.textContent =
             selectedTime
                 ? selectedTime.value
@@ -1894,7 +2101,10 @@ function updateSummary() {
     }
 
 
-    if (summaryType) {
+    if (
+        summaryType &&
+        appointmentType
+    ) {
 
         summaryType.textContent =
             appointmentType.value
@@ -1912,32 +2122,52 @@ function updateSummary() {
    SUMMARY EVENTS
 ========================================================= */
 
-service.addEventListener(
-    "change",
-    updateSummary
-);
+if (service) {
 
-doctor.addEventListener(
-    "change",
-    updateSummary
-);
+    service.addEventListener(
+        "change",
+        updateSummary
+    );
 
-appointmentDate.addEventListener(
-    "change",
-    updateSummary
-);
+}
 
-appointmentType.addEventListener(
-    "change",
-    updateSummary
-);
+
+if (doctor) {
+
+    doctor.addEventListener(
+        "change",
+        updateSummary
+    );
+
+}
+
+
+if (appointmentDate) {
+
+    appointmentDate.addEventListener(
+        "change",
+        updateSummary
+    );
+
+}
+
+
+if (appointmentType) {
+
+    appointmentType.addEventListener(
+        "change",
+        updateSummary
+    );
+
+}
+
 
 document
     .querySelectorAll(
         'input[name="time"]'
     )
     .forEach(
-        input => {
+        function (input) {
 
             input.addEventListener(
                 "change",
@@ -1952,24 +2182,38 @@ document
    PREVENT PAST DATES
 ========================================================= */
 
-const today =
-    new Date();
+if (appointmentDate) {
 
-const year =
-    today.getFullYear();
+    const today =
+        new Date();
 
-const month =
-    String(
-        today.getMonth() + 1
-    ).padStart(2, "0");
 
-const day =
-    String(
-        today.getDate()
-    ).padStart(2, "0");
+    const year =
+        today.getFullYear();
 
-appointmentDate.min =
-    `${year}-${month}-${day}`;
+
+    const month =
+        String(
+            today.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            today.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    appointmentDate.min =
+        `${year}-${month}-${day}`;
+
+}
 
 
 /* =========================================================
@@ -2013,8 +2257,9 @@ function appointmentAlreadyExists(
     const appointments =
         getAppointments();
 
+
     return appointments.some(
-        appointment => {
+        function (appointment) {
 
             return (
                 String(
@@ -2038,513 +2283,564 @@ function appointmentAlreadyExists(
 
 /* =========================================================
    BOOK APPOINTMENT
-   SEND TO BACKEND + MONGODB
 ========================================================= */
 
-appointmentForm.addEventListener(
-    "submit",
-    async function(e) {
+if (appointmentForm) {
 
-        e.preventDefault();
+    appointmentForm.addEventListener(
+        "submit",
+        async function (e) {
 
-        if (!currentStudent) {
+            e.preventDefault();
 
-            alert(
-                "Your session has expired. Please login again."
-            );
 
-            window.location.href =
-                "login.html";
+            if (!currentStudent) {
 
-            return;
-
-        }
-
-
-        /* =========================
-           VALIDATION
-        ========================= */
-
-        if (!service.value) {
-
-            alert(
-                "Please select a healthcare service."
-            );
-
-            service.focus();
-
-            return;
-
-        }
-
-
-        if (!doctor.value) {
-
-            alert(
-                "Please select a registered healthcare professional."
-            );
-
-            doctor.focus();
-
-            return;
-
-        }
-
-
-        if (!appointmentDate.value) {
-
-            alert(
-                "Please choose an appointment date."
-            );
-
-            appointmentDate.focus();
-
-            return;
-
-        }
-
-
-        if (!appointmentType.value) {
-
-            alert(
-                "Please select an appointment type."
-            );
-
-            appointmentType.focus();
-
-            return;
-
-        }
-
-
-        const selectedTime =
-            document.querySelector(
-                'input[name="time"]:checked'
-            );
-
-
-        if (!selectedTime) {
-
-            alert(
-                "Please select an available time."
-            );
-
-            return;
-
-        }
-
-
-        const reasonText =
-            reason.value.trim();
-
-
-        if (!reasonText) {
-
-            alert(
-                "Please enter the reason for your appointment."
-            );
-
-            reason.focus();
-
-            return;
-
-        }
-
-
-        if (
-            reasonText.length < 10
-        ) {
-
-            alert(
-                "Please provide at least 10 characters for the reason."
-            );
-
-            reason.focus();
-
-            return;
-
-        }
-
-
-        /* =========================
-           DATE VALIDATION
-        ========================= */
-
-        const selectedDate =
-            new Date(
-                appointmentDate.value +
-                "T00:00:00"
-            );
-
-        const currentDate =
-            new Date();
-
-        currentDate.setHours(
-            0,
-            0,
-            0,
-            0
-        );
-
-
-        if (
-            selectedDate < currentDate
-        ) {
-
-            alert(
-                "You cannot book an appointment in the past."
-            );
-
-            return;
-
-        }
-
-
-        /* =========================
-           DUPLICATE CHECK
-        ========================= */
-
-        if (
-            appointmentAlreadyExists(
-                appointmentDate.value,
-                selectedTime.value
-            )
-        ) {
-
-            alert(
-                "You already have an appointment at this date and time."
-            );
-
-            return;
-
-        }
-
-
-        /* =========================
-           DOCTOR
-        ========================= */
-
-        const selectedDoctorOption =
-            doctor.options[
-                doctor.selectedIndex
-            ];
-
-
-        const selectedDoctorId =
-            String(
-                selectedDoctorOption.value
-            );
-
-
-        const selectedDoctorName =
-            selectedDoctorOption.dataset.doctorName ||
-            selectedDoctorOption.textContent;
-
-
-        const selectedDoctorSpecialization =
-            selectedDoctorOption.dataset.specialization ||
-            "";
-
-
-        /* =========================
-           STUDENT
-        ========================= */
-
-        const fullStudentName =
-            `${currentStudent.firstName || ""} ${
-                currentStudent.lastName || ""
-            }`.trim();
-
-
-        /* =========================
-           APPOINTMENT ID
-        ========================= */
-
-        const appointmentId =
-            "APT-" +
-            Date.now();
-
-
-        /* =========================
-           APPOINTMENT DATA
-        ========================= */
-
-        const appointment = {
-
-            appointmentId:
-                appointmentId,
-
-            id:
-                appointmentId,
-
-            studentId:
-                studentId,
-
-            studentName:
-                fullStudentName || "Student",
-
-            studentEmail:
-                currentStudent.email || "",
-
-            studentPhone:
-                currentStudent.phone || "",
-
-            matricNumber:
-                currentStudent.matricNumber ||
-                currentStudent.matric ||
-                "",
-
-            service:
-                service.value,
-
-            serviceName:
-                service.options[
-                    service.selectedIndex
-                ].text,
-
-            doctorId:
-                selectedDoctorId,
-
-            doctorName:
-                selectedDoctorName,
-
-            doctorSpecialization:
-                selectedDoctorSpecialization,
-
-            date:
-                appointmentDate.value,
-
-            time:
-                selectedTime.value,
-
-            appointmentType:
-                appointmentType.value,
-
-            appointmentTypeName:
-                appointmentType.options[
-                    appointmentType.selectedIndex
-                ].text,
-
-            reason:
-                reasonText,
-
-            status:
-                "Pending",
-
-            doctorNote:
-                "",
-
-            rejectionReason:
-                "",
-
-            createdAt:
-                new Date().toISOString(),
-
-            updatedAt:
-                new Date().toISOString()
-
-        };
-
-
-        /* =========================
-           DISABLE BUTTON
-        ========================= */
-
-        submitBtn.disabled =
-            true;
-
-        submitBtn.textContent =
-            "Submitting Appointment...";
-
-
-        try {
-
-            console.log(
-                "Sending appointment to backend:",
-                appointment
-            );
-
-
-            /* =========================
-               SEND TO BACKEND
-            ========================= */
-
-            const response =
-                await fetch(
-                    `${API_BASE_URL}/appointments/book`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                appointment
-                            )
-                    }
+                showMessage(
+                    "Your session has expired. Please login again.",
+                    "error"
                 );
 
 
-            console.log(
-                "Appointment response status:",
-                response.status
-            );
+                setTimeout(
+                    function () {
 
+                        window.location.href =
+                            "login.html";
 
-            /* =========================
-               READ RESPONSE SAFELY
-            ========================= */
-
-            const responseText =
-                await response.text();
-
-
-            let data = {};
-
-            try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            } catch (jsonError) {
-
-                console.error(
-                    "Backend returned non-JSON:",
-                    responseText
+                    },
+                    1200
                 );
 
-                throw new Error(
-                    "The server returned an invalid response. Check that the backend is running on port 5001."
-                );
+
+                return;
 
             }
 
 
-            console.log(
-                "Appointment response:",
-                data
-            );
+            /* =========================
+               VALIDATION
+            ========================= */
+
+            if (!service.value) {
+
+                showMessage(
+                    "Please select a healthcare service.",
+                    "error"
+                );
+
+
+                service.focus();
+
+                return;
+
+            }
+
+
+            if (!doctor.value) {
+
+                showMessage(
+                    "Please select a registered healthcare professional.",
+                    "error"
+                );
+
+
+                doctor.focus();
+
+                return;
+
+            }
+
+
+            if (!appointmentDate.value) {
+
+                showMessage(
+                    "Please choose an appointment date.",
+                    "error"
+                );
+
+
+                appointmentDate.focus();
+
+                return;
+
+            }
+
+
+            if (!appointmentType.value) {
+
+                showMessage(
+                    "Please select an appointment type.",
+                    "error"
+                );
+
+
+                appointmentType.focus();
+
+                return;
+
+            }
+
+
+            const selectedTime =
+                document.querySelector(
+                    'input[name="time"]:checked'
+                );
+
+
+            if (!selectedTime) {
+
+                showMessage(
+                    "Please select an available time.",
+                    "error"
+                );
+
+
+                return;
+
+            }
+
+
+            const reasonText =
+                reason.value.trim();
+
+
+            if (!reasonText) {
+
+                showMessage(
+                    "Please enter the reason for your appointment.",
+                    "error"
+                );
+
+
+                reason.focus();
+
+                return;
+
+            }
+
+
+            if (
+                reasonText.length < 10
+            ) {
+
+                showMessage(
+                    "Please provide at least 10 characters for the reason.",
+                    "error"
+                );
+
+
+                reason.focus();
+
+                return;
+
+            }
 
 
             /* =========================
-               BACKEND ERROR
+               DATE VALIDATION
+            ========================= */
+
+            const selectedDate =
+                new Date(
+                    appointmentDate.value +
+                    "T00:00:00"
+                );
+
+
+            const currentDate =
+                new Date();
+
+
+            currentDate.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            if (
+                selectedDate < currentDate
+            ) {
+
+                showMessage(
+                    "You cannot book an appointment in the past.",
+                    "error"
+                );
+
+
+                return;
+
+            }
+
+
+            /* =========================
+               DUPLICATE CHECK
             ========================= */
 
             if (
-                !response.ok ||
-                data.success === false
+                appointmentAlreadyExists(
+                    appointmentDate.value,
+                    selectedTime.value
+                )
             ) {
 
-                throw new Error(
-                    data.message ||
-                    "Appointment could not be booked."
+                showMessage(
+                    "You already have an appointment at this date and time.",
+                    "error"
                 );
+
+
+                return;
 
             }
 
 
             /* =========================
-               SAVE LOCAL COPY
-               ONLY AFTER BACKEND SUCCESS
+               DOCTOR
             ========================= */
 
-            const appointments =
-                getAppointments();
+            const selectedDoctorOption =
+                doctor.options[
+                    doctor.selectedIndex
+                ];
 
-            appointments.push(
-                appointment
-            );
 
-            saveAppointments(
-                appointments
-            );
+            const selectedDoctorId =
+                String(
+                    selectedDoctorOption.value
+                );
+
+
+            const selectedDoctorName =
+                selectedDoctorOption.dataset.doctorName ||
+                selectedDoctorOption.textContent;
+
+
+            const selectedDoctorSpecialization =
+                selectedDoctorOption.dataset.specialization ||
+                "";
 
 
             /* =========================
-               NOTIFICATION
+               STUDENT
             ========================= */
 
-            addNotification(
-                "Appointment Submitted",
-                `Your ${appointment.serviceName} appointment with ${appointment.doctorName} has been submitted and is waiting for approval.`
-            );
+            const fullStudentName =
+                `${currentStudent.firstName || ""} ${
+                    currentStudent.lastName || ""
+                }`.trim();
 
 
             /* =========================
-               ACTIVITY
+               APPOINTMENT ID
             ========================= */
 
-            addRecentActivity(
-                "Appointment Submitted",
-                `${appointment.serviceName} with ${appointment.doctorName}`
-            );
+            const appointmentId =
+                "APT-" +
+                Date.now();
 
 
             /* =========================
-               SUCCESS
+               APPOINTMENT DATA
             ========================= */
 
-            alert(
-                "Appointment submitted successfully!\n\n" +
-                "Appointment ID: " +
-                (
-                    data.appointment?.appointmentId ||
-                    data.appointment?.id ||
-                    appointmentId
-                ) +
-                "\n\n" +
-                "Status: Pending Approval"
-            );
+            const appointment = {
+
+                appointmentId:
+                    appointmentId,
+
+                id:
+                    appointmentId,
+
+                studentId:
+                    studentId,
+
+                studentName:
+                    fullStudentName ||
+                    "Student",
+
+                studentEmail:
+                    currentStudent.email ||
+                    "",
+
+                studentPhone:
+                    currentStudent.phone ||
+                    "",
+
+                matricNumber:
+                    currentStudent.matricNumber ||
+                    currentStudent.matric ||
+                    "",
+
+                service:
+                    service.value,
+
+                serviceName:
+                    service.options[
+                        service.selectedIndex
+                    ].text,
+
+                doctorId:
+                    selectedDoctorId,
+
+                doctorName:
+                    selectedDoctorName,
+
+                doctorSpecialization:
+                    selectedDoctorSpecialization,
+
+                date:
+                    appointmentDate.value,
+
+                time:
+                    selectedTime.value,
+
+                appointmentType:
+                    appointmentType.value,
+
+                appointmentTypeName:
+                    appointmentType.options[
+                        appointmentType.selectedIndex
+                    ].text,
+
+                reason:
+                    reasonText,
+
+                status:
+                    "Pending",
+
+                doctorNote:
+                    "",
+
+                rejectionReason:
+                    "",
+
+                createdAt:
+                    new Date().toISOString(),
+
+                updatedAt:
+                    new Date().toISOString()
+
+            };
 
 
             /* =========================
-               RESET
+               DISABLE BUTTON
             ========================= */
-
-            appointmentForm.reset();
-
-            updateSummary();
-
-
-            /* =========================
-               REDIRECT
-            ========================= */
-
-            window.location.href =
-                "my appointment.html";
-
-
-        } catch (error) {
-
-            console.error(
-                "Appointment booking error:",
-                error
-            );
-
-
-            alert(
-                "Appointment booking failed.\n\n" +
-                error.message
-            );
-
-
-        } finally {
 
             submitBtn.disabled =
-                false;
+                true;
+
 
             submitBtn.textContent =
-                "Confirm Appointment";
+                "Submitting Appointment...";
+
+
+            try {
+
+                console.log(
+                    "Sending appointment to backend:",
+                    appointment
+                );
+
+
+                /* =========================
+                   SEND TO RENDER BACKEND
+                ========================= */
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/appointments/book`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    appointment
+                                )
+                        }
+                    );
+
+
+                console.log(
+                    "Appointment response status:",
+                    response.status
+                );
+
+
+                /* =========================
+                   READ RESPONSE SAFELY
+                ========================= */
+
+                const responseText =
+                    await response.text();
+
+
+                let data = {};
+
+
+                try {
+
+                    data =
+                        JSON.parse(
+                            responseText
+                        );
+
+                } catch (jsonError) {
+
+                    console.error(
+                        "Backend returned non-JSON:",
+                        responseText
+                    );
+
+
+                    throw new Error(
+                        "The server returned an unexpected response. Please try again."
+                    );
+
+                }
+
+
+                console.log(
+                    "Appointment response:",
+                    data
+                );
+
+
+                /* =========================
+                   BACKEND ERROR
+                ========================= */
+
+                if (
+                    !response.ok ||
+                    data.success === false
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Appointment could not be booked."
+                    );
+
+                }
+
+
+                /* =========================
+                   SAVE LOCAL COPY
+                   ONLY AFTER BACKEND SUCCESS
+                ========================= */
+
+                const appointments =
+                    getAppointments();
+
+
+                appointments.push(
+                    appointment
+                );
+
+
+                saveAppointments(
+                    appointments
+                );
+
+
+                /* =========================
+                   NOTIFICATION
+                ========================= */
+
+                addNotification(
+                    "Appointment Submitted",
+                    `Your ${appointment.serviceName} appointment with ${appointment.doctorName} has been submitted and is waiting for approval.`
+                );
+
+
+                /* =========================
+                   ACTIVITY
+                ========================= */
+
+                addRecentActivity(
+                    "Appointment Submitted",
+                    `${appointment.serviceName} with ${appointment.doctorName}`
+                );
+
+
+                /* =========================
+                   SUCCESS MESSAGE
+                ========================= */
+
+                const finalAppointmentId =
+                    data.appointment?.appointmentId ||
+                    data.appointment?.id ||
+                    appointmentId;
+
+
+                showMessage(
+                    `Appointment submitted successfully. Appointment ID: ${finalAppointmentId}. Status: Pending Approval.`,
+                    "success"
+                );
+
+
+                /* =========================
+                   RESET FORM
+                ========================= */
+
+                appointmentForm.reset();
+
+
+                updateSummary();
+
+
+                /* =========================
+                   REDIRECT
+                ========================= */
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "my appointment.html";
+
+                    },
+                    1500
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Appointment booking error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message ||
+                    "Appointment booking failed. Please try again.",
+                    "error"
+                );
+
+
+            } finally {
+
+                submitBtn.disabled =
+                    false;
+
+
+                submitBtn.textContent =
+                    "Confirm Appointment";
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
@@ -2616,7 +2912,7 @@ loadNotifications();
 
 
 setInterval(
-    function() {
+    function () {
 
         updateNotifications();
 

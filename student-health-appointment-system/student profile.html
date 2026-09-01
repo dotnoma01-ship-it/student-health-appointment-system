@@ -1464,6 +1464,7 @@
     </main>
 
 
+
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1491,8 +1492,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        CURRENT STUDENT
-       IMPORTANT:
-       We only use the currently logged-in student.
     ===================================================== */
 
     let currentStudent = null;
@@ -1540,8 +1539,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        CREATE UNIQUE STUDENT KEY
-       This prevents Student A from seeing
-       Student B's notifications.
     ===================================================== */
 
     function getStudentKey(student) {
@@ -1554,8 +1551,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return "id_" +
                 String(student._id)
-                .trim()
-                .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
         }
 
@@ -1563,8 +1560,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return "id_" +
                 String(student.id)
-                .trim()
-                .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
         }
 
@@ -1572,8 +1569,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return "email_" +
                 String(student.email)
-                .trim()
-                .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
         }
 
@@ -1581,8 +1578,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return "matric_" +
                 String(student.matricNumber)
-                .trim()
-                .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
         }
 
@@ -1655,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       ACADEMIC
+       ACADEMIC INFORMATION
     ===================================================== */
 
     const infoMatric =
@@ -1681,6 +1678,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getFullName(student = currentStudent) {
 
+        if (!student) {
+            return "Student";
+        }
+
         const first =
             student.firstName || "";
 
@@ -1689,7 +1690,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return (
             first + " " + last
-        ).trim();
+        ).trim() || "Student";
 
     }
 
@@ -1700,18 +1701,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getInitials(student = currentStudent) {
 
+        if (!student) {
+            return "ST";
+        }
+
         const first =
-            (
-                student.firstName ||
-                ""
+            String(
+                student.firstName || ""
             )
             .charAt(0)
             .toUpperCase();
 
         const last =
-            (
-                student.lastName ||
-                ""
+            String(
+                student.lastName || ""
             )
             .charAt(0)
             .toUpperCase();
@@ -1740,68 +1743,119 @@ document.addEventListener("DOMContentLoaded", function () {
             getInitials();
 
 
-        firstName.value =
-            currentStudent.firstName || "";
+        if (firstName) {
+            firstName.value =
+                currentStudent.firstName || "";
+        }
 
-        lastName.value =
-            currentStudent.lastName || "";
+        if (lastName) {
+            lastName.value =
+                currentStudent.lastName || "";
+        }
 
-        email.value =
-            currentStudent.email || "";
+        if (email) {
+            email.value =
+                currentStudent.email || "";
+        }
 
-        phone.value =
-            currentStudent.phone || "";
+        if (phone) {
+            phone.value =
+                currentStudent.phone || "";
+        }
 
-        matric.value =
-            currentStudent.matricNumber || "";
+        if (matric) {
+            matric.value =
+                currentStudent.matricNumber || "";
+        }
 
-        gender.value =
-            currentStudent.gender || "";
+        if (gender) {
+            gender.value =
+                currentStudent.gender || "";
+        }
 
-        department.value =
-            currentStudent.department || "";
+        if (department) {
+            department.value =
+                currentStudent.department || "";
+        }
 
-        level.value =
-            currentStudent.level || "";
+        if (level) {
+            level.value =
+                currentStudent.level || "";
+        }
 
 
-        profileName.textContent =
-            fullName || "Student";
+        if (profileName) {
+
+            profileName.textContent =
+                fullName;
+
+        }
 
 
-        profileDescription.textContent =
-            (
+        if (profileDescription) {
+
+            profileDescription.textContent =
+                (
+                    currentStudent.department ||
+                    "Student"
+                ) +
+                (
+                    currentStudent.level
+                        ? " • " +
+                          currentStudent.level
+                        : ""
+                );
+
+        }
+
+
+        if (avatar) {
+            avatar.textContent =
+                initials;
+        }
+
+        if (topAvatar) {
+            topAvatar.textContent =
+                initials;
+        }
+
+        if (topProfileName) {
+            topProfileName.textContent =
+                fullName;
+        }
+
+
+        if (infoMatric) {
+
+            infoMatric.textContent =
+                currentStudent.matricNumber ||
+                "—";
+
+        }
+
+        if (infoDepartment) {
+
+            infoDepartment.textContent =
                 currentStudent.department ||
-                "Student"
-            ) +
-            (
-                currentStudent.level
-                    ? " • " + currentStudent.level
-                    : ""
-            );
+                "—";
 
+        }
 
-        avatar.textContent =
-            initials;
+        if (infoLevel) {
 
-        topAvatar.textContent =
-            initials;
+            infoLevel.textContent =
+                currentStudent.level ||
+                "—";
 
-        topProfileName.textContent =
-            fullName || "Student";
+        }
 
+        if (securityEmail) {
 
-        infoMatric.textContent =
-            currentStudent.matricNumber || "—";
+            securityEmail.textContent =
+                currentStudent.email ||
+                "—";
 
-        infoDepartment.textContent =
-            currentStudent.department || "—";
-
-        infoLevel.textContent =
-            currentStudent.level || "—";
-
-        securityEmail.textContent =
-            currentStudent.email || "—";
+        }
 
     }
 
@@ -1824,7 +1878,9 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     const saveBtn =
-        document.getElementById("saveBtn");
+        document.getElementById(
+            "saveBtn"
+        );
 
     const successMessage =
         document.getElementById(
@@ -1845,77 +1901,125 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
 
-    editProfileBtn.addEventListener(
-        "click",
-        function () {
+    if (editProfileBtn) {
 
-            editableFields.forEach(function (id) {
+        editProfileBtn.addEventListener(
+            "click",
+            function () {
 
-                const field =
-                    document.getElementById(id);
+                editableFields.forEach(
+                    function (id) {
 
-                if (field) {
+                        const field =
+                            document.getElementById(id);
 
-                    field.disabled = false;
+                        if (field) {
+
+                            field.disabled =
+                                false;
+
+                        }
+
+                    }
+                );
+
+
+                if (matric) {
+                    matric.disabled = true;
+                }
+
+
+                editProfileBtn.style.display =
+                    "none";
+
+
+                if (saveBtn) {
+
+                    saveBtn.style.display =
+                        "block";
 
                 }
 
-            });
 
-            matric.disabled = true;
+                if (cancelEditBtn) {
 
-            editProfileBtn.style.display =
-                "none";
+                    cancelEditBtn.style.display =
+                        "block";
 
-            saveBtn.style.display =
-                "block";
+                }
 
-            cancelEditBtn.style.display =
-                "block";
+            }
+        );
 
-        }
-    );
+    }
 
 
     /* =====================================================
        CANCEL EDIT
     ===================================================== */
 
-    cancelEditBtn.addEventListener(
-        "click",
-        function () {
+    if (cancelEditBtn) {
 
-            loadProfile();
+        cancelEditBtn.addEventListener(
+            "click",
+            function () {
 
-            editableFields.forEach(function (id) {
+                loadProfile();
 
-                const field =
-                    document.getElementById(id);
 
-                if (field) {
+                editableFields.forEach(
+                    function (id) {
 
-                    field.disabled = true;
+                        const field =
+                            document.getElementById(id);
+
+                        if (field) {
+
+                            field.disabled =
+                                true;
+
+                        }
+
+                    }
+                );
+
+
+                if (matric) {
+                    matric.disabled = true;
+                }
+
+
+                if (editProfileBtn) {
+
+                    editProfileBtn.style.display =
+                        "block";
 
                 }
 
-            });
 
-            matric.disabled = true;
+                if (saveBtn) {
 
-            editProfileBtn.style.display =
-                "block";
+                    saveBtn.style.display =
+                        "none";
 
-            saveBtn.style.display =
-                "none";
+                }
 
-            cancelEditBtn.style.display =
-                "none";
 
-            successMessage.style.display =
-                "none";
+                cancelEditBtn.style.display =
+                    "none";
 
-        }
-    );
+
+                if (successMessage) {
+
+                    successMessage.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
 
 
     /* =====================================================
@@ -1928,212 +2032,321 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-    profileForm.addEventListener(
-        "submit",
-        function (event) {
+    if (profileForm) {
 
-            event.preventDefault();
+        profileForm.addEventListener(
+            "submit",
+            function (event) {
 
-
-            const updatedFirstName =
-                firstName.value.trim();
-
-            const updatedLastName =
-                lastName.value.trim();
-
-            const updatedEmail =
-                email.value.trim();
-
-            const updatedPhone =
-                phone.value.trim();
-
-            const updatedGender =
-                gender.value;
-
-            const updatedDepartment =
-                department.value.trim();
-
-            const updatedLevel =
-                level.value;
+                event.preventDefault();
 
 
-            if (
+                const updatedFirstName =
+                    firstName
+                        ? firstName.value.trim()
+                        : "";
 
-                updatedFirstName === "" ||
-                updatedLastName === "" ||
-                updatedEmail === "" ||
-                updatedPhone === "" ||
-                updatedGender === "" ||
-                updatedDepartment === "" ||
-                updatedLevel === ""
+                const updatedLastName =
+                    lastName
+                        ? lastName.value.trim()
+                        : "";
 
-            ) {
+                const updatedEmail =
+                    email
+                        ? email.value.trim()
+                        : "";
 
-                alert(
-                    "Please fill in all required fields."
+                const updatedPhone =
+                    phone
+                        ? phone.value.trim()
+                        : "";
+
+                const updatedGender =
+                    gender
+                        ? gender.value
+                        : "";
+
+                const updatedDepartment =
+                    department
+                        ? department.value.trim()
+                        : "";
+
+                const updatedLevel =
+                    level
+                        ? level.value
+                        : "";
+
+
+                if (
+
+                    updatedFirstName === "" ||
+                    updatedLastName === "" ||
+                    updatedEmail === "" ||
+                    updatedPhone === "" ||
+                    updatedGender === "" ||
+                    updatedDepartment === "" ||
+                    updatedLevel === ""
+
+                ) {
+
+                    showMessage(
+                        "Please fill in all required fields.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                /* UPDATE CURRENT STUDENT */
+
+                currentStudent.firstName =
+                    updatedFirstName;
+
+                currentStudent.lastName =
+                    updatedLastName;
+
+                currentStudent.email =
+                    updatedEmail;
+
+                currentStudent.phone =
+                    updatedPhone;
+
+                currentStudent.gender =
+                    updatedGender;
+
+                currentStudent.department =
+                    updatedDepartment;
+
+                currentStudent.level =
+                    updatedLevel;
+
+
+                /* SAVE CURRENT SESSION */
+
+                localStorage.setItem(
+                    "currentStudent",
+                    JSON.stringify(
+                        currentStudent
+                    )
                 );
 
-                return;
 
-            }
+                /* =========================================
+                   UPDATE LOCAL STUDENTS ARRAY
+                ========================================== */
 
-
-            currentStudent.firstName =
-                updatedFirstName;
-
-            currentStudent.lastName =
-                updatedLastName;
-
-            currentStudent.email =
-                updatedEmail;
-
-            currentStudent.phone =
-                updatedPhone;
-
-            currentStudent.gender =
-                updatedGender;
-
-            currentStudent.department =
-                updatedDepartment;
-
-            currentStudent.level =
-                updatedLevel;
+                let students = [];
 
 
-            localStorage.setItem(
-                "currentStudent",
-                JSON.stringify(currentStudent)
-            );
+                try {
+
+                    students =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "students"
+                            )
+                        ) || [];
+
+                } catch (error) {
+
+                    students = [];
+
+                }
 
 
-            /*
-             * Update the local students array
-             * ONLY for the current student.
-             */
+                const studentIndex =
+                    students.findIndex(
+                        function (student) {
 
-            let students = [];
-
-            try {
-
-                students =
-                    JSON.parse(
-                        localStorage.getItem(
-                            "students"
-                        )
-                    ) || [];
-
-            } catch (error) {
-
-                students = [];
-
-            }
-
-
-            const studentIndex =
-                students.findIndex(
-                    function (student) {
-
-                        if (
-                            student._id &&
-                            currentStudent._id
-                        ) {
-
-                            return String(
-                                student._id
-                            ) === String(
+                            if (
+                                student._id &&
                                 currentStudent._id
-                            );
+                            ) {
 
-                        }
+                                return (
+                                    String(
+                                        student._id
+                                    ) ===
+                                    String(
+                                        currentStudent._id
+                                    )
+                                );
 
-                        if (
-                            student.id &&
-                            currentStudent.id
-                        ) {
+                            }
 
-                            return String(
-                                student.id
-                            ) === String(
+
+                            if (
+                                student.id &&
                                 currentStudent.id
-                            );
+                            ) {
 
-                        }
+                                return (
+                                    String(
+                                        student.id
+                                    ) ===
+                                    String(
+                                        currentStudent.id
+                                    )
+                                );
 
-                        return (
-                            student.email &&
-                            currentStudent.email &&
-                            student.email
+                            }
+
+
+                            return (
+                                student.email &&
+                                currentStudent.email &&
+                                String(
+                                    student.email
+                                )
                                 .toLowerCase()
                                 .trim() ===
-                            currentStudent.email
+                                String(
+                                    currentStudent.email
+                                )
                                 .toLowerCase()
                                 .trim()
-                        );
+                            );
+
+                        }
+                    );
+
+
+                if (studentIndex !== -1) {
+
+                    students[studentIndex] =
+                        {
+                            ...students[studentIndex],
+                            ...currentStudent
+                        };
+
+                }
+
+
+                localStorage.setItem(
+                    "students",
+                    JSON.stringify(
+                        students
+                    )
+                );
+
+
+                /* DISABLE FIELDS */
+
+                editableFields.forEach(
+                    function (id) {
+
+                        const field =
+                            document.getElementById(id);
+
+                        if (field) {
+
+                            field.disabled =
+                                true;
+
+                        }
 
                     }
                 );
 
 
-            if (studentIndex !== -1) {
-
-                students[studentIndex] =
-                    currentStudent;
-
-            }
+                if (matric) {
+                    matric.disabled = true;
+                }
 
 
-            localStorage.setItem(
-                "students",
-                JSON.stringify(students)
-            );
+                if (editProfileBtn) {
 
-
-            editableFields.forEach(function (id) {
-
-                const field =
-                    document.getElementById(id);
-
-                if (field) {
-
-                    field.disabled = true;
+                    editProfileBtn.style.display =
+                        "block";
 
                 }
 
-            });
+
+                if (saveBtn) {
+
+                    saveBtn.style.display =
+                        "none";
+
+                }
 
 
-            matric.disabled = true;
+                if (cancelEditBtn) {
+
+                    cancelEditBtn.style.display =
+                        "none";
+
+                }
 
 
-            editProfileBtn.style.display =
-                "block";
-
-            saveBtn.style.display =
-                "none";
-
-            cancelEditBtn.style.display =
-                "none";
+                loadProfile();
 
 
-            loadProfile();
+                showMessage(
+                    "Profile updated successfully.",
+                    "success"
+                );
+
+            }
+        );
+
+    }
 
 
-            successMessage.textContent =
-                "Profile updated successfully.";
+    /* =====================================================
+       MESSAGE SYSTEM
+       REPLACES BROWSER ALERT()
+    ===================================================== */
 
-            successMessage.style.display =
-                "block";
+    function showMessage(message, type = "info") {
 
+        if (!successMessage) {
 
-            setTimeout(function () {
+            console.log(message);
 
-                successMessage.style.display =
-                    "none";
-
-            }, 3000);
+            return;
 
         }
-    );
+
+
+        successMessage.textContent =
+            message;
+
+
+        successMessage.style.display =
+            "block";
+
+
+        successMessage.classList.remove(
+            "success",
+            "error",
+            "info"
+        );
+
+
+        successMessage.classList.add(
+            type
+        );
+
+
+        clearTimeout(
+            successMessage.hideTimer
+        );
+
+
+        successMessage.hideTimer =
+            setTimeout(
+                function () {
+
+                    successMessage.style.display =
+                        "none";
+
+                },
+                3500
+            );
+
+    }
 
 
     /* =====================================================
@@ -2190,20 +2403,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       STUDENT-SPECIFIC NOTIFICATION STORAGE
-       
-       OLD:
-       localStorage["notifications"]
-
-       NEW:
-       localStorage["notifications_email_student@email.com"]
-
-       This means every student gets their own
-       notification storage.
+       STUDENT-SPECIFIC NOTIFICATION KEY
     ===================================================== */
 
     const notificationStorageKey =
-        "notifications_" + studentKey;
+        "notifications_" +
+        studentKey;
 
 
     console.log(
@@ -2213,21 +2418,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       LOAD THIS STUDENT'S NOTIFICATIONS ONLY
+       LOAD NOTIFICATIONS
     ===================================================== */
 
     let notifications = [];
 
+
     try {
 
-        notifications =
-            JSON.parse(
-                localStorage.getItem(
-                    notificationStorageKey
-                )
-            ) || [];
+        const storedNotifications =
+            localStorage.getItem(
+                notificationStorageKey
+            );
+
+
+        if (storedNotifications) {
+
+            notifications =
+                JSON.parse(
+                    storedNotifications
+                );
+
+        }
 
     } catch (error) {
+
+        console.error(
+            "Unable to load notifications:",
+            error
+        );
+
+        notifications = [];
+
+    }
+
+
+    if (!Array.isArray(notifications)) {
 
         notifications = [];
 
@@ -2242,7 +2468,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         localStorage.setItem(
             notificationStorageKey,
-            JSON.stringify(notifications)
+            JSON.stringify(
+                notifications
+            )
         );
 
     }
@@ -2260,7 +2488,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         notifications.unshift({
 
-            id: Date.now(),
+            id:
+                Date.now(),
 
             studentKey:
                 studentKey,
@@ -2278,9 +2507,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 false,
 
             date:
-                new Date().toLocaleString()
+                new Date()
+                    .toLocaleString()
 
         });
+
+
+        if (notifications.length > 50) {
+
+            notifications =
+                notifications.slice(
+                    0,
+                    50
+                );
+
+        }
 
 
         saveNotifications();
@@ -2291,29 +2532,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(value) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            value == null
+                ? ""
+                : String(value);
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =====================================================
        UPDATE NOTIFICATION UI
     ===================================================== */
 
     function updateNotificationUI() {
 
-        notificationList.innerHTML = "";
+        if (!notificationList) {
+            return;
+        }
 
 
-        /*
-         * EXTRA SAFETY:
-         * Only display notifications belonging
-         * to this student.
-         */
+        notificationList.innerHTML =
+            "";
+
 
         const studentNotifications =
-            notifications.filter(function (notification) {
+            notifications.filter(
+                function (notification) {
 
-                return (
-                    !notification.studentKey ||
-                    notification.studentKey === studentKey
-                );
+                    return (
+                        !notification.studentKey ||
+                        notification.studentKey ===
+                            studentKey
+                    );
 
-            });
+                }
+            );
 
 
         const unread =
@@ -2326,18 +2589,24 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-        if (unread.length === 0) {
+        if (notificationCount) {
 
-            notificationCount.style.display =
-                "none";
+            if (unread.length === 0) {
 
-        } else {
+                notificationCount.style.display =
+                    "none";
 
-            notificationCount.style.display =
-                "flex";
+            } else {
 
-            notificationCount.textContent =
-                unread.length;
+                notificationCount.style.display =
+                    "flex";
+
+                notificationCount.textContent =
+                    unread.length > 99
+                        ? "99+"
+                        : unread.length;
+
+            }
 
         }
 
@@ -2348,7 +2617,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <div class="empty-notification">
 
-                    No notifications yet.
+                    <div style="
+                        font-size:25px;
+                        margin-bottom:8px;
+                    ">
+                        🔕
+                    </div>
+
+                    <strong>
+                        No notifications
+                    </strong>
+
+                    <p>
+                        You have no notifications yet.
+                    </p>
 
                 </div>
 
@@ -2359,53 +2641,95 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        studentNotifications.forEach(
-            function (note) {
+        studentNotifications
+            .sort(
+                function (a, b) {
 
-                let icon = "🔔";
-
-
-                if (note.type === "success") {
-
-                    icon = "✅";
-
-                }
-
-                if (note.type === "warning") {
-
-                    icon = "⚠️";
-
-                }
-
-                if (
-                    note.type === "cancel" ||
-                    note.type === "rejected"
-                ) {
-
-                    icon = "❌";
+                    return (
+                        new Date(
+                            b.createdAt ||
+                            b.date ||
+                            0
+                        ) -
+                        new Date(
+                            a.createdAt ||
+                            a.date ||
+                            0
+                        )
+                    );
 
                 }
+            )
+            .forEach(
+                function (note) {
+
+                    let icon =
+                        "🔔";
 
 
-                /*
-                 * Find the original notification index
-                 * so marking it read still works.
-                 */
+                    if (
+                        note.type ===
+                        "success"
+                    ) {
 
-                const originalIndex =
-                    notifications.indexOf(note);
+                        icon =
+                            "✅";
+
+                    }
 
 
-                notificationList.innerHTML += `
+                    if (
+                        note.type ===
+                        "warning"
+                    ) {
 
-                    <div
-                        class="notification-item ${
+                        icon =
+                            "⚠️";
+
+                    }
+
+
+                    if (
+                        note.type ===
+                            "cancel" ||
+                        note.type ===
+                            "rejected" ||
+                        note.type ===
+                            "declined"
+                    ) {
+
+                        icon =
+                            "❌";
+
+                    }
+
+
+                    const originalIndex =
+                        notifications.indexOf(
+                            note
+                        );
+
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.className =
+                        "notification-item" +
+                        (
                             note.read
                                 ? ""
-                                : "unread"
-                        }"
-                        data-index="${originalIndex}"
-                    >
+                                : " unread"
+                        );
+
+
+                    item.dataset.index =
+                        originalIndex;
+
+
+                    item.innerHTML = `
 
                         <div class="notification-icon">
 
@@ -2432,15 +2756,95 @@ document.addEventListener("DOMContentLoaded", function () {
                             <small>
                                 ${escapeHTML(
                                     note.date ||
+                                    note.time ||
                                     "Recently"
                                 )}
                             </small>
 
                         </div>
 
-                    </div>
+                    `;
 
-                `;
+
+                    item.addEventListener(
+                        "click",
+                        function () {
+
+                            const index =
+                                Number(
+                                    item.dataset.index
+                                );
+
+
+                            if (
+                                notifications[index]
+                            ) {
+
+                                notifications[index]
+                                    .read =
+                                    true;
+
+
+                                saveNotifications();
+
+                                updateNotificationUI();
+
+                            }
+
+                        }
+                    );
+
+
+                    notificationList.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       OPEN / CLOSE NOTIFICATION CENTER
+    ===================================================== */
+
+    if (
+        notificationButton &&
+        notificationPanel
+    ) {
+
+        notificationButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                const isOpen =
+                    notificationPanel.classList
+                        .contains("show");
+
+
+                notificationPanel.classList.toggle(
+                    "show"
+                );
+
+
+                notificationButton.setAttribute(
+                    "aria-expanded",
+                    String(!isOpen)
+                );
+
+            }
+        );
+
+
+        notificationPanel.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
 
             }
         );
@@ -2449,127 +2853,138 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
-    function escapeHTML(value) {
-
-        const div =
-            document.createElement("div");
-
-        div.textContent =
-            String(value);
-
-        return div.innerHTML;
-
-    }
-
-
-    /* =====================================================
-       OPEN NOTIFICATIONS
-    ===================================================== */
-
-    notificationButton.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-            notificationPanel.classList.toggle(
-                "show"
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       KEEP PANEL OPEN
-    ===================================================== */
-
-    notificationPanel.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-        }
-    );
-
-
-    /* =====================================================
-       CLOSE OUTSIDE
+       CLOSE NOTIFICATIONS OUTSIDE
     ===================================================== */
 
     document.addEventListener(
         "click",
-        function () {
+        function (event) {
 
-            notificationPanel.classList.remove(
-                "show"
-            );
+            if (
+                notificationPanel &&
+                notificationButton
+            ) {
+
+                if (
+                    !notificationPanel.contains(
+                        event.target
+                    ) &&
+                    !notificationButton.contains(
+                        event.target
+                    )
+                ) {
+
+                    notificationPanel.classList.remove(
+                        "show"
+                    );
+
+
+                    notificationButton.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
 
         }
     );
 
 
     /* =====================================================
-       MARK NOTIFICATION AS READ
+       MARK ALL AS READ
     ===================================================== */
 
-    notificationList.addEventListener(
-        "click",
-        function (event) {
-
-            const item =
-                event.target.closest(
-                    ".notification-item"
-                );
+    const markAllRead =
+        document.getElementById(
+            "markAllRead"
+        );
 
 
-            if (!item) {
-                return;
-            }
+    if (markAllRead) {
+
+        markAllRead.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
 
 
-            const index =
-                Number(
-                    item.dataset.index
-                );
+                notifications =
+                    notifications.map(
+                        function (notification) {
 
+                            return {
+                                ...notification,
+                                read: true
+                            };
 
-            if (notifications[index]) {
+                        }
+                    );
 
-                notifications[index].read =
-                    true;
 
                 saveNotifications();
 
                 updateNotificationUI();
 
             }
+        );
 
-        }
-    );
+    }
 
 
     /* =====================================================
-       CLEAR THIS STUDENT'S NOTIFICATIONS ONLY
+       CLEAR NOTIFICATIONS
     ===================================================== */
 
-    function clearNotifications() {
+    const clearNotifications =
+        document.getElementById(
+            "clearNotifications"
+        );
 
-        notifications = [];
 
-        saveNotifications();
+    if (clearNotifications) {
 
-        updateNotificationUI();
+        clearNotifications.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                if (
+                    notifications.length ===
+                    0
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * No browser confirm().
+                 * Clear directly because this page
+                 * stores only this student's notifications.
+                 */
+
+                notifications = [];
+
+
+                saveNotifications();
+
+                updateNotificationUI();
+
+            }
+        );
 
     }
 
 
     /* =====================================================
        VERIFY EMAIL
+       REPLACES alert()
     ===================================================== */
 
     const verifyEmailBtn =
@@ -2584,8 +2999,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             function () {
 
-                alert(
-                    "Email verification will be available soon."
+                showMessage(
+                    "Email verification will be available soon.",
+                    "info"
                 );
 
             }
@@ -2601,9 +3017,15 @@ document.addEventListener("DOMContentLoaded", function () {
     updateNotificationUI();
 
 
+    console.log(
+        "Student Health Profile Page Ready"
+    );
+
 });
 
 </script>
+
+
 
 </body>
 </html>

@@ -1361,7 +1361,7 @@
     </main>
 
 
-    <script>
+<script>
 
         /* =====================================================
            MOBILE SIDEBAR
@@ -1581,11 +1581,6 @@
             }
 
 
-            /*
-             * Only show notifications belonging
-             * to the current student when studentId exists.
-             */
-
             if (currentStudent && currentStudent.id) {
 
                 notifications =
@@ -1673,7 +1668,9 @@
 
                 return (
                     minutes +
-                    (minutes === 1 ? " minute ago" : " minutes ago")
+                    (minutes === 1
+                        ? " minute ago"
+                        : " minutes ago")
                 );
 
             }
@@ -1689,7 +1686,9 @@
 
                 return (
                     hours +
-                    (hours === 1 ? " hour ago" : " hours ago")
+                    (hours === 1
+                        ? " hour ago"
+                        : " hours ago")
                 );
 
             }
@@ -1705,7 +1704,9 @@
 
                 return (
                     days +
-                    (days === 1 ? " day ago" : " days ago")
+                    (days === 1
+                        ? " day ago"
+                        : " days ago")
                 );
 
             }
@@ -1750,33 +1751,29 @@
                 );
 
 
-            /*
-             * Update notification badge
-             */
+            if (notificationCount) {
 
-            if (unreadNotifications.length > 0) {
+                if (unreadNotifications.length > 0) {
 
-                notificationCount.textContent =
-                    unreadNotifications.length > 99
-                        ? "99+"
-                        : unreadNotifications.length;
+                    notificationCount.textContent =
+                        unreadNotifications.length > 99
+                            ? "99+"
+                            : unreadNotifications.length;
 
-                notificationCount.classList.add(
-                    "show"
-                );
+                    notificationCount.classList.add(
+                        "show"
+                    );
 
-            } else {
+                } else {
 
-                notificationCount.classList.remove(
-                    "show"
-                );
+                    notificationCount.classList.remove(
+                        "show"
+                    );
+
+                }
 
             }
 
-
-            /*
-             * Empty state
-             */
 
             if (notifications.length === 0) {
 
@@ -1804,10 +1801,6 @@
 
             }
 
-
-            /*
-             * Newest notifications first
-             */
 
             notifications.sort(
                 function (a, b) {
@@ -1860,7 +1853,7 @@
                             >
 
                                 <div class="notification-icon">
-                                    ${icon}
+                                    ${escapeHtml(icon)}
                                 </div>
 
                                 <div class="notification-item-content">
@@ -1874,7 +1867,9 @@
                                     </p>
 
                                     <span class="notification-time">
-                                        ${formatNotificationTime(notification.createdAt)}
+                                        ${formatNotificationTime(
+                                            notification.createdAt
+                                        )}
                                     </span>
 
                                 </div>
@@ -1888,10 +1883,6 @@
                     }
                 ).join("");
 
-
-            /*
-             * Add click events
-             */
 
             const notificationItems =
                 document.querySelectorAll(
@@ -2024,11 +2015,6 @@
                     notifications.forEach(
                         function (notification) {
 
-                            /*
-                             * Only mark the current student's
-                             * notifications as read.
-                             */
-
                             if (
                                 currentStudent &&
                                 currentStudent.id &&
@@ -2075,18 +2061,10 @@
                     event.stopPropagation();
 
 
-                    const confirmed =
-                        confirm(
-                            "Clear all your notifications?"
-                        );
-
-
-                    if (!confirmed) {
-
-                        return;
-
-                    }
-
+                    /*
+                     * No browser confirm().
+                     * Notifications are cleared directly.
+                     */
 
                     let notifications =
                         getAllStoredNotifications();
@@ -2134,7 +2112,10 @@
            OPEN / CLOSE NOTIFICATION CENTER
         ===================================================== */
 
-        if (notificationButton) {
+        if (
+            notificationButton &&
+            notificationPanel
+        ) {
 
             notificationButton.addEventListener(
                 "click",
@@ -2201,15 +2182,23 @@
                     !wrapper.contains(event.target)
                 ) {
 
-                    notificationPanel.classList.remove(
-                        "open"
-                    );
+                    if (notificationPanel) {
+
+                        notificationPanel.classList.remove(
+                            "open"
+                        );
+
+                    }
 
 
-                    notificationButton.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
+                    if (notificationButton) {
+
+                        notificationButton.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
 
                 }
 
@@ -2237,10 +2226,6 @@
             }
         );
 
-
-        /*
-         * Render notifications when page loads.
-         */
 
         renderNotifications();
 
@@ -2326,6 +2311,10 @@
                         ).value.trim();
 
 
+                    /* =========================================
+                       VALIDATION
+                    ========================================= */
+
                     if (
                         name === "" ||
                         email === "" ||
@@ -2333,9 +2322,15 @@
                         message === ""
                     ) {
 
-                        alert(
-                            "Please fill in all fields."
-                        );
+                        if (successMessage) {
+
+                            successMessage.textContent =
+                                "Please fill in all fields.";
+
+                            successMessage.style.display =
+                                "block";
+
+                        }
 
                         return;
 
@@ -2407,8 +2402,8 @@
 
 
                     /*
-                     * Create a notification for
-                     * the submitted support request.
+                     * Create notification for submitted
+                     * support request.
                      */
 
                     let notifications =
@@ -2452,12 +2447,15 @@
                     renderNotifications();
 
 
-                    successMessage.textContent =
-                        "Your support request has been submitted successfully.";
+                    if (successMessage) {
 
+                        successMessage.textContent =
+                            "Your support request has been submitted successfully.";
 
-                    successMessage.style.display =
-                        "block";
+                        successMessage.style.display =
+                            "block";
+
+                    }
 
 
                     document.getElementById(
@@ -2473,8 +2471,12 @@
                     setTimeout(
                         function () {
 
-                            successMessage.style.display =
-                                "none";
+                            if (successMessage) {
+
+                                successMessage.style.display =
+                                    "none";
+
+                            }
 
                         },
                         4000
@@ -2500,12 +2502,37 @@
 
             centreInfoLink.addEventListener(
                 "click",
-                function () {
+                function (event) {
 
-                    alert(
-                        "Health Centre Information\n\n" +
-                        "Please contact the student health centre through the support phone number or email above for current opening hours and location information."
-                    );
+                    event.preventDefault();
+
+
+                    /*
+                     * No browser alert().
+                     * Show the information in the existing
+                     * success message area.
+                     */
+
+                    if (successMessage) {
+
+                        successMessage.textContent =
+                            "Health Centre Information: Please contact the student health centre through the support phone number or email above for current opening hours and location information.";
+
+                        successMessage.style.display =
+                            "block";
+
+
+                        setTimeout(
+                            function () {
+
+                                successMessage.style.display =
+                                    "none";
+
+                            },
+                            6000
+                        );
+
+                    }
 
                 }
             );
@@ -2539,6 +2566,7 @@
         }
 
     </script>
+
 
 </body>
 </html>

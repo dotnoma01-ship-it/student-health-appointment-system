@@ -1009,24 +1009,71 @@ input{
 </main>
 
 
+
 <script>
 
+"use strict";
+
 /* =========================================================
-   STUDENT APPOINTMENTS
+   API
 ========================================================= */
 
-/* LOGIN CHECK */
+const API_BASE_URL =
+    "https://student-health-appointment-system-backend.onrender.com/api";
 
-const currentStudent =
-    JSON.parse(
-        localStorage.getItem("currentStudent")
+
+/* =========================================================
+   CURRENT STUDENT
+========================================================= */
+
+let currentStudent = null;
+
+try {
+
+    currentStudent =
+        JSON.parse(
+            localStorage.getItem("currentStudent")
+        );
+
+} catch (error) {
+
+    console.error(
+        "Could not read current student:",
+        error
     );
 
-if(!currentStudent){
-
-    window.location.href = "login.html";
-
 }
+
+
+/* =========================================================
+   LOGIN CHECK
+========================================================= */
+
+if (!currentStudent) {
+
+    showSystemMessage(
+        "Login Required",
+        "Please login first.",
+        "info",
+        function () {
+            window.location.href = "login.html";
+        }
+    );
+
+} else {
+
+
+/* =========================================================
+   STUDENT ID
+========================================================= */
+
+const studentId =
+    currentStudent.id ||
+    currentStudent._id ||
+    currentStudent.studentId ||
+    currentStudent.matricNumber ||
+    currentStudent.email ||
+    "";
 
 
 /* =========================================================
@@ -1049,11 +1096,31 @@ const initials =
     ).toUpperCase();
 
 
-document.getElementById("studentAvatar").textContent =
-    initials || "ST";
+const studentAvatar =
+    document.getElementById(
+        "studentAvatar"
+    );
 
-document.getElementById("studentName").textContent =
-    fullName || "Student";
+const studentName =
+    document.getElementById(
+        "studentName"
+    );
+
+
+if (studentAvatar) {
+
+    studentAvatar.textContent =
+        initials || "ST";
+
+}
+
+
+if (studentName) {
+
+    studentName.textContent =
+        fullName || "Student";
+
+}
 
 
 /* =========================================================
@@ -1061,54 +1128,542 @@ document.getElementById("studentName").textContent =
 ========================================================= */
 
 const mobileMenu =
-    document.getElementById("mobileMenu");
+    document.getElementById(
+        "mobileMenu"
+    );
 
 const sidebar =
-    document.getElementById("sidebar");
-
-mobileMenu.addEventListener("click", function(){
-
-    sidebar.classList.toggle("open");
-
-});
+    document.getElementById(
+        "sidebar"
+    );
 
 
-/* CLOSE SIDEBAR AFTER CLICKING LINK ON MOBILE */
+if (mobileMenu && sidebar) {
 
-document.querySelectorAll(".nav-link").forEach(function(link){
+    mobileMenu.addEventListener(
+        "click",
+        function () {
 
-    link.addEventListener("click", function(){
+            sidebar.classList.toggle(
+                "open"
+            );
 
-        sidebar.classList.remove("open");
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE SIDEBAR
+========================================================= */
+
+document
+    .querySelectorAll(".nav-link")
+    .forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    sidebar &&
+                    window.innerWidth <= 700
+                ) {
+
+                    sidebar.classList.remove(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
 
     });
 
-});
+
+/* =========================================================
+   CUSTOM MESSAGE SYSTEM
+   Replaces browser alert()
+========================================================= */
+
+function showSystemMessage(
+    title,
+    message,
+    type = "info",
+    callback = null
+) {
+
+    let modal =
+        document.getElementById(
+            "systemMessageModal"
+        );
+
+
+    if (!modal) {
+
+        modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.id =
+            "systemMessageModal";
+
+        modal.innerHTML = `
+
+            <div
+                class="system-message-overlay"
+                id="systemMessageOverlay"
+            >
+
+                <div
+                    class="system-message-box"
+                >
+
+                    <div
+                        class="system-message-icon"
+                        id="systemMessageIcon"
+                    >
+                        ℹ️
+                    </div>
+
+                    <h3
+                        id="systemMessageTitle"
+                    >
+                        Message
+                    </h3>
+
+                    <p
+                        id="systemMessageText"
+                    ></p>
+
+                    <button
+                        type="button"
+                        id="systemMessageButton"
+                    >
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        const style =
+            document.createElement(
+                "style"
+            );
+
+        style.textContent = `
+
+            .system-message-overlay {
+
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,.45);
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                z-index: 99999;
+
+                padding: 20px;
+
+            }
+
+            .system-message-box {
+
+                width: min(420px, 100%);
+
+                background: #ffffff;
+
+                border-radius: 18px;
+
+                padding: 28px;
+
+                text-align: center;
+
+                box-shadow:
+                    0 20px 60px rgba(0,0,0,.25);
+
+                animation:
+                    systemMessageIn .2s ease;
+
+            }
+
+            .system-message-icon {
+
+                font-size: 42px;
+
+                margin-bottom: 12px;
+
+            }
+
+            .system-message-box h3 {
+
+                margin: 0 0 10px;
+
+                color: #222;
+
+            }
+
+            .system-message-box p {
+
+                margin: 0 0 22px;
+
+                color: #666;
+
+                line-height: 1.6;
+
+            }
+
+            .system-message-box button {
+
+                border: none;
+
+                background: #0a8f4d;
+
+                color: white;
+
+                padding: 11px 30px;
+
+                border-radius: 8px;
+
+                cursor: pointer;
+
+                font-weight: 600;
+
+            }
+
+            .system-message-box button:hover {
+
+                opacity: .9;
+
+            }
+
+            @keyframes systemMessageIn {
+
+                from {
+
+                    transform: scale(.9);
+
+                    opacity: 0;
+
+                }
+
+                to {
+
+                    transform: scale(1);
+
+                    opacity: 1;
+
+                }
+
+            }
+
+        `;
+
+        document.head.appendChild(
+            style
+        );
+
+    }
+
+
+    const icon =
+        document.getElementById(
+            "systemMessageIcon"
+        );
+
+    const titleElement =
+        document.getElementById(
+            "systemMessageTitle"
+        );
+
+    const textElement =
+        document.getElementById(
+            "systemMessageText"
+        );
+
+    const button =
+        document.getElementById(
+            "systemMessageButton"
+        );
+
+
+    if (type === "success") {
+
+        icon.textContent = "✅";
+
+    }
+
+    else if (type === "error") {
+
+        icon.textContent = "❌";
+
+    }
+
+    else if (type === "warning") {
+
+        icon.textContent = "⚠️";
+
+    }
+
+    else {
+
+        icon.textContent = "ℹ️";
+
+    }
+
+
+    titleElement.textContent =
+        title;
+
+    textElement.textContent =
+        message;
+
+
+    modal.style.display =
+        "block";
+
+
+    button.onclick =
+        function () {
+
+            modal.style.display =
+                "none";
+
+            if (
+                typeof callback ===
+                "function"
+            ) {
+
+                callback();
+
+            }
+
+        };
+
+}
+
+
+/* =========================================================
+   CUSTOM CONFIRMATION
+========================================================= */
+
+function showConfirmation(
+    title,
+    message,
+    onConfirm
+) {
+
+    let modal =
+        document.getElementById(
+            "confirmationModal"
+        );
+
+
+    if (!modal) {
+
+        modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.id =
+            "confirmationModal";
+
+        modal.innerHTML = `
+
+            <div class="system-message-overlay">
+
+                <div class="system-message-box">
+
+                    <div
+                        class="system-message-icon"
+                    >
+                        ⚠️
+                    </div>
+
+                    <h3
+                        id="confirmationTitle"
+                    >
+                        Confirm Action
+                    </h3>
+
+                    <p
+                        id="confirmationText"
+                    ></p>
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:10px;
+                            justify-content:center;
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            id="confirmationCancel"
+                            style="
+                                background:#777;
+                            "
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="button"
+                            id="confirmationYes"
+                        >
+                            Continue
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+        document.body.appendChild(
+            modal
+        );
+
+    }
+
+
+    document.getElementById(
+        "confirmationTitle"
+    ).textContent =
+        title;
+
+
+    document.getElementById(
+        "confirmationText"
+    ).textContent =
+        message;
+
+
+    modal.style.display =
+        "block";
+
+
+    document.getElementById(
+        "confirmationCancel"
+    ).onclick =
+        function () {
+
+            modal.style.display =
+                "none";
+
+        };
+
+
+    document.getElementById(
+        "confirmationYes"
+    ).onclick =
+        function () {
+
+            modal.style.display =
+                "none";
+
+            if (
+                typeof onConfirm ===
+                "function"
+            ) {
+
+                onConfirm();
+
+            }
+
+        };
+
+}
 
 
 /* =========================================================
    APPOINTMENT DATA
 ========================================================= */
 
-let appointments =
-    JSON.parse(
-        localStorage.getItem("appointments")
-    ) || [];
+function getAppointments() {
+
+    try {
+
+        return (
+            JSON.parse(
+                localStorage.getItem(
+                    "appointments"
+                )
+            ) || []
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not load appointments:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
 
 
-function getStudentAppointments(){
+function saveAppointments(
+    data
+) {
 
-    appointments =
-        JSON.parse(
-            localStorage.getItem("appointments")
-        ) || [];
+    localStorage.setItem(
+        "appointments",
+        JSON.stringify(data)
+    );
 
-    return appointments.filter(function(appointment){
+}
 
-        return String(appointment.studentId) ===
-               String(currentStudent.id);
 
-    });
+/* =========================================================
+   GET STUDENT APPOINTMENTS
+========================================================= */
+
+function getStudentAppointments() {
+
+    const appointments =
+        getAppointments();
+
+
+    return appointments.filter(
+        function (appointment) {
+
+            const appointmentStudentId =
+                appointment.studentId ||
+                appointment.student_id ||
+                appointment.student?.id ||
+                appointment.student?._id ||
+                appointment.studentEmail;
+
+
+            return String(
+                appointmentStudentId || ""
+            ) === String(
+                studentId
+            );
+
+        }
+    );
 
 }
 
@@ -1117,54 +1672,70 @@ function getStudentAppointments(){
    STATUS NORMALIZATION
 ========================================================= */
 
-function normalizeStatus(status){
+function normalizeStatus(
+    status
+) {
 
-    if(!status) return "Pending";
+    if (!status) {
+
+        return "Pending";
+
+    }
+
 
     const value =
-        String(status).toLowerCase().trim();
+        String(status)
+            .toLowerCase()
+            .trim();
 
 
-    if(
+    if (
         value === "approved" ||
-        value === "confirmed"
-    ){
+        value === "confirmed" ||
+        value === "accepted"
+    ) {
 
         return "Approved";
 
     }
 
 
-    /*
-       Support both old "rejected" values
-       and the new "declined" value.
-    */
-
-    if(
+    if (
         value === "rejected" ||
         value === "declined"
-    ){
+    ) {
 
         return "Declined";
 
     }
 
 
-    if(
-        value === "completed"
-    ){
+    if (
+        value === "completed" ||
+        value === "complete"
+    ) {
 
         return "Completed";
 
     }
 
 
-    if(
+    if (
         value === "cancelled" ||
         value === "canceled"
-    ){
+    ) {
 
         return "Cancelled";
+
+    }
+
+
+    if (
+        value === "pending" ||
+        value === "waiting"
+    ) {
+
+        return "Pending";
 
     }
 
@@ -1178,48 +1749,74 @@ function normalizeStatus(status){
    DATE HELPERS
 ========================================================= */
 
-function getAppointmentDate(appointment){
+function getAppointmentDate(
+    appointment
+) {
 
-    if(!appointment.date){
+    if (!appointment.date) {
 
         return null;
 
     }
+
 
     const date =
-        new Date(appointment.date);
+        new Date(
+            appointment.date +
+            (
+                String(
+                    appointment.date
+                ).length === 10
+                    ? "T00:00:00"
+                    : ""
+            )
+        );
 
-    if(isNaN(date.getTime())){
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
 
         return null;
 
     }
+
 
     return date;
 
 }
 
 
-function getDateParts(appointment){
+function getDateParts(
+    appointment
+) {
 
     const date =
-        getAppointmentDate(appointment);
+        getAppointmentDate(
+            appointment
+        );
 
-    if(!date){
+
+    if (!date) {
 
         return {
-            month:"---",
-            day:"--"
+            month: "---",
+            day: "--"
         };
 
     }
+
 
     return {
 
         month:
             date.toLocaleDateString(
                 "en-US",
-                {month:"short"}
+                {
+                    month: "short"
+                }
             ),
 
         day:
@@ -1234,9 +1831,11 @@ function getDateParts(appointment){
    STATUS CLASS
 ========================================================= */
 
-function getStatusClass(status){
+function getStatusClass(
+    status
+) {
 
-    switch(status){
+    switch (status) {
 
         case "Approved":
             return "approved";
@@ -1262,9 +1861,11 @@ function getStatusClass(status){
    STATUS ICON
 ========================================================= */
 
-function getStatusIcon(status){
+function getStatusIcon(
+    status
+) {
 
-    switch(status){
+    switch (status) {
 
         case "Approved":
             return "🟢";
@@ -1287,20 +1888,30 @@ function getStatusIcon(status){
 
 
 /* =========================================================
-   RENDER APPOINTMENTS
+   DISPLAY APPOINTMENTS
 ========================================================= */
 
-function displayAppointments(data){
+function displayAppointments(
+    data
+) {
 
     const container =
         document.getElementById(
             "appointmentsList"
         );
 
+
+    if (!container) {
+
+        return;
+
+    }
+
+
     container.innerHTML = "";
 
 
-    if(data.length === 0){
+    if (data.length === 0) {
 
         container.innerHTML = `
 
@@ -1321,10 +1932,9 @@ function displayAppointments(data){
 
                 <a
                     href="appointment.html"
-                    class="book-btn">
-
+                    class="book-btn"
+                >
                     + Book Appointment
-
                 </a>
 
             </div>
@@ -1336,158 +1946,220 @@ function displayAppointments(data){
     }
 
 
-    data.forEach(function(appointment){
-
-        const status =
-            normalizeStatus(
-                appointment.status
-            );
-
-        const dateParts =
-            getDateParts(
-                appointment
-            );
-
-        const statusClass =
-            getStatusClass(status);
-
-        const statusIcon =
-            getStatusIcon(status);
+    data.forEach(
+        function (appointment) {
 
 
-        const clinic =
-            appointment.clinic ||
-            appointment.service ||
-            "Student Health Clinic";
-
-        const doctor =
-            appointment.doctor ||
-            "Doctor not assigned";
-
-        const date =
-            appointment.date ||
-            "Date not available";
-
-        const time =
-            appointment.time ||
-            "Time not available";
-
-        const reason =
-            appointment.reason ||
-            appointment.symptoms ||
-            "Not provided";
-
-        const id =
-            appointment.id ||
-            "N/A";
+            const status =
+                normalizeStatus(
+                    appointment.status
+                );
 
 
-        let cancelButton = "";
+            const dateParts =
+                getDateParts(
+                    appointment
+                );
 
 
-        if(
-            status === "Pending" ||
-            status === "Approved"
-        ){
+            const statusClass =
+                getStatusClass(
+                    status
+                );
 
-            cancelButton = `
 
-                <button
-                    class="action-btn cancel-btn"
-                    data-action="cancel"
-                    data-id="${id}">
+            const statusIcon =
+                getStatusIcon(
+                    status
+                );
 
-                    Cancel
 
-                </button>
+            const clinic =
+                appointment.clinic ||
+                appointment.serviceName ||
+                appointment.service ||
+                "Student Health Clinic";
+
+
+            const doctor =
+                appointment.doctorName ||
+                appointment.doctor ||
+                "Doctor not assigned";
+
+
+            const date =
+                appointment.date ||
+                "Date not available";
+
+
+            const time =
+                appointment.time ||
+                "Time not available";
+
+
+            const reason =
+                appointment.reason ||
+                appointment.symptoms ||
+                "Not provided";
+
+
+            const id =
+                appointment.id ||
+                appointment.appointmentId ||
+                appointment._id ||
+                "N/A";
+
+
+            const doctorNote =
+                appointment.doctorNote ||
+                appointment.rejectionReason ||
+                "";
+
+
+            let cancelButton = "";
+
+
+            if (
+                status === "Pending" ||
+                status === "Approved"
+            ) {
+
+                cancelButton = `
+
+                    <button
+                        type="button"
+                        class="action-btn cancel-btn"
+                        data-action="cancel"
+                        data-id="${escapeHTML(id)}"
+                    >
+                        Cancel
+                    </button>
+
+                `;
+
+            }
+
+
+            const noteHTML =
+                doctorNote
+                    ? `
+                        <span>
+                            💬
+                            ${escapeHTML(
+                                doctorNote
+                            )}
+                        </span>
+                    `
+                    : "";
+
+
+            container.innerHTML += `
+
+                <div
+                    class="appointment"
+                    data-appointment-id="${escapeHTML(id)}"
+                >
+
+                    <div class="date-box">
+
+                        <span class="month">
+                            ${escapeHTML(
+                                dateParts.month
+                            )}
+                        </span>
+
+                        <span class="day">
+                            ${escapeHTML(
+                                dateParts.day
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="appointment-main">
+
+                        <h3>
+                            ${escapeHTML(
+                                clinic
+                            )}
+                        </h3>
+
+                        <div class="service">
+                            Healthcare Appointment
+                        </div>
+
+                        <div class="appointment-details">
+
+                            <span>
+                                👨‍⚕️
+                                ${escapeHTML(
+                                    doctor
+                                )}
+                            </span>
+
+                            <span>
+                                📅
+                                ${escapeHTML(
+                                    date
+                                )}
+                            </span>
+
+                            <span>
+                                🕐
+                                ${escapeHTML(
+                                    time
+                                )}
+                            </span>
+
+                            <span>
+                                📝
+                                ${escapeHTML(
+                                    reason
+                                )}
+                            </span>
+
+                            ${noteHTML}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="appointment-actions">
+
+                        <span
+                            class="status ${statusClass}"
+                        >
+
+                            ${statusIcon}
+                            ${escapeHTML(
+                                status
+                            )}
+
+                        </span>
+
+
+                        <button
+                            type="button"
+                            class="action-btn"
+                            data-action="view"
+                            data-id="${escapeHTML(id)}"
+                        >
+                            View Details
+                        </button>
+
+
+                        ${cancelButton}
+
+                    </div>
+
+                </div>
 
             `;
 
         }
-
-
-        container.innerHTML += `
-
-            <div class="appointment">
-
-                <div class="date-box">
-
-                    <span class="month">
-                        ${dateParts.month}
-                    </span>
-
-                    <span class="day">
-                        ${dateParts.day}
-                    </span>
-
-                </div>
-
-
-                <div class="appointment-main">
-
-                    <h3>
-                        ${escapeHTML(clinic)}
-                    </h3>
-
-                    <div class="service">
-                        Healthcare Appointment
-                    </div>
-
-                    <div class="appointment-details">
-
-                        <span>
-                            👨‍⚕️
-                            ${escapeHTML(doctor)}
-                        </span>
-
-                        <span>
-                            📅
-                            ${escapeHTML(date)}
-                        </span>
-
-                        <span>
-                            🕐
-                            ${escapeHTML(time)}
-                        </span>
-
-                        <span>
-                            📝
-                            ${escapeHTML(reason)}
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="appointment-actions">
-
-                    <span
-                        class="status ${statusClass}">
-
-                        ${statusIcon}
-                        ${status}
-
-                    </span>
-
-                    <button
-                        class="action-btn"
-                        data-action="view"
-                        data-id="${id}">
-
-                        View Details
-
-                    </button>
-
-                    ${cancelButton}
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
+    );
 
 }
 
@@ -1496,36 +2168,60 @@ function displayAppointments(data){
    ESCAPE HTML
 ========================================================= */
 
-function escapeHTML(value){
+function escapeHTML(
+    value
+) {
 
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    return String(value ?? "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 /* =========================================================
-   FILTER + SEARCH
+   SEARCH + FILTER
 ========================================================= */
 
 let activeFilter = "all";
 
 
-function filterAppointments(){
+function filterAppointments() {
 
     const studentAppointments =
         getStudentAppointments();
 
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
     const keyword =
-        document
-        .getElementById("searchInput")
-        .value
-        .trim()
-        .toLowerCase();
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
     let filtered =
@@ -1534,164 +2230,236 @@ function filterAppointments(){
 
     /* SEARCH */
 
-    if(keyword){
+    if (keyword) {
 
         filtered =
-            filtered.filter(function(item){
+            filtered.filter(
+                function (item) {
 
-                const text = `
+                    const text = `
 
-                    ${item.id || ""}
+                        ${item.id || ""}
 
-                    ${item.clinic || ""}
+                        ${item.appointmentId || ""}
 
-                    ${item.doctor || ""}
+                        ${item.clinic || ""}
 
-                    ${item.reason || ""}
+                        ${item.service || ""}
 
-                    ${item.date || ""}
+                        ${item.serviceName || ""}
 
-                    ${item.time || ""}
+                        ${item.doctor || ""}
 
-                    ${item.status || ""}
+                        ${item.doctorName || ""}
 
-                `.toLowerCase();
+                        ${item.reason || ""}
 
-                return text.includes(keyword);
+                        ${item.date || ""}
 
-            });
+                        ${item.time || ""}
+
+                        ${item.status || ""}
+
+                    `.toLowerCase();
+
+
+                    return text.includes(
+                        keyword
+                    );
+
+                }
+            );
 
     }
 
 
     /* STATUS FILTER */
 
-    if(activeFilter !== "all"){
+    if (
+        activeFilter !== "all"
+    ) {
 
         filtered =
-            filtered.filter(function(item){
+            filtered.filter(
+                function (item) {
 
-                const status =
-                    normalizeStatus(
-                        item.status
-                    );
+                    const status =
+                        normalizeStatus(
+                            item.status
+                        );
 
 
-                if(activeFilter === "upcoming"){
+                    if (
+                        activeFilter ===
+                        "upcoming"
+                    ) {
 
-                    return (
-                        status === "Pending" ||
-                        status === "Approved"
-                    );
+                        return (
+                            status ===
+                            "Pending" ||
+                            status ===
+                            "Approved"
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        "pending"
+                    ) {
+
+                        return (
+                            status ===
+                            "Pending"
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        "completed"
+                    ) {
+
+                        return (
+                            status ===
+                            "Completed"
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        "cancelled"
+                    ) {
+
+                        return (
+                            status ===
+                            "Cancelled" ||
+                            status ===
+                            "Declined"
+                        );
+
+                    }
+
+
+                    return true;
 
                 }
-
-
-                if(activeFilter === "pending"){
-
-                    return status === "Pending";
-
-                }
-
-
-                if(activeFilter === "completed"){
-
-                    return status === "Completed";
-
-                }
-
-
-                if(activeFilter === "cancelled"){
-
-                    return (
-                        status === "Cancelled" ||
-                        status === "Declined"
-                    );
-
-                }
-
-
-                return true;
-
-            });
+            );
 
     }
 
 
     /* SORT */
 
-    filtered.sort(function(a,b){
+    filtered.sort(
+        function (a, b) {
 
-        const dateA =
-            getAppointmentDate(a);
+            const dateA =
+                getAppointmentDate(a);
 
-        const dateB =
-            getAppointmentDate(b);
-
-
-        if(dateA && dateB){
-
-            return dateA - dateB;
-
-        }
-
-        return 0;
-
-    });
+            const dateB =
+                getAppointmentDate(b);
 
 
-    displayAppointments(filtered);
+            if (
+                dateA &&
+                dateB
+            ) {
 
-}
+                return dateA - dateB;
 
-
-/* SEARCH EVENT */
-
-document
-.getElementById("searchInput")
-.addEventListener(
-    "input",
-    filterAppointments
-);
+            }
 
 
-/* TAB EVENTS */
-
-document
-.querySelectorAll(".tab")
-.forEach(function(tab){
-
-    tab.addEventListener(
-        "click",
-        function(){
-
-            document
-            .querySelectorAll(".tab")
-            .forEach(function(item){
-
-                item.classList.remove("active");
-
-            });
-
-
-            this.classList.add("active");
-
-            activeFilter =
-                this.dataset.filter;
-
-            filterAppointments();
+            return 0;
 
         }
     );
 
-});
+
+    displayAppointments(
+        filtered
+    );
+
+}
+
+
+/* =========================================================
+   SEARCH EVENT
+========================================================= */
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        filterAppointments
+    );
+
+}
+
+
+/* =========================================================
+   TAB EVENTS
+========================================================= */
+
+document
+    .querySelectorAll(".tab")
+    .forEach(
+        function (tab) {
+
+            tab.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(
+                            ".tab"
+                        )
+                        .forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                    this.classList.add(
+                        "active"
+                    );
+
+
+                    activeFilter =
+                        this.dataset.filter ||
+                        "all";
+
+
+                    filterAppointments();
+
+                }
+            );
+
+        }
+    );
 
 
 /* =========================================================
    STATISTICS
 ========================================================= */
 
-function updateStatistics(){
+function updateStatistics() {
 
     const data =
         getStudentAppointments();
@@ -1703,267 +2471,513 @@ function updateStatistics(){
     let cancelled = 0;
 
 
-    data.forEach(function(item){
+    data.forEach(
+        function (item) {
 
-        const status =
-            normalizeStatus(
-                item.status
-            );
+            const status =
+                normalizeStatus(
+                    item.status
+                );
 
 
-        if(status === "Pending"){
+            if (
+                status ===
+                "Pending"
+            ) {
 
-            pending++;
-            upcoming++;
+                pending++;
+                upcoming++;
+
+            }
+
+            else if (
+                status ===
+                "Approved"
+            ) {
+
+                upcoming++;
+
+            }
+
+            else if (
+                status ===
+                "Completed"
+            ) {
+
+                completed++;
+
+            }
+
+            else if (
+                status ===
+                "Cancelled" ||
+                status ===
+                "Declined"
+            ) {
+
+                cancelled++;
+
+            }
 
         }
-
-        else if(status === "Approved"){
-
-            upcoming++;
-
-        }
-
-        else if(status === "Completed"){
-
-            completed++;
-
-        }
-
-        else if(
-            status === "Cancelled" ||
-            status === "Declined"
-        ){
-
-            cancelled++;
-
-        }
-
-    });
+    );
 
 
-    document.getElementById(
-        "upcomingCount"
-    ).textContent = upcoming;
+    const upcomingCount =
+        document.getElementById(
+            "upcomingCount"
+        );
+
+    const pendingCount =
+        document.getElementById(
+            "pendingCount"
+        );
+
+    const completedCount =
+        document.getElementById(
+            "completedCount"
+        );
+
+    const cancelledCount =
+        document.getElementById(
+            "cancelledCount"
+        );
 
 
-    document.getElementById(
-        "pendingCount"
-    ).textContent = pending;
+    if (upcomingCount) {
+
+        upcomingCount.textContent =
+            upcoming;
+
+    }
 
 
-    document.getElementById(
-        "completedCount"
-    ).textContent = completed;
+    if (pendingCount) {
+
+        pendingCount.textContent =
+            pending;
+
+    }
 
 
-    document.getElementById(
-        "cancelledCount"
-    ).textContent = cancelled;
+    if (completedCount) {
+
+        completedCount.textContent =
+            completed;
+
+    }
+
+
+    if (cancelledCount) {
+
+        cancelledCount.textContent =
+            cancelled;
+
+    }
 
 }
 
 
 /* =========================================================
-   VIEW / CANCEL APPOINTMENT
+   APPOINTMENT LIST ACTIONS
 ========================================================= */
 
-document
-.getElementById("appointmentsList")
-.addEventListener(
-    "click",
-    function(e){
-
-        const button =
-            e.target.closest(
-                "button[data-action]"
-            );
-
-        if(!button) return;
+const appointmentsList =
+    document.getElementById(
+        "appointmentsList"
+    );
 
 
-        const id =
-            button.dataset.id;
+if (appointmentsList) {
 
-        const action =
-            button.dataset.action;
+    appointmentsList.addEventListener(
+        "click",
+        function (e) {
 
-
-        let data =
-            JSON.parse(
-                localStorage.getItem(
-                    "appointments"
-                )
-            ) || [];
-
-
-        const index =
-            data.findIndex(function(item){
-
-                return String(item.id) ===
-                       String(id);
-
-            });
-
-
-        if(index === -1){
-
-            alert(
-                "Appointment could not be found."
-            );
-
-            return;
-
-        }
-
-
-        const appointment =
-            data[index];
-
-
-        /* VIEW */
-
-        if(action === "view"){
-
-            const status =
-                normalizeStatus(
-                    appointment.status
+            const button =
+                e.target.closest(
+                    "button[data-action]"
                 );
 
 
-            alert(
-
-`Appointment Details
-
-Appointment ID:
-${appointment.id || "N/A"}
-
-Clinic:
-${appointment.clinic || "N/A"}
-
-Doctor:
-${appointment.doctor || "Not assigned"}
-
-Date:
-${appointment.date || "N/A"}
-
-Time:
-${appointment.time || "N/A"}
-
-Reason:
-${appointment.reason || "N/A"}
-
-Status:
-${status}`
-
-            );
-
-            return;
-
-        }
-
-
-        /* CANCEL */
-
-        if(action === "cancel"){
-
-            const confirmCancel =
-                confirm(
-                    "Are you sure you want to cancel this appointment?"
-                );
-
-
-            if(!confirmCancel){
+            if (!button) {
 
                 return;
 
             }
 
 
-            data[index].status =
-                "Cancelled";
-
-            data[index].cancelledAt =
-                new Date().toISOString();
+            const id =
+                button.dataset.id;
 
 
-            localStorage.setItem(
-                "appointments",
-                JSON.stringify(data)
-            );
+            const action =
+                button.dataset.action;
 
 
-            /* NOTIFICATION */
-
-            addNotification(
-                "Appointment Cancelled",
-                `Your appointment ${appointment.id || ""} has been cancelled.`
-            );
+            const data =
+                getAppointments();
 
 
-            filterAppointments();
+            const index =
+                data.findIndex(
+                    function (item) {
 
-            updateStatistics();
+                        return (
+                            String(
+                                item.id ||
+                                item.appointmentId ||
+                                item._id ||
+                                ""
+                            ) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+            if (index === -1) {
+
+                showSystemMessage(
+                    "Appointment Not Found",
+                    "The appointment could not be found.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const appointment =
+                data[index];
+
+
+            /* =========================
+               VIEW DETAILS
+            ========================= */
+
+            if (
+                action === "view"
+            ) {
+
+                const status =
+                    normalizeStatus(
+                        appointment.status
+                    );
+
+
+                const appointmentId =
+                    appointment.id ||
+                    appointment.appointmentId ||
+                    appointment._id ||
+                    "N/A";
+
+
+                const serviceName =
+                    appointment.serviceName ||
+                    appointment.service ||
+                    "N/A";
+
+
+                const doctorName =
+                    appointment.doctorName ||
+                    appointment.doctor ||
+                    "Not assigned";
+
+
+                const doctorSpecialization =
+                    appointment.doctorSpecialization ||
+                    "";
+
+
+                const date =
+                    appointment.date ||
+                    "N/A";
+
+
+                const time =
+                    appointment.time ||
+                    "N/A";
+
+
+                const appointmentType =
+                    appointment.appointmentTypeName ||
+                    appointment.appointmentType ||
+                    "N/A";
+
+
+                const reason =
+                    appointment.reason ||
+                    appointment.symptoms ||
+                    "N/A";
+
+
+                const doctorNote =
+                    appointment.doctorNote ||
+                    "";
+
+
+                const rejectionReason =
+                    appointment.rejectionReason ||
+                    "";
+
+
+                let details =
+
+                    `Appointment ID:
+${appointmentId}
+
+Service:
+${serviceName}
+
+Doctor:
+${doctorName}`;
+
+
+                if (
+                    doctorSpecialization
+                ) {
+
+                    details +=
+                        `
+
+Specialization:
+${doctorSpecialization}`;
+
+                }
+
+
+                details +=
+
+                    `
+
+Date:
+${date}
+
+Time:
+${time}
+
+Appointment Type:
+${appointmentType}
+
+Reason:
+${reason}
+
+Status:
+${status}`;
+
+
+                if (
+                    doctorNote
+                ) {
+
+                    details +=
+                        `
+
+Doctor Note:
+${doctorNote}`;
+
+                }
+
+
+                if (
+                    rejectionReason
+                ) {
+
+                    details +=
+                        `
+
+Decline Reason:
+${rejectionReason}`;
+
+                }
+
+
+                showSystemMessage(
+                    "Appointment Details",
+                    details,
+                    status === "Declined"
+                        ? "error"
+                        : "info"
+                );
+
+
+                return;
+
+            }
+
+
+            /* =========================
+               CANCEL
+            ========================= */
+
+            if (
+                action === "cancel"
+            ) {
+
+                const status =
+                    normalizeStatus(
+                        appointment.status
+                    );
+
+
+                if (
+                    status !== "Pending" &&
+                    status !== "Approved"
+                ) {
+
+                    showSystemMessage(
+                        "Cannot Cancel",
+                        "This appointment can no longer be cancelled.",
+                        "warning"
+                    );
+
+                    return;
+
+                }
+
+
+                showConfirmation(
+                    "Cancel Appointment",
+                    "Are you sure you want to cancel this appointment?",
+                    function () {
+
+                        data[index].status =
+                            "Cancelled";
+
+
+                        data[index].cancelledAt =
+                            new Date()
+                                .toISOString();
+
+
+                        data[index].updatedAt =
+                            new Date()
+                                .toISOString();
+
+
+                        saveAppointments(
+                            data
+                        );
+
+
+                        addNotification(
+                            "Appointment Cancelled",
+                            `Your appointment ${
+                                appointment.id ||
+                                appointment.appointmentId ||
+                                ""
+                            } has been cancelled.`
+                        );
+
+
+                        filterAppointments();
+
+                        updateStatistics();
+
+
+                        showSystemMessage(
+                            "Appointment Cancelled",
+                            "Your appointment has been cancelled successfully.",
+                            "success"
+                        );
+
+                    }
+                );
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
    NOTIFICATIONS
 ========================================================= */
 
-let notifications =
-    JSON.parse(
-        localStorage.getItem(
-            "notifications"
-        )
-    ) || [];
+const notificationStorageKey =
+    "notifications";
 
 
-/* Only show notifications belonging
-   to this student when a studentId exists */
+function getAllNotifications() {
 
-function getStudentNotifications(){
-
-    return notifications.filter(function(note){
+    try {
 
         return (
-            !note.studentId ||
-            String(note.studentId) ===
-            String(currentStudent.id)
+            JSON.parse(
+                localStorage.getItem(
+                    notificationStorageKey
+                )
+            ) || []
         );
 
-    });
+    } catch (error) {
+
+        console.error(
+            "Could not load notifications:",
+            error
+        );
+
+        return [];
+
+    }
 
 }
 
 
-function saveNotifications(){
+function saveNotifications(
+    notificationData
+) {
 
     localStorage.setItem(
-        "notifications",
-        JSON.stringify(notifications)
+        notificationStorageKey,
+        JSON.stringify(
+            notificationData
+        )
     );
 
 }
 
 
-function updateNotificationBadge(){
+function getStudentNotifications() {
 
-    const studentNotes =
-        getStudentNotifications();
+    const allNotifications =
+        getAllNotifications();
 
 
-    const unread =
-        studentNotes.filter(function(note){
+    return allNotifications.filter(
+        function (note) {
 
-            return note.read !== true;
+            if (
+                !note.studentId
+            ) {
 
-        });
+                return false;
 
+            }
+
+
+            return String(
+                note.studentId
+            ) === String(
+                studentId
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+========================================================= */
+
+function updateNotificationBadge() {
 
     const badge =
         document.getElementById(
@@ -1971,25 +2985,56 @@ function updateNotificationBadge(){
         );
 
 
-    if(unread.length === 0){
+    if (!badge) {
 
-        badge.style.display = "none";
+        return;
 
-    }else{
+    }
 
-        badge.style.display = "flex";
+
+    const studentNotes =
+        getStudentNotifications();
+
+
+    const unread =
+        studentNotes.filter(
+            function (note) {
+
+                return (
+                    note.read !== true
+                );
+
+            }
+        );
+
+
+    if (
+        unread.length === 0
+    ) {
+
+        badge.style.display =
+            "none";
+
+    } else {
+
+        badge.style.display =
+            "flex";
 
         badge.textContent =
             unread.length > 9
-            ? "9+"
-            : unread.length;
+                ? "9+"
+                : unread.length;
 
     }
 
 }
 
 
-function loadNotifications(){
+/* =========================================================
+   LOAD NOTIFICATIONS
+========================================================= */
+
+function loadNotifications() {
 
     const list =
         document.getElementById(
@@ -1997,14 +3042,23 @@ function loadNotifications(){
         );
 
 
-    list.innerHTML = "";
+    if (!list) {
+
+        return;
+
+    }
 
 
     const studentNotes =
         getStudentNotifications();
 
 
-    if(studentNotes.length === 0){
+    list.innerHTML = "";
+
+
+    if (
+        studentNotes.length === 0
+    ) {
 
         list.innerHTML = `
 
@@ -2027,105 +3081,144 @@ function loadNotifications(){
     }
 
 
-    studentNotes
-    .sort(function(a,b){
+    studentNotes.sort(
+        function (a, b) {
 
-        return (
-            new Date(b.createdAt || b.time || 0) -
-            new Date(a.createdAt || a.time || 0)
-        );
+            return (
+                new Date(
+                    b.createdAt ||
+                    b.time ||
+                    0
+                ) -
+                new Date(
+                    a.createdAt ||
+                    a.time ||
+                    0
+                )
+            );
 
-    })
-    .forEach(function(note){
-
-        const index =
-            notifications.indexOf(note);
+        }
+    );
 
 
-        list.innerHTML += `
+    studentNotes.forEach(
+        function (note) {
 
-            <div
-                class="notification-item ${
-                    note.read ? "" : "unread"
-                }"
-                data-index="${index}">
+            const noteId =
+                note.id ||
+                "";
 
-                <div class="notification-icon">
-                    🔔
+
+            list.innerHTML += `
+
+                <div
+                    class="notification-item ${
+                        note.read
+                            ? ""
+                            : "unread"
+                    }"
+                    data-notification-id="${escapeHTML(
+                        noteId
+                    )}"
+                >
+
+                    <div class="notification-icon">
+                        🔔
+                    </div>
+
+                    <div class="notification-content">
+
+                        <strong>
+                            ${escapeHTML(
+                                note.title ||
+                                "Notification"
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHTML(
+                                note.message ||
+                                ""
+                            )}
+                        </p>
+
+                        <small>
+                            ${escapeHTML(
+                                note.time ||
+                                note.createdAt ||
+                                ""
+                            )}
+                        </small>
+
+                    </div>
+
                 </div>
 
-                <div class="notification-content">
+            `;
 
-                    <strong>
-                        ${escapeHTML(
-                            note.title ||
-                            "Notification"
-                        )}
-                    </strong>
-
-                    <p>
-                        ${escapeHTML(
-                            note.message ||
-                            ""
-                        )}
-                    </p>
-
-                    <small>
-                        ${escapeHTML(
-                            note.time ||
-                            ""
-                        )}
-                    </small>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
+        }
+    );
 
 }
 
 
+/* =========================================================
+   ADD NOTIFICATION
+========================================================= */
+
 function addNotification(
     title,
     message
-){
+) {
 
-    notifications.unshift({
+    const notificationData =
+        getAllNotifications();
 
-        id:Date.now(),
+
+    notificationData.unshift({
+
+        id:
+            "NOT-" +
+            Date.now(),
 
         studentId:
-            currentStudent.id,
+            studentId,
 
-        title:title,
+        title:
+            title,
 
-        message:message,
+        message:
+            message,
 
         time:
             new Date()
-            .toLocaleString(),
+                .toLocaleString(),
 
         createdAt:
             new Date()
-            .toISOString(),
+                .toISOString(),
 
-        read:false
+        read:
+            false
 
     });
 
 
-    if(notifications.length > 50){
+    if (
+        notificationData.length > 50
+    ) {
 
-        notifications =
-            notifications.slice(0,50);
+        notificationData.splice(
+            50
+        );
 
     }
 
 
-    saveNotifications();
+    saveNotifications(
+        notificationData
+    );
+
 
     updateNotificationBadge();
 
@@ -2134,88 +3227,83 @@ function addNotification(
 }
 
 
-/* NOTIFICATION BUTTON */
+/* =========================================================
+   NOTIFICATION BUTTON
+========================================================= */
 
-document
-.getElementById("notificationButton")
-.addEventListener(
-    "click",
-    function(e){
+const notificationButton =
+    document.getElementById(
+        "notificationButton"
+    );
 
-        e.stopPropagation();
-
-        document
-        .getElementById(
-            "notificationPanel"
-        )
-        .classList.toggle("show");
-
-    }
-);
+const notificationPanel =
+    document.getElementById(
+        "notificationPanel"
+    );
 
 
-/* CLOSE NOTIFICATIONS */
+if (
+    notificationButton &&
+    notificationPanel
+) {
+
+    notificationButton.addEventListener(
+        "click",
+        function (e) {
+
+            e.stopPropagation();
+
+
+            const isOpen =
+                notificationPanel.classList.contains(
+                    "show"
+                );
+
+
+            if (isOpen) {
+
+                notificationPanel.classList.remove(
+                    "show"
+                );
+
+            } else {
+
+                loadNotifications();
+
+                notificationPanel.classList.add(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE NOTIFICATION PANEL
+========================================================= */
 
 document.addEventListener(
     "click",
-    function(e){
+    function (e) {
 
-        const panel =
-            document.getElementById(
-                "notificationPanel"
+        if (
+            notificationPanel &&
+            notificationButton &&
+            !notificationPanel.contains(
+                e.target
+            ) &&
+            !notificationButton.contains(
+                e.target
+            )
+        ) {
+
+            notificationPanel.classList.remove(
+                "show"
             );
-
-        const button =
-            document.getElementById(
-                "notificationButton"
-            );
-
-
-        if(
-            !panel.contains(e.target) &&
-            !button.contains(e.target)
-        ){
-
-            panel.classList.remove("show");
-
-        }
-
-    }
-);
-
-
-/* MARK NOTIFICATION AS READ */
-
-document
-.getElementById("notificationList")
-.addEventListener(
-    "click",
-    function(e){
-
-        const item =
-            e.target.closest(
-                ".notification-item"
-            );
-
-        if(!item) return;
-
-
-        const index =
-            Number(
-                item.dataset.index
-            );
-
-
-        if(notifications[index]){
-
-            notifications[index].read =
-                true;
-
-            saveNotifications();
-
-            updateNotificationBadge();
-
-            loadNotifications();
 
         }
 
@@ -2224,37 +3312,79 @@ document
 
 
 /* =========================================================
-   LOGOUT
+   MARK NOTIFICATION AS READ
 ========================================================= */
 
-document
-.getElementById("logoutBtn")
-.addEventListener(
-    "click",
-    function(e){
-
-        e.preventDefault();
+const notificationList =
+    document.getElementById(
+        "notificationList"
+    );
 
 
-        const answer =
-            confirm(
-                "Are you sure you want to logout?"
-            );
+if (notificationList) {
+
+    notificationList.addEventListener(
+        "click",
+        function (e) {
+
+            const item =
+                e.target.closest(
+                    ".notification-item"
+                );
 
 
-        if(answer){
+            if (!item) {
 
-            localStorage.removeItem(
-                "currentStudent"
-            );
+                return;
 
-            window.location.href =
-                "login.html";
+            }
+
+
+            const id =
+                item.dataset.notificationId;
+
+
+            const notificationData =
+                getAllNotifications();
+
+
+            const index =
+                notificationData.findIndex(
+                    function (note) {
+
+                        return String(
+                            note.id
+                        ) === String(
+                            id
+                        );
+
+                    }
+                );
+
+
+            if (
+                index !== -1
+            ) {
+
+                notificationData[index].read =
+                    true;
+
+
+                saveNotifications(
+                    notificationData
+                );
+
+
+                updateNotificationBadge();
+
+                loadNotifications();
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
@@ -2263,23 +3393,16 @@ document
 
 window.addEventListener(
     "storage",
-    function(e){
+    function (e) {
 
-        if(
+        if (
             e.key === "appointments" ||
             e.key === "notifications"
-        ){
+        ) {
 
             filterAppointments();
 
             updateStatistics();
-
-            notifications =
-                JSON.parse(
-                    localStorage.getItem(
-                        "notifications"
-                    )
-                ) || [];
 
             updateNotificationBadge();
 
@@ -2293,44 +3416,66 @@ window.addEventListener(
 
 /* =========================================================
    AUTO REFRESH
-   This allows the student to see when the doctor
-   approves/declines an appointment.
 ========================================================= */
 
-setInterval(function(){
+setInterval(
+    function () {
 
-    filterAppointments();
+        filterAppointments();
 
-    updateStatistics();
-
-
-    const latestNotifications =
-        JSON.parse(
-            localStorage.getItem(
-                "notifications"
-            )
-        ) || [];
-
-
-    if(
-        JSON.stringify(
-            latestNotifications
-        ) !==
-        JSON.stringify(
-            notifications
-        )
-    ){
-
-        notifications =
-            latestNotifications;
+        updateStatistics();
 
         updateNotificationBadge();
 
         loadNotifications();
 
-    }
+    },
+    3000
+);
 
-},3000);
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    ) ||
+    document.querySelector(
+        ".logout"
+    );
+
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        function (e) {
+
+            e.preventDefault();
+
+
+            showConfirmation(
+                "Logout",
+                "Are you sure you want to logout?",
+                function () {
+
+                    localStorage.removeItem(
+                        "currentStudent"
+                    );
+
+
+                    window.location.href =
+                        "login.html";
+
+                }
+            );
+
+        }
+    );
+
+}
 
 
 /* =========================================================
@@ -2350,7 +3495,15 @@ console.log(
     "My Appointments page loaded successfully."
 );
 
+console.log(
+    "Current student ID:",
+    studentId
+);
+
+}
+
 </script>
+
 
 </body>
 </html>

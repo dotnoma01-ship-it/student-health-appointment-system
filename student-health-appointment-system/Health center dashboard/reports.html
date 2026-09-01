@@ -1259,11 +1259,44 @@ function loadDoctorProfile() {
    GET APPOINTMENTS
 ========================================== */
 
-function getAppointments() {
+let appointmentsCache = [];
 
-    return JSON.parse(
-        localStorage.getItem("appointments")
-    ) || [];
+async function getAppointments() {
+
+    try {
+
+        const response = await fetch(
+            "https://student-health-appointment-system-backend.onrender.com/api/appointments",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        appointmentsCache =
+            Array.isArray(data.appointments)
+                ? data.appointments
+                : [];
+
+        return appointmentsCache;
+
+    } catch (error) {
+
+        console.error(
+            "Failed to fetch appointments:",
+            error
+        );
+
+        return [];
+    }
 
 }
 
@@ -1272,9 +1305,9 @@ function getAppointments() {
    FILTER APPOINTMENTS
 ========================================== */
 
-function filterAppointments() {
+async function filterAppointments() {
 
-    const appointments = getAppointments();
+    const appointments = await getAppointments();
 
     const filter = reportFilter.value;
 
@@ -1382,7 +1415,7 @@ function loadStudentCount() {
             localStorage.getItem("students")
         ) || [];
 
-    const appointments = getAppointments();
+    const appointments = await getAppointments();
 
     const names = new Set();
 
@@ -1418,10 +1451,9 @@ function loadStudentCount() {
    LOAD REPORT
 ========================================== */
 
-function loadReport() {
+async function loadReport() {
 
-    const appointments =
-        filterAppointments();
+    const appointments = await filterAppointments();
 
     let pending = 0;
     let approved = 0;
@@ -1554,9 +1586,9 @@ function updatePercentage(
    TODAY'S APPOINTMENTS
 ========================================== */
 
-function loadTodayAppointmentCount() {
+async async function loadTodayAppointmentCount() {
 
-    const appointments = getAppointments();
+    const appointments = await getAppointments();
 
     const today = new Date();
 
@@ -1749,8 +1781,7 @@ function escapeHTML(value) {
 document.getElementById("exportBtn")
 .addEventListener("click", function() {
 
-    const appointments =
-        filterAppointments();
+    const appointments = await filterAppointments();
 
     if (appointments.length === 0) {
 
@@ -1893,7 +1924,7 @@ function updateNotificationCount() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    async function() {
 
         updateGreeting();
 
@@ -1901,7 +1932,7 @@ document.addEventListener(
 
         loadDoctorProfile();
 
-        loadReport();
+        await loadReport();
 
         updateNotificationCount();
 
@@ -1925,3 +1956,8 @@ setInterval(function() {
 
 </body>
 </html>
+
+
+
+
+
