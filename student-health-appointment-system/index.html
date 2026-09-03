@@ -194,17 +194,41 @@
            HERO
         ========================================== */
 
-        .hero {
-            padding: 75px 0 65px;
+.hero {
+    position: relative;
+    padding: 75px 0 65px;
+    min-height: 520px;
 
-            background-image:
-                url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfdio34cCihmCe-D5ocaLdOLN41IDD3YcavULFwpEuoQ&s=10");
+    background-image: url("./images/hero.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 
-            background-size: cover;
+    overflow: hidden;
+}
 
-            background-position: center;
-        }
+/* Dark/green fade over the image */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
 
+    background: linear-gradient(
+        90deg,
+        rgba(0, 75, 45, 0.95) 0%,
+        rgba(0, 75, 45, 0.75) 40%,
+        rgba(0, 75, 45, 0.35) 70%,
+        rgba(0, 75, 45, 0.15) 100%
+    );
+
+    z-index: 0;
+}
+
+/* Keep hero content above the image */
+.hero > * {
+    position: relative;
+    z-index: 1;
+}
 
         .hero-grid {
             display: grid;
@@ -228,9 +252,9 @@
 
             border-radius: 30px;
 
-            color: var(--primary);
+            color: whitesmoke;
 
-            background: var(--secondary);
+            background: lightgreen;
 
             font-size: 13px;
 
@@ -250,16 +274,18 @@
             margin-bottom: 20px;
 
             max-width: 650px;
+
+            color: #f0f8f5;
         }
 
 
         .hero h1 span {
-            color: var(--primary);
+            color:white;
         }
 
 
         .hero p {
-            color: var(--muted);
+            color: white;
 
             max-width: 570px;
 
