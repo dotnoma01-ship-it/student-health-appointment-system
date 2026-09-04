@@ -1,5 +1,9 @@
-
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force Node.js to prefer IPv4 connections.
+// Render is currently trying Gmail through IPv6 and failing.
+dns.setDefaultResultOrder("ipv4first");
 
 // =====================================================
 // GMAIL SMTP CONFIGURATION
@@ -8,11 +12,11 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, // STARTTLS on port 587
+    secure: false,
 
     auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     },
 
     connectionTimeout: 20000,
@@ -56,9 +60,7 @@ async function sendVerificationCode(email, code) {
                             Student Health Appointment System
                         </h2>
 
-                        <p>
-                            Hello,
-                        </p>
+                        <p>Hello,</p>
 
                         <p>
                             Your verification code is:
@@ -75,7 +77,8 @@ async function sendVerificationCode(email, code) {
                         </div>
 
                         <p>
-                            This code will expire in <strong>10 minutes</strong>.
+                            This code will expire in
+                            <strong>10 minutes</strong>.
                         </p>
 
                         <p>
@@ -100,7 +103,6 @@ async function sendVerificationCode(email, code) {
 
                 </div>
             `
-
         });
 
         console.log("OTP email sent successfully to:", email);
@@ -110,16 +112,10 @@ async function sendVerificationCode(email, code) {
         console.error("OTP EMAIL ERROR:", error);
 
         throw error;
-
     }
 }
 
 
-// =====================================================
-// EXPORT
-// =====================================================
-
 module.exports = {
     sendVerificationCode
 };
-
