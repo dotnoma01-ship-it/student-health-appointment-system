@@ -57,6 +57,30 @@ const studentSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true
+        },
+
+        // =====================================================
+        // TWO-FACTOR AUTHENTICATION
+        // =====================================================
+
+        twoFactorEnabled: {
+            type: Boolean,
+            default: true
+        },
+
+        otpHash: {
+            type: String,
+            default: null
+        },
+
+        otpExpiresAt: {
+            type: Date,
+            default: null
+        },
+
+        otpAttempts: {
+            type: Number,
+            default: 0
         }
     },
     {

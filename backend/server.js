@@ -1,10 +1,21 @@
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const path = require("path");
 
-dotenv.config();
+// =====================================================
+// LOAD ENVIRONMENT VARIABLES
+// =====================================================
+
+dotenv.config({
+    path: path.join(__dirname, ".env")
+});
+
+
+// =====================================================
+// CREATE EXPRESS APP
+// =====================================================
 
 const app = express();
 
@@ -42,6 +53,20 @@ app.use(
     "/api/appointments",
     appointmentRoutes
 );
+
+
+// =====================================================
+// ROOT ROUTE
+// =====================================================
+
+app.get("/", (req, res) => {
+
+    res.json({
+        success: true,
+        message: "Student Health Appointment Backend is running."
+    });
+
+});
 
 
 // =====================================================
@@ -139,10 +164,17 @@ mongoose.connection.on(
 
 async function connectDatabase() {
 
-    if (!process.env.MONGO_URI) {
+    const mongoURI = process.env.MONGO_URI;
+
+    // Check if MongoDB URI exists
+    if (!mongoURI) {
 
         console.error(
             "MONGO_URI is missing from the .env file."
+        );
+
+        console.error(
+            "Make sure your .env file is inside the backend folder."
         );
 
         process.exit(1);
@@ -152,7 +184,7 @@ async function connectDatabase() {
     try {
 
         await mongoose.connect(
-            process.env.MONGO_URI,
+            mongoURI,
             {
 
                 serverSelectionTimeoutMS: 15000,
@@ -202,6 +234,10 @@ async function startServer() {
                     `Server running on port ${PORT}`
                 );
 
+                console.log(
+                    `http://localhost:${PORT}`
+                );
+
             }
         );
 
@@ -226,4 +262,3 @@ async function startServer() {
 // =====================================================
 
 startServer();
-
