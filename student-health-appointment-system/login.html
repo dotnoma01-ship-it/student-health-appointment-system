@@ -792,9 +792,7 @@
 
 
 
-
 <script>
-
 /* =====================================================
    ELEMENTS
 ===================================================== */
@@ -812,7 +810,16 @@ const showPassword = document.getElementById("showPassword");
    API
 ===================================================== */
 
-const API_URL = "https://student-health-appointment-system-backend.onrender.com/api/students/login";
+/*
+   LOCAL TESTING:
+   http://localhost:5001/api/students/login
+
+   DEPLOYED BACKEND:
+   https://student-health-appointment-system-backend.onrender.com/api/students/login
+*/
+
+const API_URL =
+    "https://student-health-appointment-system-backend.onrender.com/api/students/login";
 
 
 /* =====================================================
@@ -907,7 +914,7 @@ form.addEventListener("submit", async function (event) {
     --------------------------------------------- */
 
     loginButton.disabled = true;
-    loginButton.textContent = "Logging in...";
+    loginButton.textContent = "Checking...";
 
 
     try {
@@ -992,25 +999,78 @@ form.addEventListener("submit", async function (event) {
 
 
         /* =========================================
-           CHECK STUDENT OBJECT
+           CHECK TWO-FACTOR RESPONSE
         ========================================= */
 
         if (
-            !data.student ||
-            typeof data.student !== "object"
+            data.requiresTwoFactor &&
+            data.studentId
         ) {
 
-            console.error(
-                "Student information missing:",
-                data
+            /*
+                IMPORTANT:
+
+                Do NOT mark the student as fully
+                logged in yet.
+
+                Password is correct, but OTP has
+                not been verified.
+            */
+
+
+            localStorage.setItem(
+                "pendingStudentId",
+                String(data.studentId)
             );
 
-            showError(
-                "Login succeeded, but student information was not returned."
+
+            localStorage.setItem(
+                "pendingStudentEmail",
+                data.email || email
             );
 
-            loginButton.disabled = false;
-            loginButton.textContent = "Login";
+
+            /*
+                Remove any old login state.
+            */
+
+            localStorage.removeItem(
+                "isLoggedIn"
+            );
+
+            localStorage.removeItem(
+                "currentStudent"
+            );
+
+            localStorage.removeItem(
+                "studentId"
+            );
+
+
+            /* -------------------------------------
+               SUCCESS MESSAGE
+            ------------------------------------- */
+
+            showSuccess(
+                "Verification code sent to your email."
+            );
+
+
+            loginButton.textContent =
+                "Code Sent";
+
+
+            /* -------------------------------------
+               GO TO OTP PAGE
+            ------------------------------------- */
+
+            setTimeout(function () {
+
+                window.location.href =
+                    "verify-otp.html";
+
+            }, 700);
+
 
             return;
 
@@ -1018,166 +1078,36 @@ form.addEventListener("submit", async function (event) {
 
 
         /* =========================================
-           GET STUDENT ID
-           
-           MongoDB normally returns _id.
-           We also support id in case the backend
-           sends that format.
+           UNEXPECTED RESPONSE
         ========================================= */
 
-        const studentId =
-            data.student.id ||
-            data.student._id;
-
-
-        if (!studentId) {
-
-            console.error(
-                "Student ID missing:",
-                data.student
-            );
-
-            showError(
-                "Login succeeded, but your student ID was not returned by the server."
-            );
-
-            loginButton.disabled = false;
-            loginButton.textContent = "Login";
-
-            return;
-
-        }
-
-
-        /* =========================================
-           CREATE CLEAN STUDENT OBJECT
-
-           NEVER STORE PASSWORD
-        ========================================= */
-
-        const loggedInStudent = {
-
-            id:
-                String(studentId),
-
-            _id:
-                String(studentId),
-
-            firstName:
-                data.student.firstName || "",
-
-            lastName:
-                data.student.lastName || "",
-
-            email:
-                data.student.email || "",
-
-            phone:
-                data.student.phone || "",
-
-            matricNumber:
-                data.student.matricNumber || "",
-
-            department:
-                data.student.department || "",
-
-            level:
-                data.student.level || "",
-
-            gender:
-                data.student.gender || ""
-
-        };
-
-
-        /* =========================================
-           SAVE CURRENT STUDENT
-        ========================================= */
-
-        localStorage.setItem(
-            "currentStudent",
-            JSON.stringify(loggedInStudent)
+        console.error(
+            "Unexpected login response:",
+            data
         );
 
-
-        /* =========================================
-           SAVE LOGIN STATUS
-        ========================================= */
-
-        localStorage.setItem(
-            "isLoggedIn",
-            "true"
+        showError(
+            "Unexpected server response. Please try again."
         );
 
-
-        /* =========================================
-           SAVE STUDENT ID SEPARATELY
-
-           Useful for appointment requests
-           and other pages.
-        ========================================= */
-
-        localStorage.setItem(
-            "studentId",
-            String(studentId)
-        );
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
 
 
-        /* =========================================
-           VERIFY STORAGE
-        ========================================= */
-
-        console.log(
-            "Logged-in student:",
-            loggedInStudent
-        );
-
-        console.log(
-            "Student ID:",
-            studentId
-        );
-
-
-        /* =========================================
-           SUCCESS
-        ========================================= */
-
-        showSuccess(
-            "Login successful. Redirecting..."
-        );
-
-        loginButton.textContent = "Success!";
-
-
-        /* =========================================
-           REDIRECT
-        ========================================= */
-
-        setTimeout(function () {
-
-            window.location.href =
-                "student dashboard.html";
-
-        }, 700);
-
-    }
-
-
-    /* =============================================
-       CONNECTION ERROR
-    ============================================= */
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Student login error:",
             error
         );
 
+
         showError(
             "Unable to connect to the backend. " +
-            "Make sure your backend server is running on port 5001."
+            "Please check your internet connection " +
+            "and try again."
         );
+
 
         loginButton.disabled = false;
         loginButton.textContent = "Login";

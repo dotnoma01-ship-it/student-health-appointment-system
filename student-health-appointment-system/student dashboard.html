@@ -1474,12 +1474,12 @@
 
 /* =====================================================
    SHABS STUDENT DASHBOARD
-   FINAL CORRECTED VERSION
+   2FA PROTECTED VERSION
 ===================================================== */
 
 
 /* =====================================================
-   CHECK LOGIN SESSION FIRST
+   CHECK LOGIN + 2FA SESSION
 ===================================================== */
 
 const storedStudent =
@@ -1488,18 +1488,33 @@ const storedStudent =
 const isLoggedIn =
     localStorage.getItem("isLoggedIn");
 
+const twoFactorVerified =
+    localStorage.getItem("twoFactorVerified");
+
 
 /*
-   If there is no logged-in student,
-   send the user back to login.
+   The dashboard can ONLY be opened when:
+
+   1. Student data exists
+   2. isLoggedIn is true
+   3. Two-factor verification is true
 */
 
-if (!storedStudent || isLoggedIn !== "true") {
+if (
+    !storedStudent ||
+    isLoggedIn !== "true" ||
+    twoFactorVerified !== "true"
+) {
+
+    localStorage.removeItem("currentStudent");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("studentId");
+    localStorage.removeItem("twoFactorVerified");
 
     window.location.replace("login.html");
 
     throw new Error(
-        "Student is not logged in."
+        "Authentication required."
     );
 
 }
@@ -1529,6 +1544,14 @@ try {
 
     localStorage.removeItem(
         "isLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "studentId"
+    );
+
+    localStorage.removeItem(
+        "twoFactorVerified"
     );
 
     window.location.replace(
@@ -1587,11 +1610,14 @@ if (
 ===================================================== */
 
 const dashboardStudentId =
-    currentStudent.id ||
-    currentStudent.studentId ||
-    currentStudent.matricNumber ||
-    currentStudent.email ||
-    "";
+    String(
+        currentStudent.id ||
+        currentStudent._id ||
+        currentStudent.studentId ||
+        currentStudent.matricNumber ||
+        currentStudent.email ||
+        ""
+    );
 
 
 const dashboardStudentEmail =
@@ -1858,15 +1884,33 @@ const studentAppointments =
     allAppointments.filter(
         function (appointment) {
 
+            const appointmentStudentId =
+                String(
+                    appointment.studentId ||
+                    ""
+                );
+
+            const appointmentEmail =
+                String(
+                    appointment.studentEmail ||
+                    ""
+                ).toLowerCase();
+
+            const studentEmail =
+                String(
+                    dashboardStudentEmail ||
+                    ""
+                ).toLowerCase();
+
             return (
 
-                appointment.studentId ===
+                appointmentStudentId ===
                 dashboardStudentId
 
                 ||
 
-                appointment.studentEmail ===
-                dashboardStudentEmail
+                appointmentEmail ===
+                studentEmail
 
             );
 
@@ -1969,9 +2013,9 @@ if (completedCount) {
 }
 
 
-/*
-   Count unique departments/services.
-*/
+/* =====================================================
+   COUNT UNIQUE HEALTH SERVICES
+===================================================== */
 
 const services =
     new Set(
@@ -1982,6 +2026,7 @@ const services =
                     return (
                         appointment.department ||
                         appointment.service ||
+                        appointment.serviceName ||
                         ""
                     );
 
@@ -2036,35 +2081,81 @@ function escapeHTML(value) {
 
 function getStatusClass(status) {
 
-    if (status === "Pending") {
+    const normalizedStatus =
+        String(
+            status || ""
+        ).toLowerCase();
+
+
+    if (
+        normalizedStatus ===
+        "pending"
+    ) {
 
         return "pending";
 
     }
 
-    if (status === "Upcoming") {
+
+    if (
+        normalizedStatus ===
+        "upcoming"
+
+        ||
+
+        normalizedStatus ===
+        "confirmed"
+
+        ||
+
+        normalizedStatus ===
+        "approved"
+    ) {
 
         return "confirmed";
 
     }
 
-    if (status === "Completed") {
+
+    if (
+        normalizedStatus ===
+        "completed"
+    ) {
 
         return "completed";
 
     }
 
-    if (status === "Rejected") {
+
+    if (
+        normalizedStatus ===
+        "rejected"
+
+        ||
+
+        normalizedStatus ===
+        "declined"
+    ) {
 
         return "rejected";
 
     }
 
-    if (status === "Cancelled") {
+
+    if (
+        normalizedStatus ===
+        "cancelled"
+
+        ||
+
+        normalizedStatus ===
+        "canceled"
+    ) {
 
         return "cancelled";
 
     }
+
 
     return "";
 
@@ -2127,12 +2218,14 @@ if (appointmentsContainer) {
                         const dateA =
                             new Date(
                                 a.appointmentDate ||
+                                a.date ||
                                 0
                             );
 
                         const dateB =
                             new Date(
                                 b.appointmentDate ||
+                                b.date ||
                                 0
                             );
 
@@ -2152,6 +2245,31 @@ if (appointmentsContainer) {
                         "Pending";
 
 
+                    const serviceName =
+                        appointment.department ||
+                        appointment.serviceName ||
+                        appointment.service ||
+                        "Health Service";
+
+
+                    const doctorName =
+                        appointment.doctorName ||
+                        appointment.doctor ||
+                        "Doctor not assigned";
+
+
+                    const appointmentDate =
+                        appointment.appointmentDate ||
+                        appointment.date ||
+                        "";
+
+
+                    const appointmentTime =
+                        appointment.appointmentTime ||
+                        appointment.time ||
+                        "";
+
+
                     appointmentsContainer
                         .innerHTML += `
 
@@ -2165,16 +2283,13 @@ if (appointmentsContainer) {
 
                                 <h4>
                                     ${escapeHTML(
-                                        appointment.department ||
-                                        appointment.service ||
-                                        "Health Service"
+                                        serviceName
                                     )}
                                 </h4>
 
                                 <p>
                                     ${escapeHTML(
-                                        appointment.doctor ||
-                                        "Doctor not assigned"
+                                        doctorName
                                     )}
                                 </p>
 
@@ -2191,15 +2306,13 @@ if (appointmentsContainer) {
 
                                 <strong>
                                     ${escapeHTML(
-                                        appointment.appointmentDate ||
-                                        ""
+                                        appointmentDate
                                     )}
                                 </strong>
 
                                 <span>
                                     ${escapeHTML(
-                                        appointment.appointmentTime ||
-                                        ""
+                                        appointmentTime
                                     )}
                                 </span>
 
@@ -2301,15 +2414,36 @@ function notificationBelongsToStudent(
     notification
 ) {
 
+    const notificationStudentId =
+        String(
+            notification.studentId ||
+            ""
+        );
+
+
+    const notificationEmail =
+        String(
+            notification.studentEmail ||
+            ""
+        ).toLowerCase();
+
+
+    const studentEmail =
+        String(
+            dashboardStudentEmail ||
+            ""
+        ).toLowerCase();
+
+
     return (
 
-        notification.studentId ===
+        notificationStudentId ===
         dashboardStudentId
 
         ||
 
-        notification.studentEmail ===
-        dashboardStudentEmail
+        notificationEmail ===
+        studentEmail
 
     );
 
@@ -2386,6 +2520,12 @@ function getNotificationIcon(
         notificationTitle.includes(
             "approved"
         )
+
+        ||
+
+        notificationTitle.includes(
+            "accepted"
+        )
     ) {
 
         return "✅";
@@ -2396,6 +2536,12 @@ function getNotificationIcon(
     if (
         notificationTitle.includes(
             "rejected"
+        )
+
+        ||
+
+        notificationTitle.includes(
+            "declined"
         )
     ) {
 
@@ -2753,6 +2899,8 @@ function markAllNotificationsAsRead() {
 
     updateNotificationBadge();
 
+    loadNotifications();
+
 }
 
 
@@ -2906,13 +3054,30 @@ if (logoutBtn) {
             }
 
 
+            /* Clear complete student session */
+
             localStorage.removeItem(
                 "currentStudent"
             );
 
-
             localStorage.removeItem(
                 "isLoggedIn"
+            );
+
+            localStorage.removeItem(
+                "studentId"
+            );
+
+            localStorage.removeItem(
+                "twoFactorVerified"
+            );
+
+            localStorage.removeItem(
+                "pendingStudentId"
+            );
+
+            localStorage.removeItem(
+                "pendingStudentEmail"
             );
 
 
@@ -2974,6 +3139,12 @@ console.log(
 
 
 console.log(
+    "2FA Verified:",
+    twoFactorVerified === "true"
+);
+
+
+console.log(
     "Student Appointments:",
     studentAppointments
 );
@@ -2985,6 +3156,7 @@ console.log(
 );
 
 </script>
+
 
 </body>
 

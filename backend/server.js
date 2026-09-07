@@ -12,21 +12,21 @@ dotenv.config({
     path: path.join(__dirname, ".env")
 });
 
-
 // =====================================================
 // CREATE EXPRESS APP
 // =====================================================
 
 const app = express();
 
-const PORT = process.env.PORT || 5001;
-
-
 // =====================================================
 // MIDDLEWARE
 // =====================================================
 
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(express.json());
 
@@ -36,6 +36,48 @@ app.use(
     })
 );
 
+// =====================================================
+// DATABASE CONNECTION
+// =====================================================
+
+let isConnected = false;
+
+async function connectDatabase() {
+
+    if (isConnected) {
+        return;
+    }
+
+    const mongoURI = process.env.MONGO_URI;
+
+    if (!mongoURI) {
+        throw new Error("MONGO_URI is missing.");
+    }
+
+    try {
+
+        await mongoose.connect(mongoURI, {
+            serverSelectionTimeoutMS: 15000,
+            connectTimeoutMS: 15000,
+            socketTimeoutMS: 45000,
+            maxPoolSize: 10,
+            minPoolSize: 1
+        });
+
+        isConnected = true;
+
+        console.log("MongoDB connected successfully.");
+
+    } catch (error) {
+
+        console.error(
+            "MongoDB connection failed:",
+            error.message
+        );
+
+        throw error;
+    }
+}
 
 // =====================================================
 // ROUTES
@@ -54,20 +96,31 @@ app.use(
     appointmentRoutes
 );
 
-
 // =====================================================
 // ROOT ROUTE
 // =====================================================
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
 
-    res.json({
-        success: true,
-        message: "Student Health Appointment Backend is running."
-    });
+    try {
+
+        await connectDatabase();
+
+        res.json({
+            success: true,
+            message: "Student Health Appointment Backend is running."
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: "Backend is running but MongoDB connection failed."
+        });
+
+    }
 
 });
-
 
 // =====================================================
 // 404 HANDLER
@@ -76,15 +129,11 @@ app.get("/", (req, res) => {
 app.use((req, res) => {
 
     res.status(404).json({
-
         success: false,
-
         message: "Route not found."
-
     });
 
 });
-
 
 // =====================================================
 // ERROR HANDLER
@@ -98,137 +147,30 @@ app.use((error, req, res, next) => {
     );
 
     res.status(500).json({
-
         success: false,
-
         message: "Internal server error."
-
     });
 
 });
 
-
 // =====================================================
-// MONGOOSE EVENTS
-// =====================================================
-
-mongoose.connection.on(
-    "connected",
-    () => {
-
-        console.log(
-            "MongoDB connected successfully."
-        );
-
-    }
-);
-
-mongoose.connection.on(
-    "disconnected",
-    () => {
-
-        console.log(
-            "MongoDB disconnected."
-        );
-
-    }
-);
-
-mongoose.connection.on(
-    "reconnected",
-    () => {
-
-        console.log(
-            "MongoDB reconnected."
-        );
-
-    }
-);
-
-mongoose.connection.on(
-    "error",
-    (error) => {
-
-        console.error(
-            "MongoDB error:",
-            error.message
-        );
-
-    }
-);
-
-
-// =====================================================
-// CONNECT TO MONGODB
+// VERCEL SERVERLESS HANDLER
 // =====================================================
 
-async function connectDatabase() {
-
-    const mongoURI = process.env.MONGO_URI;
-
-    // Check if MongoDB URI exists
-    if (!mongoURI) {
-
-        console.error(
-            "MONGO_URI is missing from the .env file."
-        );
-
-        console.error(
-            "Make sure your .env file is inside the backend folder."
-        );
-
-        process.exit(1);
-
-    }
-
-    try {
-
-        await mongoose.connect(
-            mongoURI,
-            {
-
-                serverSelectionTimeoutMS: 15000,
-
-                connectTimeoutMS: 15000,
-
-                socketTimeoutMS: 45000,
-
-                maxPoolSize: 10,
-
-                minPoolSize: 1
-
-            }
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "MongoDB connection failed:",
-            error.message
-        );
-
-        process.exit(1);
-
-    }
-
-}
-
+module.exports = app;
 
 // =====================================================
-// START SERVER
+// LOCAL DEVELOPMENT
 // =====================================================
 
-async function startServer() {
+if (require.main === module) {
 
-    try {
+    const PORT = process.env.PORT || 5001;
 
-        await connectDatabase();
+    connectDatabase()
+        .then(() => {
 
-        app.listen(
-            PORT,
-            () => {
+            app.listen(PORT, () => {
 
                 console.log(
                     `Server running on port ${PORT}`
@@ -238,27 +180,18 @@ async function startServer() {
                     `http://localhost:${PORT}`
                 );
 
-            }
-        );
+            });
 
-    }
+        })
+        .catch((error) => {
 
-    catch (error) {
+            console.error(
+                "Server startup failed:",
+                error.message
+            );
 
-        console.error(
-            "Server startup failed:",
-            error.message
-        );
+            process.exit(1);
 
-        process.exit(1);
-
-    }
+        });
 
 }
-
-
-// =====================================================
-// START APPLICATION
-// =====================================================
-
-startServer();
