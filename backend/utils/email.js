@@ -1,43 +1,16 @@
-const nodemailer = require("nodemailer");
-const dns = require("dns");
+const { Resend } = require("resend");
 
-// Force Node.js to prefer IPv4 connections.
-// Render is currently trying Gmail through IPv6 and failing.
-dns.setDefaultResultOrder("ipv4first");
-
-// =====================================================
-// GMAIL SMTP CONFIGURATION
-// =====================================================
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 20000
-});
-
-
-// =====================================================
-// SEND OTP VERIFICATION EMAIL
-// =====================================================
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendVerificationCode(email, code) {
 
     try {
 
-        await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
 
-            from: `"Student Health Appointment System" <${process.env.GMAIL_USER}>`,
+            from: "Student Health Appointment System <onboarding@resend.dev>",
 
-            to: email,
+            to: [email],
 
             subject: "Your Student Health Verification Code",
 
@@ -105,7 +78,14 @@ async function sendVerificationCode(email, code) {
             `
         });
 
-        console.log("OTP email sent successfully to:", email);
+        if (error) {
+            console.error("RESEND EMAIL ERROR:", error);
+            throw new Error(error.message || "Failed to send email");
+        }
+
+        console.log("OTP email sent successfully:", data);
+
+        return data;
 
     } catch (error) {
 
@@ -114,7 +94,6 @@ async function sendVerificationCode(email, code) {
         throw error;
     }
 }
-
 
 module.exports = {
     sendVerificationCode
