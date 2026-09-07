@@ -830,7 +830,9 @@
             }
 
 
-            // Save logged-in student
+            // ==================================
+            // SAVE LOGGED-IN STUDENT
+            // ==================================
 
             localStorage.setItem(
                 "currentStudent",
@@ -838,18 +840,25 @@
             );
 
 
-            // Save student ID
+            // ==================================
+            // SAVE STUDENT ID
+            // ==================================
+
+            const loggedInStudentId =
+                student.id ||
+                student._id ||
+                pendingStudentId;
+
 
             localStorage.setItem(
                 "studentId",
-                String(
-                    student.id ||
-                    student._id
-                )
+                String(loggedInStudentId)
             );
 
 
-            // Login status
+            // ==================================
+            // LOGIN STATUS
+            // ==================================
 
             localStorage.setItem(
                 "isLoggedIn",
@@ -857,7 +866,19 @@
             );
 
 
-            // Remove pending login data
+            // ==================================
+            // TWO-FACTOR VERIFICATION STATUS
+            // ==================================
+
+            localStorage.setItem(
+                "twoFactorVerified",
+                "true"
+            );
+
+
+            // ==================================
+            // REMOVE PENDING LOGIN DATA
+            // ==================================
 
             localStorage.removeItem(
                 "pendingStudentId"
@@ -867,6 +888,10 @@
                 "pendingStudentEmail"
             );
 
+
+            // ==================================
+            // SUCCESS MESSAGE
+            // ==================================
 
             showMessage(
                 "Verification successful! Redirecting...",
@@ -879,7 +904,7 @@
 
 
             // ==================================
-            // REDIRECT
+            // REDIRECT TO DASHBOARD
             // ==================================
 
             setTimeout(function () {
