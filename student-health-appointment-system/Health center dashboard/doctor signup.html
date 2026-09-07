@@ -980,6 +980,13 @@
 
 "use strict";
 
+/* ==========================================
+   API
+========================================== */
+
+const API_URL =
+    "https://student-health-appointment-system-backend.onrender.com/api/doctors";
+
 
 /* ==========================================
    ELEMENTS
@@ -1191,18 +1198,18 @@ passwordInput.addEventListener("input", function () {
 
 signupForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
         hideMessage();
 
 
-        /* ==============================
+        /* ==================================
            GET VALUES
-        ============================== */
+        ================================== */
 
-        const name =
+        const fullName =
             nameInput.value.trim();
 
         const email =
@@ -1224,12 +1231,12 @@ signupForm.addEventListener(
             confirmPasswordInput.value;
 
 
-        /* ==============================
+        /* ==================================
            VALIDATION
-        ============================== */
+        ================================== */
 
         if (
-            !name ||
+            !fullName ||
             !email ||
             !phone ||
             !license ||
@@ -1248,9 +1255,37 @@ signupForm.addEventListener(
         }
 
 
-        /* ==============================
+        /* ==================================
+           NAME VALIDATION
+        ================================== */
+
+        const nameParts =
+            fullName.split(/\s+/);
+
+        if (nameParts.length < 2) {
+
+            showMessage(
+                "Please enter your first and last name.",
+                "error"
+            );
+
+            nameInput.focus();
+
+            return;
+
+        }
+
+
+        const firstName =
+            nameParts[0];
+
+        const lastName =
+            nameParts.slice(1).join(" ");
+
+
+        /* ==================================
            PASSWORD LENGTH
-        ============================== */
+        ================================== */
 
         if (password.length < 8) {
 
@@ -1266,9 +1301,9 @@ signupForm.addEventListener(
         }
 
 
-        /* ==============================
+        /* ==================================
            PASSWORD MATCH
-        ============================== */
+        ================================== */
 
         if (password !== confirmPassword) {
 
@@ -1284,9 +1319,9 @@ signupForm.addEventListener(
         }
 
 
-        /* ==============================
+        /* ==================================
            TERMS
-        ============================== */
+        ================================== */
 
         if (!termsInput.checked) {
 
@@ -1300,125 +1335,9 @@ signupForm.addEventListener(
         }
 
 
-        /* ==============================
-           GET EXISTING DOCTORS
-        ============================== */
-
-        let doctors =
-            JSON.parse(
-                localStorage.getItem("doctorAccounts")
-            ) || [];
-
-
-        /* ==============================
-           CHECK EMAIL
-        ============================== */
-
-        const emailExists =
-            doctors.some(function (doctor) {
-
-                return (
-                    doctor.email.toLowerCase() === email
-                );
-
-            });
-
-
-        if (emailExists) {
-
-            showMessage(
-                "A doctor account with this email already exists.",
-                "error"
-            );
-
-            emailInput.focus();
-
-            return;
-
-        }
-
-
-        /* ==============================
-           CHECK LICENSE
-        ============================== */
-
-        const licenseExists =
-            doctors.some(function (doctor) {
-
-                return (
-                    doctor.license.toLowerCase() ===
-                    license.toLowerCase()
-                );
-
-            });
-
-
-        if (licenseExists) {
-
-            showMessage(
-                "This medical license / ID is already registered.",
-                "error"
-            );
-
-            licenseInput.focus();
-
-            return;
-
-        }
-
-
-        /* ==============================
-           CREATE DOCTOR
-        ============================== */
-
-        const doctor = {
-
-            id: Date.now(),
-
-            name: name,
-
-            email: email,
-
-            phone: phone,
-
-            license: license,
-
-            specialization: specialization,
-
-            role: "Medical Officer",
-
-            password: password,
-
-            image: "images/doctor.png",
-
-            createdAt:
-                new Date().toISOString()
-
-        };
-
-
-        /* ==============================
-           SAVE DOCTOR
-        ============================== */
-
-        doctors.push(doctor);
-
-
-        localStorage.setItem(
-            "doctorAccounts",
-            JSON.stringify(doctors)
-        );
-
-
-        /* ==============================
-           SUCCESS
-        ============================== */
-
-        showMessage(
-            "Doctor account created successfully. Redirecting to login...",
-            "success"
-        );
-
+        /* ==================================
+           DISABLE BUTTON
+        ================================== */
 
         signupBtn.disabled = true;
 
@@ -1426,16 +1345,130 @@ signupForm.addEventListener(
             '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
 
 
-        /* ==============================
-           REDIRECT
-        ============================== */
+        try {
 
-        setTimeout(function () {
+            /* ==================================
+               SEND TO BACKEND
+            ================================== */
 
-            window.location.href =
-                "doctor login.html";
+            const response = await fetch(
+                `${API_URL}/register`,
+                {
+                    method: "POST",
 
-        }, 1200);
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        firstName: firstName,
+
+                        lastName: lastName,
+
+                        email: email,
+
+                        password: password,
+
+                        phone: phone,
+
+                        specialization:
+                            specialization,
+
+                        licenseNumber:
+                            license,
+
+                        gender: "Not Specified"
+
+                    })
+                }
+            );
+
+
+            /* ==================================
+               READ RESPONSE
+            ================================== */
+
+            const data =
+                await response.json();
+
+
+            /* ==================================
+               REGISTRATION FAILED
+            ================================== */
+
+            if (!response.ok || !data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Doctor registration failed."
+                );
+
+            }
+
+
+            /* ==================================
+               SAVE DOCTOR ID FOR OTP
+            ================================== */
+
+            localStorage.setItem(
+                "doctorId",
+                data.doctorId
+            );
+
+            localStorage.setItem(
+                "doctorVerificationEmail",
+                email
+            );
+
+
+            /* ==================================
+               SUCCESS
+            ================================== */
+
+            showMessage(
+                "Account created successfully. A verification code has been sent to your email.",
+                "success"
+            );
+
+
+            signupBtn.innerHTML =
+                '<i class="fas fa-envelope-circle-check"></i> Verification Code Sent';
+
+
+            /* ==================================
+               GO TO OTP PAGE
+            ================================== */
+
+            setTimeout(function () {
+
+                window.location.href =
+                    "doctor otp.html";
+
+            }, 1200);
+
+
+        } catch (error) {
+
+            console.error(
+                "Doctor registration error:",
+                error
+            );
+
+
+            showMessage(
+                error.message ||
+                "Unable to connect to the server.",
+                "error"
+            );
+
+
+            signupBtn.disabled = false;
+
+            signupBtn.innerHTML =
+                '<i class="fas fa-user-plus"></i> Create Doctor Account';
+
+        }
 
     }
 );

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Verification | Student Health</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f8f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 40px 35px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 20px;
+            background: #0b7a4b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #12372a;
+            margin-bottom: 12px;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+
+        .email {
+            color: #0b7a4b;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 28px;
+            text-align: center;
+            letter-spacing: 10px;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        .otp-input:focus {
+            border-color: #0b7a4b;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #0b7a4b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #09643e;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .success {
+            display: block;
+            background: #e8f7ef;
+            color: #08743f;
+        }
+
+        .error {
+            display: block;
+            background: #fdeaea;
+            color: #b42318;
+        }
+
+        .resend {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .resend button {
+            width: auto;
+            padding: 0;
+            background: transparent;
+            color: #0b7a4b;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .resend button:hover {
+            background: transparent;
+            text-decoration: underline;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #0b7a4b;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 22px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .otp-input {
+                font-size: 24px;
+                letter-spacing: 7px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">+</div>
+
+        <h1>Verify Your Account</h1>
+
+        <p class="subtitle">
+            We sent a 6-digit verification code to
+            <span class="email" id="emailDisplay"></span>
+        </p>
+
+        <form id="otpForm">
+
+            <input
+                type="text"
+                id="otp"
+                class="otp-input"
+                placeholder="000000"
+                maxlength="6"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                required
+            >
+
+            <div id="message" class="message"></div>
+
+            <button type="submit" id="verifyBtn">
+                Verify Account
+            </button>
+
+        </form>
+
+        <div class="resend">
+            Didn't receive the code?
+
+            <button type="button" id="resendBtn">
+                Resend Code
+            </button>
+        </div>
+
+        <a href="doctor login.html" class="back">
+            ← Back to Doctor Login
+        </a>
+
+    </div>
+
+
+    <script>
+
+        const API_URL =
+            "https://student-health-appointment-system-backend.onrender.com/api/doctors";
+
+
+        const doctorId = localStorage.getItem("doctorId");
+
+        const verificationEmail =
+            localStorage.getItem("doctorVerificationEmail");
+
+
+        const emailDisplay =
+            document.getElementById("emailDisplay");
+
+        const otpForm =
+            document.getElementById("otpForm");
+
+        const otpInput =
+            document.getElementById("otp");
+
+        const verifyBtn =
+            document.getElementById("verifyBtn");
+
+        const resendBtn =
+            document.getElementById("resendBtn");
+
+        const message =
+            document.getElementById("message");
+
+
+        // Display email
+        if (verificationEmail) {
+            emailDisplay.textContent = verificationEmail;
+        } else {
+            emailDisplay.textContent = "your email";
+        }
+
+
+        // Show message
+        function showMessage(text, type) {
+
+            message.textContent = text;
+
+            message.className =
+                "message " + type;
+        }
+
+
+        // Only allow numbers
+        otpInput.addEventListener("input", function () {
+
+            this.value =
+                this.value.replace(/\D/g, "");
+
+        });
+
+
+        // Verify OTP
+        otpForm.addEventListener("submit", async function (e) {
+
+            e.preventDefault();
+
+            const otp = otpInput.value.trim();
+
+
+            if (!doctorId) {
+
+                showMessage(
+                    "Doctor information is missing. Please register again.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!otp || otp.length !== 6) {
+
+                showMessage(
+                    "Please enter the 6-digit verification code.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            verifyBtn.disabled = true;
+
+            verifyBtn.textContent = "Verifying...";
+
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/verify-otp`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            doctorId: doctorId,
+                            otp: otp
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok || !data.success) {
+
+                    showMessage(
+                        data.message ||
+                        "Invalid or expired verification code.",
+                        "error"
+                    );
+
+                    verifyBtn.disabled = false;
+
+                    verifyBtn.textContent =
+                        "Verify Account";
+
+                    return;
+                }
+
+
+                // Save authenticated doctor
+                if (data.doctor) {
+
+                    localStorage.setItem(
+                        "doctor",
+                        JSON.stringify(data.doctor)
+                    );
+
+                }
+
+
+                localStorage.setItem(
+                    "doctorLoggedIn",
+                    "true"
+                );
+
+
+                showMessage(
+                    "Account verified successfully. Redirecting...",
+                    "success"
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "health dashboard.html";
+
+                }, 1200);
+
+
+            } catch (error) {
+
+                console.error(
+                    "OTP verification error:",
+                    error
+                );
+
+                showMessage(
+                    "Unable to connect to the server. Please try again.",
+                    "error"
+                );
+
+                verifyBtn.disabled = false;
+
+                verifyBtn.textContent =
+                    "Verify Account";
+            }
+
+        });
+
+
+        // Resend OTP
+        resendBtn.addEventListener("click", async function () {
+
+            if (!doctorId) {
+
+                showMessage(
+                    "Doctor information is missing. Please register again.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            resendBtn.disabled = true;
+
+            resendBtn.textContent =
+                "Sending...";
+
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/resend-otp`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            doctorId: doctorId
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok || !data.success) {
+
+                    showMessage(
+                        data.message ||
+                        "Unable to resend verification code.",
+                        "error"
+                    );
+
+                    resendBtn.disabled = false;
+
+                    resendBtn.textContent =
+                        "Resend Code";
+
+                    return;
+                }
+
+
+                showMessage(
+                    "A new verification code has been sent to your email.",
+                    "success"
+                );
+
+
+                resendBtn.textContent =
+                    "Code Sent";
+
+
+                setTimeout(function () {
+
+                    resendBtn.disabled = false;
+
+                    resendBtn.textContent =
+                        "Resend Code";
+
+                }, 30000);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Resend OTP error:",
+                    error
+                );
+
+                showMessage(
+                    "Unable to connect to the server. Please try again.",
+                    "error"
+                );
+
+                resendBtn.disabled = false;
+
+                resendBtn.textContent =
+                    "Resend Code";
+            }
+
+        });
+
+
+        // Automatically focus OTP field
+        otpInput.focus();
+
+    </script>
+
+</body>
+</html>

@@ -22,11 +22,13 @@ const app = express();
 // MIDDLEWARE
 // =====================================================
 
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
 
 app.use(express.json());
 
@@ -44,7 +46,7 @@ let isConnected = false;
 
 async function connectDatabase() {
 
-    if (isConnected) {
+    if (isConnected && mongoose.connection.readyState === 1) {
         return;
     }
 
@@ -70,6 +72,8 @@ async function connectDatabase() {
 
     } catch (error) {
 
+        isConnected = false;
+
         console.error(
             "MongoDB connection failed:",
             error.message
@@ -84,12 +88,30 @@ async function connectDatabase() {
 // =====================================================
 
 const studentRoutes = require("./routes/studentRoutes");
+const doctorRoutes = require("./routes/doctorRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+
+// =====================================================
+// STUDENT ROUTES
+// =====================================================
 
 app.use(
     "/api/students",
     studentRoutes
 );
+
+// =====================================================
+// DOCTOR ROUTES
+// =====================================================
+
+app.use(
+    "/api/doctors",
+    doctorRoutes
+);
+
+// =====================================================
+// APPOINTMENT ROUTES
+// =====================================================
 
 app.use(
     "/api/appointments",
@@ -112,6 +134,11 @@ app.get("/", async (req, res) => {
         });
 
     } catch (error) {
+
+        console.error(
+            "Root route error:",
+            error.message
+        );
 
         res.status(500).json({
             success: false,
@@ -154,7 +181,7 @@ app.use((error, req, res, next) => {
 });
 
 // =====================================================
-// VERCEL SERVERLESS HANDLER
+// EXPORT APP
 // =====================================================
 
 module.exports = app;
