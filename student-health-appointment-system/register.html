@@ -917,13 +917,16 @@ form.addEventListener("submit", async function (event) {
         // SUCCESS
         // ==========================================
 
-        if (data.success) {
+if (data.success) {
 
-            window.location.href =
-                "login.html";
+    // Save the email for the OTP verification page
+    sessionStorage.setItem("verificationEmail", email);
 
-            return;
-        }
+    // Go to student OTP verification page
+    window.location.href = "verify-otp.html";
+
+    return;
+}
 
 
         // ==========================================
