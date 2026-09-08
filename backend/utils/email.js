@@ -1,17 +1,23 @@
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+
+    auth: {
+        user: process.env.BREVO_SMTP_LOGIN,
+        pass: process.env.BREVO_SMTP_KEY
+    }
+});
 
 async function sendVerificationCode(email, code) {
 
     try {
 
-        const { data, error } = await resend.emails.send({
-
-            from: "Student Health Appointment System <onboarding@resend.dev>",
-
-            to: [email],
-
+        const mailOptions = {
+            from: `"Student Health Appointment System" <${process.env.BREVO_SENDER_EMAIL}>`,
+            to: email,
             subject: "Your Student Health Verification Code",
 
             html: `
@@ -76,20 +82,20 @@ async function sendVerificationCode(email, code) {
 
                 </div>
             `
-        });
+        };
 
-        if (error) {
-            console.error("RESEND EMAIL ERROR:", error);
-            throw new Error(error.message || "Failed to send email");
-        }
+        const info = await transporter.sendMail(mailOptions);
 
-        console.log("OTP email sent successfully:", data);
+        console.log(
+            "OTP email sent successfully:",
+            info.messageId
+        );
 
-        return data;
+        return info;
 
     } catch (error) {
 
-        console.error("OTP EMAIL ERROR:", error);
+        console.error("SMTP EMAIL ERROR:", error);
 
         throw error;
     }
