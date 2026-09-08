@@ -777,9 +777,10 @@
                 <p>
                     Are you a healthcare professional?
                 </p>
-           <a href="Health center dashboard/doctor login.html">
-    Doctor Login
-</a>
+
+                <a href="Health center dashboard/doctor login.html">
+                    Doctor Login
+                </a>
 
             </div>
 
@@ -793,30 +794,36 @@
 
 
 <script>
+
 /* =====================================================
    ELEMENTS
 ===================================================== */
 
-const form = document.getElementById("studentLoginForm");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const loginButton = document.getElementById("loginButton");
-const errorMessage = document.getElementById("errorMessage");
-const successMessage = document.getElementById("successMessage");
-const showPassword = document.getElementById("showPassword");
+const form =
+    document.getElementById("studentLoginForm");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const successMessage =
+    document.getElementById("successMessage");
+
+const showPassword =
+    document.getElementById("showPassword");
 
 
 /* =====================================================
    API
 ===================================================== */
-
-/*
-   LOCAL TESTING:
-   http://localhost:5001/api/students/login
-
-   DEPLOYED BACKEND:
-   https://student-health-appointment-system-backend.onrender.com/api/students/login
-*/
 
 const API_URL =
     "https://student-health-appointment-system-backend.onrender.com/api/students/login";
@@ -826,21 +833,31 @@ const API_URL =
    SHOW / HIDE PASSWORD
 ===================================================== */
 
-showPassword.addEventListener("click", function () {
+showPassword.addEventListener(
+    "click",
+    function () {
 
-    if (passwordInput.type === "password") {
+        if (
+            passwordInput.type === "password"
+        ) {
 
-        passwordInput.type = "text";
-        showPassword.textContent = "Hide";
+            passwordInput.type = "text";
 
-    } else {
+            showPassword.textContent =
+                "Hide";
 
-        passwordInput.type = "password";
-        showPassword.textContent = "Show";
+        } else {
+
+            passwordInput.type =
+                "password";
+
+            showPassword.textContent =
+                "Show";
+
+        }
 
     }
-
-});
+);
 
 
 /* =====================================================
@@ -849,11 +866,14 @@ showPassword.addEventListener("click", function () {
 
 function showError(message) {
 
-    successMessage.style.display = "none";
+    successMessage.style.display =
+        "none";
 
-    errorMessage.textContent = message;
-    errorMessage.style.display = "block";
+    errorMessage.textContent =
+        message;
 
+    errorMessage.style.display =
+        "block";
 }
 
 
@@ -863,11 +883,14 @@ function showError(message) {
 
 function showSuccess(message) {
 
-    errorMessage.style.display = "none";
+    errorMessage.style.display =
+        "none";
 
-    successMessage.textContent = message;
-    successMessage.style.display = "block";
+    successMessage.textContent =
+        message;
 
+    successMessage.style.display =
+        "block";
 }
 
 
@@ -875,246 +898,309 @@ function showSuccess(message) {
    STUDENT LOGIN
 ===================================================== */
 
-form.addEventListener("submit", async function (event) {
+form.addEventListener(
+    "submit",
+    async function (event) {
 
-    event.preventDefault();
-
-    errorMessage.style.display = "none";
-    successMessage.style.display = "none";
-
-
-    /* ---------------------------------------------
-       GET VALUES
-    --------------------------------------------- */
-
-    const email =
-        emailInput.value.trim().toLowerCase();
-
-    const password =
-        passwordInput.value;
+        event.preventDefault();
 
 
-    /* ---------------------------------------------
-       VALIDATION
-    --------------------------------------------- */
+        errorMessage.style.display =
+            "none";
 
-    if (!email || !password) {
-
-        showError(
-            "Please enter your email and password."
-        );
-
-        return;
-
-    }
+        successMessage.style.display =
+            "none";
 
 
-    /* ---------------------------------------------
-       DISABLE BUTTON
-    --------------------------------------------- */
+        /* ---------------------------------------------
+           GET VALUES
+        --------------------------------------------- */
 
-    loginButton.disabled = true;
-    loginButton.textContent = "Checking...";
+        const email =
+            emailInput.value
+                .trim()
+                .toLowerCase();
 
-
-    try {
-
-        /* =========================================
-           SEND LOGIN REQUEST
-        ========================================= */
-
-        const response = await fetch(
-            API_URL,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            }
-        );
+        const password =
+            passwordInput.value;
 
 
-        /* =========================================
-           READ RESPONSE
-        ========================================= */
+        /* ---------------------------------------------
+           VALIDATION
+        --------------------------------------------- */
 
-        const responseText =
-            await response.text();
+        if (!email || !password) {
 
-        console.log(
-            "Login server response:",
-            responseText
-        );
+            showError(
+                "Please enter your email and password."
+            );
+
+            return;
+        }
 
 
-        let data;
+        /* ---------------------------------------------
+           DISABLE BUTTON
+        --------------------------------------------- */
+
+        loginButton.disabled =
+            true;
+
+        loginButton.textContent =
+            "Logging in...";
+
 
         try {
 
-            data = JSON.parse(responseText);
+            /* =========================================
+               SEND LOGIN REQUEST
+            ========================================= */
 
-        } catch (error) {
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+                        method: "POST",
 
-            console.error(
-                "Invalid JSON response:",
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+            /* =========================================
+               READ SERVER RESPONSE
+            ========================================= */
+
+            const responseText =
+                await response.text();
+
+
+            console.log(
+                "Login server response:",
                 responseText
             );
 
-            showError(
-                "The server returned an invalid response."
+
+            let data;
+
+
+            try {
+
+                data =
+                    JSON.parse(responseText);
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid JSON response:",
+                    responseText
+                );
+
+                showError(
+                    "The server returned an invalid response. Please try again."
+                );
+
+                loginButton.disabled =
+                    false;
+
+                loginButton.textContent =
+                    "Login";
+
+                return;
+            }
+
+
+            /* =========================================
+               LOGIN FAILED
+            ========================================= */
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                showError(
+                    data.message ||
+                    "Invalid email or password."
+                );
+
+                loginButton.disabled =
+                    false;
+
+                loginButton.textContent =
+                    "Login";
+
+                return;
+            }
+
+
+            /* =========================================
+               LOGIN SUCCESSFUL
+            ========================================= */
+
+            console.log(
+                "Student login successful:",
+                data
             );
 
-            loginButton.disabled = false;
-            loginButton.textContent = "Login";
-
-            return;
-
-        }
-
-
-        /* =========================================
-           LOGIN FAILED
-        ========================================= */
-
-        if (!response.ok || !data.success) {
-
-            showError(
-                data.message ||
-                "Invalid email or password."
-            );
-
-            loginButton.disabled = false;
-            loginButton.textContent = "Login";
-
-            return;
-
-        }
-
-
-        /* =========================================
-           CHECK TWO-FACTOR RESPONSE
-        ========================================= */
-
-        if (
-            data.requiresTwoFactor &&
-            data.studentId
-        ) {
 
             /*
-                IMPORTANT:
+                The backend should return the student
+                object as data.student.
 
-                Do NOT mark the student as fully
-                logged in yet.
-
-                Password is correct, but OTP has
-                not been verified.
+                We also support data.user in case
+                your backend uses that name.
             */
+
+            const student =
+                data.student ||
+                data.user;
+
+
+            if (!student) {
+
+                console.error(
+                    "Login response does not contain student data:",
+                    data
+                );
+
+                showError(
+                    "Login succeeded, but student information was not returned by the server."
+                );
+
+                loginButton.disabled =
+                    false;
+
+                loginButton.textContent =
+                    "Login";
+
+                return;
+            }
+
+
+            /* =========================================
+               SAVE LOGGED-IN STUDENT
+            ========================================= */
+
+            const studentId =
+                student.id ||
+                student._id ||
+                data.studentId;
+
+
+            if (studentId) {
+
+                localStorage.setItem(
+                    "studentId",
+                    String(studentId)
+                );
+
+            }
+
+
+            /*
+                Save complete student information.
+
+                This allows the dashboard and profile
+                pages to know which student is logged in.
+            */
+
+            localStorage.setItem(
+                "currentStudent",
+                JSON.stringify(student)
+            );
+
+
+            /*
+                Main login flag.
+            */
+
+            localStorage.setItem(
+                "isLoggedIn",
+                "true"
+            );
 
 
             localStorage.setItem(
-                "pendingStudentId",
-                String(data.studentId)
-            );
-
-
-            localStorage.setItem(
-                "pendingStudentEmail",
-                data.email || email
+                "studentLoggedIn",
+                "true"
             );
 
 
             /*
-                Remove any old login state.
+                Remove old verification session
+                information if it exists.
             */
 
             localStorage.removeItem(
-                "isLoggedIn"
+                "pendingStudentId"
             );
 
             localStorage.removeItem(
-                "currentStudent"
-            );
-
-            localStorage.removeItem(
-                "studentId"
+                "pendingStudentEmail"
             );
 
 
-            /* -------------------------------------
+            /* =========================================
                SUCCESS MESSAGE
-            ------------------------------------- */
+            ========================================= */
 
             showSuccess(
-                "Verification code sent to your email."
+                "Login successful! Redirecting to your dashboard..."
             );
 
 
             loginButton.textContent =
-                "Code Sent";
+                "Success";
 
 
-            /* -------------------------------------
-               GO TO OTP PAGE
-            ------------------------------------- */
+            /* =========================================
+               REDIRECT TO DASHBOARD
+            ========================================= */
 
-            setTimeout(function () {
+            setTimeout(
+                function () {
 
-                window.location.href =
-                    "verify-otp.html";
+                    window.location.href =
+                        "student dashboard.html";
 
-            }, 700);
+                },
+                800
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Student login error:",
+                error
+            );
 
 
-            return;
+            showError(
+                "Unable to connect to the server. Please check your internet connection and try again."
+            );
 
+
+            loginButton.disabled =
+                false;
+
+            loginButton.textContent =
+                "Login";
         }
 
-
-        /* =========================================
-           UNEXPECTED RESPONSE
-        ========================================= */
-
-        console.error(
-            "Unexpected login response:",
-            data
-        );
-
-        showError(
-            "Unexpected server response. Please try again."
-        );
-
-        loginButton.disabled = false;
-        loginButton.textContent = "Login";
-
-
-    } catch (error) {
-
-        console.error(
-            "Student login error:",
-            error
-        );
-
-
-        showError(
-            "Unable to connect to the backend. " +
-            "Please check your internet connection " +
-            "and try again."
-        );
-
-
-        loginButton.disabled = false;
-        loginButton.textContent = "Login";
-
     }
-
-});
+);
 
 
 /* =====================================================
@@ -1126,8 +1212,6 @@ console.log(
 );
 
 </script>
-
-
 
 
 </body>
