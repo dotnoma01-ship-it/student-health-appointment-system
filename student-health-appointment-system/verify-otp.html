@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,529 +9,233 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Verify OTP | Student Health</title>
+    <title>Verify Email | Student Health</title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        :root {
-            --primary: #126e51;
-            --primary-dark: #0c523c;
-            --white: #ffffff;
-            --text: #17221e;
-            --muted: #68756f;
-            --border: #d7e5df;
-            --danger: #c63b3b;
+            font-family: Arial, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(
-                135deg,
-                #eaf8f2,
-                #ffffff
-            );
-            color: var(--text);
+            background: #f5f7f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .page {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .container {
+            width: 100%;
+            max-width: 900px;
+            min-height: 560px;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+            display: flex;
         }
 
-        /* ==============================
-           LEFT SIDE
-        ============================== */
-
-        .intro {
-            background: var(--primary);
-            color: var(--white);
-            padding: 60px;
+        .left {
+            width: 45%;
+            background: #087f5b;
+            color: white;
+            padding: 50px 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 50px;
-        }
-
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 13px;
-            background: rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .intro h1 {
-            font-size: clamp(38px, 5vw, 58px);
-            line-height: 1.05;
-            max-width: 520px;
+        .left h1 {
+            font-size: 34px;
             margin-bottom: 20px;
         }
 
-        .intro p {
-            max-width: 530px;
-            color: #d9eee6;
+        .left p {
             line-height: 1.7;
-            margin-bottom: 35px;
-            font-size: 15px;
+            font-size: 16px;
+            opacity: 0.95;
         }
 
-        .benefits {
-            display: grid;
-            gap: 14px;
-        }
-
-        .benefit {
+        .right {
+            width: 55%;
+            padding: 50px 45px;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-        }
-
-        .check {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        /* ==============================
-           RIGHT SIDE
-        ============================== */
-
-        .form-area {
-            padding: 45px 30px;
-            display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
         }
 
-        .form-box {
-            width: 100%;
-            max-width: 500px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 35px;
-            box-shadow: 0 18px 45px rgba(18, 77, 58, 0.08);
-        }
-
-        .top-link {
-            display: inline-block;
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: bold;
-            text-decoration: none;
-            margin-bottom: 22px;
-        }
-
-        .top-link:hover {
-            text-decoration: underline;
-        }
-
-        h2 {
-            font-size: 31px;
+        .right h2 {
+            color: #222;
+            font-size: 30px;
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 25px;
+            color: #777;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
 
         .email-display {
-            background: #f1faf6;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 14px;
-            color: var(--primary);
+            background: #f1f8f5;
+            border: 1px solid #d6eee5;
+            padding: 13px 15px;
+            border-radius: 8px;
+            color: #087f5b;
             font-weight: bold;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
             word-break: break-word;
-        }
-
-        form {
-            display: grid;
-            gap: 18px;
-        }
-
-        .field {
-            display: grid;
-            gap: 7px;
-        }
-
-        label {
-            font-size: 13px;
-            font-weight: bold;
         }
 
         .otp-input {
             width: 100%;
-            padding: 15px 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: #fcfefd;
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 8px;
+            height: 55px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 0 15px;
+            font-size: 24px;
+            letter-spacing: 10px;
             text-align: center;
-            color: var(--text);
             outline: none;
         }
 
         .otp-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(18, 110, 81, 0.08);
+            border-color: #087f5b;
         }
 
-        .otp-input::placeholder {
-            letter-spacing: 4px;
-            color: #aab8b3;
-        }
-
-        button {
+        .verify-btn {
             width: 100%;
-            padding: 14px;
+            height: 52px;
             border: none;
-            border-radius: 10px;
-            background: var(--primary);
-            color: var(--white);
-            font-size: 14px;
-            font-weight: 800;
+            border-radius: 8px;
+            background: #087f5b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.2s ease;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
+        .verify-btn:hover {
+            background: #066b4d;
         }
 
-        button:disabled {
+        .verify-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
 
-        .resend-area {
+        .resend {
             text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--muted);
+            margin-top: 22px;
+            color: #666;
+            font-size: 14px;
         }
 
-        .resend-btn {
-            width: auto;
-            padding: 0;
-            margin-left: 4px;
+        .resend button {
             background: none;
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .resend-btn:hover {
-            background: none;
-            transform: none;
-            text-decoration: underline;
-        }
-
-        .resend-btn:disabled {
-            color: var(--muted);
-            opacity: 1;
-            cursor: not-allowed;
-            text-decoration: none;
-        }
-
-        .back-login {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .back-login a {
-            color: var(--primary);
-            font-size: 13px;
+            border: none;
+            color: #087f5b;
             font-weight: bold;
-            text-decoration: none;
+            cursor: pointer;
+            margin-left: 5px;
         }
 
-        .back-login a:hover {
-            text-decoration: underline;
+        .resend button:disabled {
+            color: #aaa;
+            cursor: not-allowed;
         }
 
         .message {
             display: none;
-            padding: 11px 13px;
-            border-radius: 9px;
-            font-size: 13px;
-            line-height: 1.5;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.4;
         }
 
-        .message.error {
-            display: block;
-            background: #fff0f0;
-            color: var(--danger);
-            border: 1px solid #f0cccc;
+        .error {
+            background: #ffe9e9;
+            color: #c62828;
         }
 
-        .message.success {
-            display: block;
-            background: #eefaf5;
-            color: var(--primary);
-            border: 1px solid #cce8dc;
+        .success {
+            background: #e8f7ef;
+            color: #087f5b;
         }
 
-        .timer {
+        .back-login {
             text-align: center;
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 10px;
+            margin-top: 25px;
+            font-size: 14px;
         }
 
-        /* ==============================
-           TABLET / SMALL LAPTOP
-        ============================== */
-
-        @media (max-width: 850px) {
-
-            .page {
-                grid-template-columns: 1fr;
-            }
-
-            .intro {
-                padding: 40px 25px;
-            }
-
-            .logo {
-                margin-bottom: 30px;
-            }
-
-            .intro h1 {
-                font-size: 42px;
-            }
-
-            .form-area {
-                padding: 40px 25px;
-            }
-
+        .back-login a {
+            color: #087f5b;
+            text-decoration: none;
+            font-weight: bold;
         }
 
-        /* ==============================
-           MOBILE
-        ============================== */
-
-        @media (max-width: 550px) {
-
-            .intro {
-                padding: 30px 20px;
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+                min-height: auto;
             }
 
-            .logo {
-                font-size: 18px;
-                margin-bottom: 25px;
+            .left {
+                width: 100%;
+                padding: 35px 25px;
+                text-align: center;
             }
 
-            .logo-icon {
-                width: 40px;
-                height: 40px;
+            .left h1 {
+                font-size: 28px;
             }
 
-            .intro h1 {
-                font-size: 34px;
+            .right {
+                width: 100%;
+                padding: 35px 25px;
             }
 
-            .intro p {
-                font-size: 14px;
-                margin-bottom: 25px;
+            .right h2 {
+                font-size: 26px;
             }
-
-            .benefit {
-                font-size: 13px;
-            }
-
-            .form-area {
-                padding: 25px 15px;
-            }
-
-            .form-box {
-                padding: 24px 18px;
-                border-radius: 18px;
-            }
-
-            h2 {
-                font-size: 27px;
-            }
-
-            .subtitle {
-                font-size: 13px;
-            }
-
-            .otp-input {
-                font-size: 20px;
-                letter-spacing: 6px;
-            }
-
         }
-
-        /* ==============================
-           VERY SMALL PHONES
-        ============================== */
-
-        @media (max-width: 360px) {
-
-            .intro h1 {
-                font-size: 30px;
-            }
-
-            .form-box {
-                padding: 20px 15px;
-            }
-
-            h2 {
-                font-size: 25px;
-            }
-
-            .otp-input {
-                font-size: 18px;
-                letter-spacing: 5px;
-            }
-
-        }
-
     </style>
-
 </head>
-
 
 <body>
 
-<div class="page">
+    <div class="container">
 
-    <!-- LEFT SIDE -->
+        <div class="left">
+            <h1>Student Health</h1>
 
-    <section class="intro">
-
-        <div class="logo">
-
-            <div class="logo-icon">
-                ❤
-            </div>
-
-            <span>
-                Student Health
-            </span>
-
+            <p>
+                Verify your email address to complete your
+                student registration and gain access to the
+                Student Health Appointment System.
+            </p>
         </div>
 
+        <div class="right">
 
-        <h1>
-            Secure access to your health account.
-        </h1>
-
-
-        <p>
-            We've sent a verification code to your email.
-            Enter the code to securely complete your login.
-        </p>
-
-
-        <div class="benefits">
-
-            <div class="benefit">
-
-                <div class="check">
-                    ✓
-                </div>
-
-                <span>
-                    Secure student authentication
-                </span>
-
-            </div>
-
-
-            <div class="benefit">
-
-                <div class="check">
-                    ✓
-                </div>
-
-                <span>
-                    Protect your health information
-                </span>
-
-            </div>
-
-
-            <div class="benefit">
-
-                <div class="check">
-                    ✓
-                </div>
-
-                <span>
-                    Quick and easy verification
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- RIGHT SIDE -->
-
-    <section class="form-area">
-
-        <div class="form-box">
-
-            <a
-                href="login.html"
-                class="top-link"
-            >
-                ← Back to login
-            </a>
-
-
-            <h2>
-                Verify your login
-            </h2>
-
+            <h2>Verify your email</h2>
 
             <p class="subtitle">
-                Enter the 6-digit verification code we sent
-                to your email address.
+                We sent a 6-digit verification code to your email.
+                Enter the code below to complete your registration.
             </p>
 
+            <div
+                id="message"
+                class="message"
+            ></div>
 
             <div
                 id="emailDisplay"
@@ -541,604 +244,433 @@
                 Loading email...
             </div>
 
+            <input
+                type="text"
+                id="otp"
+                class="otp-input"
+                maxlength="6"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="000000"
+            >
 
-            <div
-                id="message"
-                class="message"
-            ></div>
+            <button
+                type="button"
+                id="verifyBtn"
+                class="verify-btn"
+            >
+                Verify Email
+            </button>
 
-
-            <form id="otpForm">
-
-                <div class="field">
-
-                    <label for="otp">
-                        Verification Code
-                    </label>
-
-                    <input
-                        type="text"
-                        id="otp"
-                        class="otp-input"
-                        maxlength="6"
-                        inputmode="numeric"
-                        autocomplete="one-time-code"
-                        placeholder="000000"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    id="verifyBtn"
-                >
-                    Verify & Continue
-                </button>
-
-            </form>
-
-
-            <div class="resend-area">
-
+            <div class="resend">
                 Didn't receive the code?
 
                 <button
                     type="button"
                     id="resendBtn"
-                    class="resend-btn"
                 >
                     Resend Code
                 </button>
-
             </div>
 
-
-            <div
-                id="timer"
-                class="timer"
-            ></div>
-
-
             <div class="back-login">
-
                 <a href="login.html">
-                    Return to Login
+                    Back to Login
                 </a>
-
             </div>
 
         </div>
 
-    </section>
-
-</div>
+    </div>
 
 
+    <script>
 
-<script>
+        // ================================
+        // API URL
+        // ================================
 
-    // ==========================================
-    // API
-    // ==========================================
-
-    const API_BASE =
-        "https://student-health-appointment-system-backend.onrender.com/api/students";
-
-
-    // ==========================================
-    // ELEMENTS
-    // ==========================================
-
-    const otpForm =
-        document.getElementById("otpForm");
-
-    const otpInput =
-        document.getElementById("otp");
-
-    const verifyBtn =
-        document.getElementById("verifyBtn");
-
-    const resendBtn =
-        document.getElementById("resendBtn");
-
-    const message =
-        document.getElementById("message");
-
-    const emailDisplay =
-        document.getElementById("emailDisplay");
-
-    const timer =
-        document.getElementById("timer");
+        const API_URL =
+            "https://student-health-appointment-system-backend.onrender.com/api/students";
 
 
-    // ==========================================
-    // GET PENDING LOGIN DATA
-    // ==========================================
+        // ================================
+        // GET PENDING REGISTRATION DATA
+        // ================================
 
-    const pendingStudentId =
-        localStorage.getItem("pendingStudentId");
+        const pendingStudentId =
+            localStorage.getItem("pendingStudentId");
 
-    const pendingStudentEmail =
-        localStorage.getItem("pendingStudentEmail");
+        const pendingStudentEmail =
+            localStorage.getItem("pendingStudentEmail");
 
 
-    // ==========================================
-    // CHECK LOGIN SESSION
-    // ==========================================
+        // ================================
+        // ELEMENTS
+        // ================================
 
-    if (!pendingStudentId) {
+        const otpInput =
+            document.getElementById("otp");
 
-        showMessage(
-            "Your verification session has expired. Please login again.",
-            "error"
+        const verifyBtn =
+            document.getElementById("verifyBtn");
+
+        const resendBtn =
+            document.getElementById("resendBtn");
+
+        const messageBox =
+            document.getElementById("message");
+
+        const emailDisplay =
+            document.getElementById("emailDisplay");
+
+
+        // ================================
+        // CHECK VERIFICATION SESSION
+        // ================================
+
+        if (
+            !pendingStudentId ||
+            !pendingStudentEmail
+        ) {
+
+            emailDisplay.textContent =
+                "No active registration found.";
+
+            showError(
+                "Your verification session has expired. Please register again."
+            );
+
+            verifyBtn.disabled = true;
+            resendBtn.disabled = true;
+
+        } else {
+
+            emailDisplay.textContent =
+                pendingStudentEmail;
+
+        }
+
+
+        // ================================
+        // ONLY ALLOW NUMBERS
+        // ================================
+
+        otpInput.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value
+                        .replace(/\D/g, "")
+                        .slice(0, 6);
+
+            }
         );
 
-        verifyBtn.disabled = true;
-        resendBtn.disabled = true;
 
-    }
+        // ================================
+        // VERIFY OTP
+        // ================================
 
+        verifyBtn.addEventListener(
+            "click",
+            async function () {
 
-    // ==========================================
-    // DISPLAY EMAIL
-    // ==========================================
-
-    if (pendingStudentEmail) {
-
-        emailDisplay.textContent =
-            pendingStudentEmail;
-
-    } else {
-
-        emailDisplay.textContent =
-            "Verification email";
-
-    }
+                const otp =
+                    otpInput.value.trim();
 
 
-    // ==========================================
-    // OTP INPUT
-    // ==========================================
+                if (!pendingStudentId) {
 
-    otpInput.addEventListener("input", function () {
+                    showError(
+                        "Your verification session has expired. Please register again."
+                    );
 
-        this.value =
-            this.value.replace(/\D/g, "").slice(0, 6);
-
-    });
+                    return;
+                }
 
 
-    // ==========================================
-    // VERIFY OTP
-    // ==========================================
+                if (!/^\d{6}$/.test(otp)) {
 
-    otpForm.addEventListener("submit", async function (e) {
+                    showError(
+                        "Please enter the 6-digit verification code."
+                    );
 
-        e.preventDefault();
-
-
-        const otp =
-            otpInput.value.trim();
+                    return;
+                }
 
 
-        if (!pendingStudentId) {
+                verifyBtn.disabled = true;
 
-            showMessage(
-                "Verification session expired. Please login again.",
-                "error"
-            );
+                verifyBtn.textContent =
+                    "Verifying...";
 
-            return;
-
-        }
+                hideMessage();
 
 
-        if (!/^\d{6}$/.test(otp)) {
+                try {
 
-            showMessage(
-                "Please enter the 6-digit verification code.",
-                "error"
-            );
+                    const response =
+                        await fetch(
+                            `${API_URL}/verify-otp`,
+                            {
+                                method: "POST",
 
-            otpInput.focus();
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
 
-            return;
+                                body: JSON.stringify({
+                                    studentId:
+                                        pendingStudentId,
 
-        }
-
-
-        verifyBtn.disabled = true;
-
-        verifyBtn.textContent =
-            "Verifying...";
-
-        hideMessage();
+                                    otp:
+                                        otp
+                                })
+                            }
+                        );
 
 
-        try {
+                    const data =
+                        await response.json();
 
-            const response =
-                await fetch(
-                    `${API_BASE}/verify-otp`,
-                    {
-                        method: "POST",
 
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                    if (!response.ok || !data.success) {
 
-                        body: JSON.stringify({
+                        showError(
+                            data.message ||
+                            "Invalid or expired verification code."
+                        );
 
-                            studentId:
-                                pendingStudentId,
+                        verifyBtn.disabled = false;
 
-                            otp:
-                                otp
+                        verifyBtn.textContent =
+                            "Verify Email";
 
-                        })
+                        return;
                     }
-                );
 
 
-            const raw =
-                await response.text();
+                    // ================================
+                    // VERIFICATION SUCCESSFUL
+                    // ================================
 
+                    showSuccess(
+                        "Email verified successfully! Redirecting to login..."
+                    );
 
-            let data;
 
+                    // Remove temporary registration data
+                    localStorage.removeItem(
+                        "pendingStudentId"
+                    );
 
-            try {
+                    localStorage.removeItem(
+                        "pendingStudentEmail"
+                    );
 
-                data =
-                    JSON.parse(raw);
 
-            } catch (error) {
+                    setTimeout(
+                        function () {
 
-                throw new Error(
-                    "The server returned an invalid response."
-                );
+                            window.location.href =
+                                "login.html";
 
-            }
-
-
-            if (!response.ok || !data.success) {
-
-                throw new Error(
-                    data.message ||
-                    "Verification failed."
-                );
-
-            }
-
-
-            // ==================================
-            // LOGIN SUCCESSFUL
-            // ==================================
-
-            const student =
-                data.student;
-
-
-            if (!student) {
-
-                throw new Error(
-                    "Student information was not returned."
-                );
-
-            }
-
-
-            // ==================================
-            // SAVE LOGGED-IN STUDENT
-            // ==================================
-
-            localStorage.setItem(
-                "currentStudent",
-                JSON.stringify(student)
-            );
-
-
-            // ==================================
-            // SAVE STUDENT ID
-            // ==================================
-
-            const loggedInStudentId =
-                student.id ||
-                student._id ||
-                pendingStudentId;
-
-
-            localStorage.setItem(
-                "studentId",
-                String(loggedInStudentId)
-            );
-
-
-            // ==================================
-            // LOGIN STATUS
-            // ==================================
-
-            localStorage.setItem(
-                "isLoggedIn",
-                "true"
-            );
-
-
-            // ==================================
-            // TWO-FACTOR VERIFICATION STATUS
-            // ==================================
-
-            localStorage.setItem(
-                "twoFactorVerified",
-                "true"
-            );
-
-
-            // ==================================
-            // REMOVE PENDING LOGIN DATA
-            // ==================================
-
-            localStorage.removeItem(
-                "pendingStudentId"
-            );
-
-            localStorage.removeItem(
-                "pendingStudentEmail"
-            );
-
-
-            // ==================================
-            // SUCCESS MESSAGE
-            // ==================================
-
-            showMessage(
-                "Verification successful! Redirecting...",
-                "success"
-            );
-
-
-            verifyBtn.textContent =
-                "Login Successful";
-
-
-            // ==================================
-            // REDIRECT TO DASHBOARD
-            // ==================================
-
-            setTimeout(function () {
-
-                window.location.href =
-                    "student dashboard.html";
-
-            }, 700);
-
-
-        } catch (error) {
-
-            console.error(
-                "OTP verification error:",
-                error
-            );
-
-
-            showMessage(
-                error.message ||
-                "Unable to verify the code. Please try again.",
-                "error"
-            );
-
-
-            verifyBtn.disabled = false;
-
-            verifyBtn.textContent =
-                "Verify & Continue";
-
-        }
-
-    });
-
-
-    // ==========================================
-    // RESEND OTP
-    // ==========================================
-
-    resendBtn.addEventListener("click", async function () {
-
-        if (!pendingStudentId) {
-
-            showMessage(
-                "Verification session expired. Please login again.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        resendBtn.disabled = true;
-
-        resendBtn.textContent =
-            "Sending...";
-
-        hideMessage();
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_BASE}/resend-otp`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json"
                         },
-
-                        body: JSON.stringify({
-
-                            studentId:
-                                pendingStudentId
-
-                        })
-                    }
-                );
+                        1200
+                    );
 
 
-            const raw =
-                await response.text();
+                } catch (error) {
 
+                    console.error(
+                        "OTP verification error:",
+                        error
+                    );
 
-            let data;
+                    showError(
+                        "Unable to connect to the server. Please try again."
+                    );
 
+                    verifyBtn.disabled = false;
 
-            try {
-
-                data =
-                    JSON.parse(raw);
-
-            } catch (error) {
-
-                throw new Error(
-                    "The server returned an invalid response."
-                );
+                    verifyBtn.textContent =
+                        "Verify Email";
+                }
 
             }
+        );
 
 
-            if (!response.ok || !data.success) {
+        // ================================
+        // RESEND OTP
+        // ================================
 
-                throw new Error(
-                    data.message ||
-                    "Unable to resend verification code."
-                );
+        resendBtn.addEventListener(
+            "click",
+            async function () {
 
-            }
+                if (!pendingStudentId) {
 
+                    showError(
+                        "Your verification session has expired. Please register again."
+                    );
 
-            showMessage(
-                "A new verification code has been sent to your email.",
-                "success"
-            );
-
-
-            startResendTimer();
-
-
-        } catch (error) {
-
-            console.error(
-                "Resend OTP error:",
-                error
-            );
+                    return;
+                }
 
 
-            showMessage(
-                error.message ||
-                "Unable to resend the code.",
-                "error"
-            );
-
-
-            resendBtn.disabled = false;
-
-            resendBtn.textContent =
-                "Resend Code";
-
-        }
-
-    });
-
-
-    // ==========================================
-    // RESEND TIMER
-    // ==========================================
-
-    let countdown;
-
-
-    function startResendTimer() {
-
-        let seconds = 60;
-
-
-        resendBtn.disabled = true;
-
-        resendBtn.textContent =
-            `Resend in ${seconds}s`;
-
-
-        timer.textContent =
-            "Please wait before requesting another code.";
-
-
-        clearInterval(countdown);
-
-
-        countdown =
-            setInterval(function () {
-
-                seconds--;
-
+                resendBtn.disabled = true;
 
                 resendBtn.textContent =
-                    `Resend in ${seconds}s`;
+                    "Sending...";
+
+                hideMessage();
 
 
-                if (seconds <= 0) {
+                try {
 
-                    clearInterval(countdown);
+                    const response =
+                        await fetch(
+                            `${API_URL}/resend-otp`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    studentId:
+                                        pendingStudentId
+                                })
+                            }
+                        );
 
 
-                    resendBtn.disabled =
-                        false;
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok || !data.success) {
+
+                        showError(
+                            data.message ||
+                            "Unable to resend verification code."
+                        );
+
+                        resendBtn.disabled = false;
+
+                        resendBtn.textContent =
+                            "Resend Code";
+
+                        return;
+                    }
+
+
+                    showSuccess(
+                        "A new verification code has been sent to your email."
+                    );
+
+
+                    resendBtn.textContent =
+                        "Code Sent";
+
+
+                    // Wait 60 seconds before allowing resend
+                    let seconds = 60;
+
+
+                    const timer =
+                        setInterval(
+                            function () {
+
+                                seconds--;
+
+                                resendBtn.textContent =
+                                    `Resend in ${seconds}s`;
+
+
+                                if (seconds <= 0) {
+
+                                    clearInterval(timer);
+
+                                    resendBtn.disabled =
+                                        false;
+
+                                    resendBtn.textContent =
+                                        "Resend Code";
+                                }
+
+                            },
+                            1000
+                        );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Resend OTP error:",
+                        error
+                    );
+
+                    showError(
+                        "Unable to connect to the server. Please try again."
+                    );
+
+                    resendBtn.disabled = false;
 
                     resendBtn.textContent =
                         "Resend Code";
-
-                    timer.textContent =
-                        "";
-
                 }
 
-            }, 1000);
-
-    }
-
-
-    // ==========================================
-    // MESSAGE FUNCTIONS
-    // ==========================================
-
-    function showMessage(
-        text,
-        type
-    ) {
-
-        message.textContent =
-            text;
-
-        message.className =
-            `message ${type}`;
-
-    }
+            }
+        );
 
 
-    function hideMessage() {
+        // ================================
+        // MESSAGE FUNCTIONS
+        // ================================
 
-        message.textContent =
-            "";
+        function showError(message) {
 
-        message.className =
-            "message";
+            messageBox.textContent =
+                message;
 
-    }
+            messageBox.className =
+                "message error";
 
-</script>
+            messageBox.style.display =
+                "block";
+        }
 
+
+        function showSuccess(message) {
+
+            messageBox.textContent =
+                message;
+
+            messageBox.className =
+                "message success";
+
+            messageBox.style.display =
+                "block";
+        }
+
+
+        function hideMessage() {
+
+            messageBox.style.display =
+                "none";
+
+            messageBox.textContent =
+                "";
+        }
+
+    </script>
 
 </body>
 

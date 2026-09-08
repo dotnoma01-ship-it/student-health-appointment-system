@@ -35,8 +35,6 @@
             grid-template-columns: 1fr 1fr;
         }
 
-        /* LEFT SIDE */
-
         .intro {
             background: var(--primary);
             color: white;
@@ -101,8 +99,6 @@
             font-size: 13px;
             flex-shrink: 0;
         }
-
-        /* RIGHT SIDE */
 
         .form-area {
             padding: 45px 30px;
@@ -250,10 +246,7 @@
             border: 1px solid #f3caca;
         }
 
-        /* RESPONSIVENESS */
-
         @media (max-width: 850px) {
-
             .page {
                 grid-template-columns: 1fr;
             }
@@ -272,7 +265,6 @@
         }
 
         @media (max-width: 550px) {
-
             .form-area {
                 padding: 25px 15px;
             }
@@ -291,8 +283,6 @@
 <body>
 
 <div class="page">
-
-    <!-- LEFT SIDE -->
 
     <section class="intro">
 
@@ -329,9 +319,6 @@
 
     </section>
 
-
-    <!-- REGISTRATION FORM -->
-
     <section class="form-area">
 
         <div class="form-box">
@@ -350,15 +337,10 @@
 
             <form id="studentRegistrationForm">
 
-                <!-- FIRST NAME + LAST NAME -->
-
                 <div class="form-row">
 
                     <div class="field">
-
-                        <label for="firstName">
-                            First Name
-                        </label>
+                        <label for="firstName">First Name</label>
 
                         <input
                             type="text"
@@ -368,14 +350,10 @@
                             autocomplete="given-name"
                             required
                         >
-
                     </div>
 
                     <div class="field">
-
-                        <label for="lastName">
-                            Last Name
-                        </label>
+                        <label for="lastName">Last Name</label>
 
                         <input
                             type="text"
@@ -385,13 +363,9 @@
                             autocomplete="family-name"
                             required
                         >
-
                     </div>
 
                 </div>
-
-
-                <!-- MATRIC NUMBER + GENDER -->
 
                 <div class="form-row">
 
@@ -441,9 +415,6 @@
 
                 </div>
 
-
-                <!-- DEPARTMENT + LEVEL -->
-
                 <div class="form-row">
 
                     <div class="field">
@@ -474,38 +445,18 @@
                                 Select level
                             </option>
 
-                            <option value="100">
-                                100 Level
-                            </option>
-
-                            <option value="200">
-                                200 Level
-                            </option>
-
-                            <option value="300">
-                                300 Level
-                            </option>
-
-                            <option value="400">
-                                400 Level
-                            </option>
-
-                            <option value="500">
-                                500 Level
-                            </option>
-
-                            <option value="600">
-                                600 Level
-                            </option>
+                            <option value="100">100 Level</option>
+                            <option value="200">200 Level</option>
+                            <option value="300">300 Level</option>
+                            <option value="400">400 Level</option>
+                            <option value="500">500 Level</option>
+                            <option value="600">600 Level</option>
 
                         </select>
 
                     </div>
 
                 </div>
-
-
-                <!-- EMAIL -->
 
                 <div class="field">
 
@@ -523,9 +474,6 @@
                     >
 
                 </div>
-
-
-                <!-- PHONE -->
 
                 <div class="field">
 
@@ -546,9 +494,6 @@
 
                 </div>
 
-
-                <!-- PASSWORDS -->
-
                 <div class="form-row">
 
                     <div class="field">
@@ -562,7 +507,7 @@
                             id="password"
                             name="password"
                             placeholder="Create password"
-                            minlength="6"
+                            minlength="8"
                             autocomplete="new-password"
                             required
                         >
@@ -580,7 +525,7 @@
                             id="confirmPassword"
                             name="confirmPassword"
                             placeholder="Repeat password"
-                            minlength="6"
+                            minlength="8"
                             autocomplete="new-password"
                             required
                         >
@@ -590,11 +535,8 @@
                 </div>
 
                 <span class="password-note">
-                    Password must be at least 6 characters.
+                    Password must be at least 8 characters.
                 </span>
-
-
-                <!-- TERMS -->
 
                 <label class="checkbox">
 
@@ -612,9 +554,6 @@
 
                 </label>
 
-
-                <!-- SUBMIT -->
-
                 <button
                     class="submit-btn"
                     id="submitButton"
@@ -624,7 +563,6 @@
                 </button>
 
             </form>
-
 
             <p class="login-text">
 
@@ -642,36 +580,23 @@
 
 </div>
 
-
 <script>
 
-const form = document.getElementById(
-    "studentRegistrationForm"
-);
+const form =
+    document.getElementById("studentRegistrationForm");
 
-const errorMessage = document.getElementById(
-    "errorMessage"
-);
+const errorMessage =
+    document.getElementById("errorMessage");
 
-const submitButton = document.getElementById(
-    "submitButton"
-);
+const submitButton =
+    document.getElementById("submitButton");
 
-
-// ==========================================
-// FORM SUBMISSION
-// ==========================================
 
 form.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
     hideError();
-
-
-    // ==========================================
-    // GET VALUES
-    // ==========================================
 
     const firstName =
         document.getElementById("firstName")
@@ -722,10 +647,6 @@ form.addEventListener("submit", async function (event) {
         .value;
 
 
-    // ==========================================
-    // VALIDATION
-    // ==========================================
-
     if (
         !firstName ||
         !lastName ||
@@ -740,16 +661,12 @@ form.addEventListener("submit", async function (event) {
     ) {
 
         showError("Please fill in all fields.");
-
         return;
     }
 
 
-    // ==========================================
-    // NAME VALIDATION
-    // ==========================================
-
-    const namePattern = /^[A-Za-z\s]+$/;
+    const namePattern =
+        /^[A-Za-z\s]+$/;
 
     if (!namePattern.test(firstName)) {
 
@@ -770,10 +687,6 @@ form.addEventListener("submit", async function (event) {
     }
 
 
-    // ==========================================
-    // EMAIL VALIDATION
-    // ==========================================
-
     const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -787,11 +700,8 @@ form.addEventListener("submit", async function (event) {
     }
 
 
-    // ==========================================
-    // PHONE VALIDATION
-    // ==========================================
-
-    const phonePattern = /^[0-9]{11}$/;
+    const phonePattern =
+        /^[0-9]{11}$/;
 
     if (!phonePattern.test(phone)) {
 
@@ -803,18 +713,15 @@ form.addEventListener("submit", async function (event) {
     }
 
 
-    // ==========================================
-    // PASSWORD VALIDATION
-    // ==========================================
-
-    if (password.length < 6) {
+    if (password.length < 8) {
 
         showError(
-            "Password must be at least 6 characters."
+            "Password must be at least 8 characters."
         );
 
         return;
     }
+
 
     if (password !== confirmPassword) {
 
@@ -826,64 +733,56 @@ form.addEventListener("submit", async function (event) {
     }
 
 
-    // ==========================================
-    // DISABLE BUTTON
-    // ==========================================
-
     submitButton.disabled = true;
 
     submitButton.textContent =
         "Creating Account...";
 
 
-    // ==========================================
-    // SEND TO BACKEND
-    // ==========================================
-
     try {
 
-        const response = await fetch(
-            "https://student-health-appointment-system-backend.onrender.com/api/students/register",
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                "https://student-health-appointment-system-backend.onrender.com/api/students/register",
+                {
+                    method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-                body: JSON.stringify({
+                    body: JSON.stringify({
 
-                    firstName: firstName,
-                    lastName: lastName,
-                    matricNumber: matricNumber,
-                    gender: gender,
-                    department: department,
-                    level: level,
-                    email: email,
-                    phone: phone,
-                    password: password
+                        firstName,
+                        lastName,
+                        matricNumber,
+                        gender,
+                        department,
+                        level,
+                        email,
+                        phone,
+                        password
 
-                })
-            }
-        );
+                    })
+                }
+            );
 
-
-        // ==========================================
-        // READ RESPONSE SAFELY
-        // ==========================================
 
         const contentType =
             response.headers.get("content-type") || "";
 
         let data = {};
 
-        if (contentType.includes("application/json")) {
+        if (
+            contentType.includes("application/json")
+        ) {
 
             data = await response.json();
 
         } else {
 
-            const text = await response.text();
+            const text =
+                await response.text();
 
             console.error(
                 "Server returned non-JSON response:",
@@ -895,10 +794,6 @@ form.addEventListener("submit", async function (event) {
             );
         }
 
-
-        // ==========================================
-        // BACKEND ERROR
-        // ==========================================
 
         if (!response.ok) {
 
@@ -913,25 +808,62 @@ form.addEventListener("submit", async function (event) {
         }
 
 
-        // ==========================================
-        // SUCCESS
-        // ==========================================
+        if (data.success) {
 
-if (data.success) {
+            /*
+             * Save the newly created student's ID.
+             * The OTP verification page needs this
+             * to verify the registration OTP.
+             */
 
-    // Save the email for the OTP verification page
-    sessionStorage.setItem("verificationEmail", email);
+            const student =
+                data.student || {};
 
-    // Go to student OTP verification page
-    window.location.href = "verify-otp.html";
+            const studentId =
+                student.id ||
+                student._id ||
+                data.studentId;
 
-    return;
-}
+
+            if (!studentId) {
+
+                console.error(
+                    "Registration response:",
+                    data
+                );
+
+                showError(
+                    "Registration succeeded, but the verification session could not be created."
+                );
+
+                resetButton();
+
+                return;
+            }
 
 
-        // ==========================================
-        // UNKNOWN RESPONSE
-        // ==========================================
+            localStorage.setItem(
+                "pendingStudentId",
+                String(studentId)
+            );
+
+            localStorage.setItem(
+                "pendingStudentEmail",
+                email
+            );
+
+
+            /*
+             * Registration is complete.
+             * Now send the student to the OTP page.
+             */
+
+            window.location.href =
+                "verify otp.html";
+
+            return;
+        }
+
 
         showError(
             data.message ||
@@ -939,6 +871,7 @@ if (data.success) {
         );
 
         resetButton();
+
 
     } catch (error) {
 
@@ -948,8 +881,8 @@ if (data.success) {
         );
 
         showError(
-            "Unable to connect to the server. " +
-            "Please try again later."
+            error.message ||
+            "Unable to connect to the server. Please try again later."
         );
 
         resetButton();
@@ -959,15 +892,13 @@ if (data.success) {
 });
 
 
-// ==========================================
-// SHOW ERROR
-// ==========================================
-
 function showError(message) {
 
-    errorMessage.textContent = message;
+    errorMessage.textContent =
+        message;
 
-    errorMessage.style.display = "block";
+    errorMessage.style.display =
+        "block";
 
     errorMessage.scrollIntoView({
         behavior: "smooth",
@@ -976,25 +907,20 @@ function showError(message) {
 }
 
 
-// ==========================================
-// HIDE ERROR
-// ==========================================
-
 function hideError() {
 
-    errorMessage.textContent = "";
+    errorMessage.textContent =
+        "";
 
-    errorMessage.style.display = "none";
+    errorMessage.style.display =
+        "none";
 }
 
 
-// ==========================================
-// RESET BUTTON
-// ==========================================
-
 function resetButton() {
 
-    submitButton.disabled = false;
+    submitButton.disabled =
+        false;
 
     submitButton.textContent =
         "Create Student Account";
@@ -1002,6 +928,6 @@ function resetButton() {
 
 </script>
 
-
 </body>
 </html>
+
