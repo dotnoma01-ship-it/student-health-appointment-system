@@ -35,7 +35,9 @@ function getStudentData(student) {
         matricNumber: student.matricNumber,
         department: student.department,
         level: student.level,
-        gender: student.gender
+        gender: student.gender,
+
+        emailVerified: student.emailVerified
     };
 }
 
@@ -143,6 +145,7 @@ router.post("/register", async (req, res) => {
             gender
         } = req.body;
 
+        // Check required fields
         if (
             !firstName ||
             !lastName ||
@@ -160,6 +163,7 @@ router.post("/register", async (req, res) => {
             });
         }
 
+        // Password validation
         if (String(password).length < 8) {
             return res.status(400).json({
                 success: false,
@@ -167,6 +171,7 @@ router.post("/register", async (req, res) => {
             });
         }
 
+        // Clean input
         const cleanFirstName = String(firstName).trim();
         const cleanLastName = String(lastName).trim();
 
@@ -185,13 +190,31 @@ router.post("/register", async (req, res) => {
         const cleanGender = String(gender).trim();
 
 
+        // =================================================
         // CHECK EMAIL
+        // =================================================
 
         const existingEmail = await Student.findOne({
             email: cleanEmail
         });
 
         if (existingEmail) {
+
+            // If the account exists but email is not verified,
+            // allow the user to request a new OTP instead of
+            // creating another account.
+
+            if (existingEmail.emailVerified === false) {
+
+                return res.status(409).json({
+                    success: false,
+                    requiresVerification: true,
+                    message:
+                        "An account with this email already exists but has not been verified.",
+                    studentId: String(existingEmail._id)
+                });
+            }
+
             return res.status(409).json({
                 success: false,
                 message: "A student with this email already exists."
@@ -199,7 +222,9 @@ router.post("/register", async (req, res) => {
         }
 
 
+        // =================================================
         // CHECK MATRIC NUMBER
+        // =================================================
 
         const existingMatric = await Student.findOne({
             matricNumber: cleanMatric
@@ -208,12 +233,15 @@ router.post("/register", async (req, res) => {
         if (existingMatric) {
             return res.status(409).json({
                 success: false,
-                message: "A student with this matric number already exists."
+                message:
+                    "A student with this matric number already exists."
             });
         }
 
 
+        // =================================================
         // HASH PASSWORD
+        // =================================================
 
         const hashedPassword = await bcrypt.hash(
             String(password),
@@ -221,7 +249,9 @@ router.post("/register", async (req, res) => {
         );
 
 
+        // =================================================
         // CREATE STUDENT
+        // =================================================
 
         const student = new Student({
             firstName: cleanFirstName,
@@ -234,7 +264,11 @@ router.post("/register", async (req, res) => {
             level: cleanLevel,
             gender: cleanGender,
 
-            twoFactorEnabled: true,
+            // Email must be verified during registration
+            emailVerified: false,
+
+            // Keep this field for future optional 2FA
+            twoFactorEnabled: false,
 
             otpHash: null,
             otpExpiresAt: null,
@@ -243,78 +277,9 @@ router.post("/register", async (req, res) => {
         });
 
 
-        // SAVE
-
-        const savedStudent = await student.save();
-
-
-        return res.status(201).json({
-            success: true,
-            message: "Student registered successfully.",
-            student: getStudentData(savedStudent)
-        });
-
-    } catch (error) {
-
-        console.error("STUDENT REGISTRATION ERROR:", error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Server error while registering student."
-        });
-    }
-});
-
-
-// =====================================================
-// STUDENT LOGIN - STEP 1
-// POST /api/students/login
-// =====================================================
-
-router.post("/login", async (req, res) => {
-    try {
-
-        const {
-            email,
-            password
-        } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Email and password are required."
-            });
-        }
-
-        const cleanEmail = String(email)
-            .trim()
-            .toLowerCase();
-
-        const student = await Student.findOne({
-            email: cleanEmail
-        });
-
-        if (!student) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid email or password."
-            });
-        }
-
-        const passwordMatch = await bcrypt.compare(
-            String(password),
-            student.password
-        );
-
-        if (!passwordMatch) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid email or password."
-            });
-        }
-
-
-        // CREATE OTP
+        // =================================================
+        // CREATE REGISTRATION OTP
+        // =================================================
 
         const otp = generateOTP();
 
@@ -323,7 +288,6 @@ router.post("/login", async (req, res) => {
             10
         );
 
-
         student.otpHash = otpHash;
 
         student.otpExpiresAt = new Date(
@@ -331,14 +295,19 @@ router.post("/login", async (req, res) => {
         );
 
         student.otpAttempts = 0;
-
         student.otpLastSentAt = new Date();
 
+
+        // =================================================
+        // SAVE STUDENT
+        // =================================================
 
         await student.save();
 
 
-        // SEND OTP
+        // =================================================
+        // SEND REGISTRATION OTP
+        // =================================================
 
         try {
 
@@ -354,12 +323,8 @@ router.post("/login", async (req, res) => {
                 emailError
             );
 
-            student.otpHash = null;
-            student.otpExpiresAt = null;
-            student.otpAttempts = 0;
-            student.otpLastSentAt = null;
-
-            await student.save();
+            // Delete account if email could not be sent
+            await Student.findByIdAndDelete(student._id);
 
             return res.status(500).json({
                 success: false,
@@ -369,19 +334,125 @@ router.post("/login", async (req, res) => {
         }
 
 
-        return res.status(200).json({
+        // =================================================
+        // RESPONSE
+        // =================================================
 
+        return res.status(201).json({
             success: true,
-
-            requiresTwoFactor: true,
-
             message:
-                "A verification code has been sent to your email.",
+                "Student registered successfully. Verification code sent to your email.",
+            studentId: String(student._id),
+            email: student.email
+        });
 
-            email: student.email,
+    } catch (error) {
 
-            studentId: String(student._id)
+        console.error(
+            "STUDENT REGISTRATION ERROR:",
+            error
+        );
 
+        return res.status(500).json({
+            success: false,
+            message:
+                "Server error while registering student."
+        });
+    }
+});
+
+
+// =====================================================
+// STUDENT LOGIN
+// POST /api/students/login
+//
+// OTP IS NOT SENT DURING NORMAL LOGIN.
+// OTP IS ONLY REQUIRED FOR EMAIL VERIFICATION.
+// =====================================================
+
+router.post("/login", async (req, res) => {
+    try {
+
+        const {
+            email,
+            password
+        } = req.body;
+
+        // Check required fields
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Email and password are required."
+            });
+        }
+
+        // Clean email
+        const cleanEmail = String(email)
+            .trim()
+            .toLowerCase();
+
+        // Find student
+        const student = await Student.findOne({
+            email: cleanEmail
+        });
+
+        // Student not found
+        if (!student) {
+            return res.status(401).json({
+                success: false,
+                message:
+                    "Invalid email or password."
+            });
+        }
+
+
+        // =================================================
+        // CHECK PASSWORD
+        // =================================================
+
+        const passwordMatch = await bcrypt.compare(
+            String(password),
+            student.password
+        );
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message:
+                    "Invalid email or password."
+            });
+        }
+
+
+        // =================================================
+        // CHECK EMAIL VERIFICATION
+        // =================================================
+
+        if (!student.emailVerified) {
+
+            return res.status(403).json({
+                success: false,
+                requiresVerification: true,
+                message:
+                    "Please verify your email before logging in.",
+                studentId: String(student._id),
+                email: student.email
+            });
+        }
+
+
+        // =================================================
+        // LOGIN SUCCESSFUL
+        // NO OTP
+        // =================================================
+
+        return res.status(200).json({
+            success: true,
+            message:
+                "Student login successful.",
+            student:
+                getStudentData(student)
         });
 
     } catch (error) {
@@ -393,14 +464,15 @@ router.post("/login", async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: "Server error while logging in."
+            message:
+                "Server error while logging in."
         });
     }
 });
 
 
 // =====================================================
-// VERIFY OTP - STEP 2
+// VERIFY REGISTRATION OTP
 // POST /api/students/verify-otp
 // =====================================================
 
@@ -434,7 +506,8 @@ router.post("/verify-otp", async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(studentId)) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid student ID."
+                message:
+                    "Invalid student ID."
             });
         }
 
@@ -447,12 +520,25 @@ router.post("/verify-otp", async (req, res) => {
         if (!student) {
             return res.status(404).json({
                 success: false,
-                message: "Student account not found."
+                message:
+                    "Student account not found."
             });
         }
 
 
-        // CHECK OTP
+        // Already verified
+        if (student.emailVerified) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "This student account is already verified."
+            });
+        }
+
+
+        // =================================================
+        // CHECK OTP EXISTS
+        // =================================================
 
         if (
             !student.otpHash ||
@@ -467,9 +553,14 @@ router.post("/verify-otp", async (req, res) => {
         }
 
 
+        // =================================================
         // CHECK EXPIRATION
+        // =================================================
 
-        if (new Date() > new Date(student.otpExpiresAt)) {
+        if (
+            new Date() >
+            new Date(student.otpExpiresAt)
+        ) {
 
             student.otpHash = null;
             student.otpExpiresAt = null;
@@ -486,9 +577,13 @@ router.post("/verify-otp", async (req, res) => {
         }
 
 
+        // =================================================
         // CHECK ATTEMPT LIMIT
+        // =================================================
 
-        if (Number(student.otpAttempts || 0) >= 5) {
+        if (
+            Number(student.otpAttempts || 0) >= 5
+        ) {
 
             student.otpHash = null;
             student.otpExpiresAt = null;
@@ -505,7 +600,9 @@ router.post("/verify-otp", async (req, res) => {
         }
 
 
+        // =================================================
         // COMPARE OTP
+        // =================================================
 
         const otpMatch = await bcrypt.compare(
             String(otp).trim(),
@@ -513,7 +610,9 @@ router.post("/verify-otp", async (req, res) => {
         );
 
 
+        // =================================================
         // WRONG OTP
+        // =================================================
 
         if (!otpMatch) {
 
@@ -536,26 +635,30 @@ router.post("/verify-otp", async (req, res) => {
         }
 
 
+        // =================================================
         // CORRECT OTP
+        // =================================================
 
         student.otpHash = null;
         student.otpExpiresAt = null;
         student.otpAttempts = 0;
         student.otpLastSentAt = null;
 
+        student.emailVerified = true;
+
         await student.save();
 
 
+        // =================================================
+        // SUCCESS
+        // =================================================
+
         return res.status(200).json({
-
             success: true,
-
             message:
-                "Two-factor verification successful. Login complete.",
-
+                "Email verified successfully. Registration complete.",
             student:
                 getStudentData(student)
-
         });
 
     } catch (error) {
@@ -575,28 +678,34 @@ router.post("/verify-otp", async (req, res) => {
 
 
 // =====================================================
-// RESEND OTP
+// RESEND REGISTRATION OTP
 // POST /api/students/resend-otp
 // =====================================================
 
 router.post("/resend-otp", async (req, res) => {
     try {
 
-        const { studentId } = req.body;
+        const {
+            studentId
+        } = req.body;
 
 
         if (!studentId) {
             return res.status(400).json({
                 success: false,
-                message: "Student ID is required."
+                message:
+                    "Student ID is required."
             });
         }
 
 
-        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+        if (
+            !mongoose.Types.ObjectId.isValid(studentId)
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid student ID."
+                message:
+                    "Invalid student ID."
             });
         }
 
@@ -614,7 +723,19 @@ router.post("/resend-otp", async (req, res) => {
         }
 
 
+        // Don't resend OTP to an already verified account
+        if (student.emailVerified) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "This account is already verified."
+            });
+        }
+
+
+        // =================================================
         // 60 SECOND COOLDOWN
+        // =================================================
 
         if (student.otpLastSentAt) {
 
@@ -643,7 +764,9 @@ router.post("/resend-otp", async (req, res) => {
         }
 
 
-        // CREATE OTP
+        // =================================================
+        // CREATE NEW OTP
+        // =================================================
 
         const otp = generateOTP();
 
@@ -663,14 +786,15 @@ router.post("/resend-otp", async (req, res) => {
             );
 
         student.otpAttempts = 0;
-
         student.otpLastSentAt = new Date();
 
 
         await student.save();
 
 
+        // =================================================
         // SEND OTP
+        // =================================================
 
         try {
 
@@ -731,13 +855,16 @@ router.post("/resend-otp", async (req, res) => {
 router.post("/check-email", async (req, res) => {
     try {
 
-        const { email } = req.body;
+        const {
+            email
+        } = req.body;
 
 
         if (!email) {
             return res.status(400).json({
                 success: false,
-                message: "Email is required."
+                message:
+                    "Email is required."
             });
         }
 
@@ -766,7 +893,9 @@ router.post("/check-email", async (req, res) => {
         return res.status(200).json({
             success: true,
             message:
-                "Email verified successfully."
+                "Student email exists.",
+            emailVerified:
+                !!student.emailVerified
         });
 
     } catch (error) {
@@ -787,7 +916,12 @@ router.post("/check-email", async (req, res) => {
 
 // =====================================================
 // FORGOT PASSWORD
-// POST /api/students/forgot-password
+// =====================================================
+//
+// NOTE:
+// This route currently changes the password directly.
+// For production, this should be protected by a
+// password-reset OTP/email verification flow.
 // =====================================================
 
 router.post("/forgot-password", async (req, res) => {
@@ -808,7 +942,9 @@ router.post("/forgot-password", async (req, res) => {
         }
 
 
-        if (String(newPassword).length < 8) {
+        if (
+            String(newPassword).length < 8
+        ) {
             return res.status(400).json({
                 success: false,
                 message:
@@ -882,8 +1018,9 @@ router.post("/forgot-password", async (req, res) => {
 router.put("/:studentId", async (req, res) => {
     try {
 
-        const { studentId } =
-            req.params;
+        const {
+            studentId
+        } = req.params;
 
 
         const {
@@ -897,18 +1034,25 @@ router.put("/:studentId", async (req, res) => {
         } = req.body;
 
 
+        // =================================================
         // VALIDATE ID
+        // =================================================
 
-        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+        if (
+            !mongoose.Types.ObjectId.isValid(studentId)
+        ) {
 
             return res.status(400).json({
                 success: false,
-                message: "Invalid student ID."
+                message:
+                    "Invalid student ID."
             });
         }
 
 
+        // =================================================
         // REQUIRED FIELDS
+        // =================================================
 
         if (
             !firstName ||
@@ -928,7 +1072,9 @@ router.put("/:studentId", async (req, res) => {
         }
 
 
+        // =================================================
         // CLEAN INPUT
+        // =================================================
 
         const cleanFirstName =
             String(firstName).trim();
@@ -954,10 +1100,14 @@ router.put("/:studentId", async (req, res) => {
             String(level).trim();
 
 
+        // =================================================
         // FIND STUDENT
+        // =================================================
 
         const student =
-            await Student.findById(studentId);
+            await Student.findById(
+                studentId
+            );
 
 
         if (!student) {
@@ -970,7 +1120,9 @@ router.put("/:studentId", async (req, res) => {
         }
 
 
+        // =================================================
         // CHECK EMAIL
+        // =================================================
 
         const existingEmail =
             await Student.findOne({
@@ -994,7 +1146,9 @@ router.put("/:studentId", async (req, res) => {
         }
 
 
+        // =================================================
         // UPDATE
+        // =================================================
 
         student.firstName =
             cleanFirstName;
@@ -1018,13 +1172,17 @@ router.put("/:studentId", async (req, res) => {
             cleanLevel;
 
 
+        // =================================================
         // SAVE
+        // =================================================
 
         const updatedStudent =
             await student.save();
 
 
+        // =================================================
         // RESPONSE
+        // =================================================
 
         return res.status(200).json({
 
@@ -1061,3 +1219,4 @@ router.put("/:studentId", async (req, res) => {
 // =====================================================
 
 module.exports = router;
+

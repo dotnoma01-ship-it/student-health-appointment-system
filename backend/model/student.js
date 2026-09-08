@@ -22,6 +22,11 @@ const studentSchema = new mongoose.Schema(
             trim: true
         },
 
+        emailVerified: {
+            type: Boolean,
+            default: false
+        },
+
         password: {
             type: String,
             required: true
@@ -60,12 +65,12 @@ const studentSchema = new mongoose.Schema(
         },
 
         // =====================================================
-        // TWO-FACTOR AUTHENTICATION
+        // TWO-FACTOR / REGISTRATION OTP
         // =====================================================
 
         twoFactorEnabled: {
             type: Boolean,
-            default: true
+            default: false
         },
 
         otpHash: {
@@ -81,6 +86,49 @@ const studentSchema = new mongoose.Schema(
         otpAttempts: {
             type: Number,
             default: 0
+        },
+
+        otpLastSentAt: {
+            type: Date,
+            default: null
+        },
+
+        // =====================================================
+        // PASSWORD RESET OTP
+        // =====================================================
+
+        resetOtpHash: {
+            type: String,
+            default: null
+        },
+
+        resetOtpExpiresAt: {
+            type: Date,
+            default: null
+        },
+
+        resetOtpAttempts: {
+            type: Number,
+            default: 0
+        },
+
+        resetOtpLastSentAt: {
+            type: Date,
+            default: null
+        },
+
+        // =====================================================
+        // PASSWORD RESET TOKEN
+        // =====================================================
+
+        resetToken: {
+            type: String,
+            default: null
+        },
+
+        resetTokenExpiresAt: {
+            type: Date,
+            default: null
         }
     },
     {
@@ -92,3 +140,4 @@ const studentSchema = new mongoose.Schema(
 module.exports =
     mongoose.models.Student ||
     mongoose.model("Student", studentSchema);
+
